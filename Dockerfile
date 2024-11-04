@@ -1,4 +1,4 @@
-ROM openjdk:21-slim-buster AS Builder
+FROM openjdk:21-slim-buster AS Builder
 WORKDIR /usr/bin/app
 COPY build/libs/*.jar app.jar
 ENV TZ=Asia/Seoul
