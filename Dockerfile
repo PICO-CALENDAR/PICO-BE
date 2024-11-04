@@ -21,6 +21,12 @@ RUN apt-get update && apt-get install -y wget dos2unix
 RUN dos2unix /usr/bin/run-java.sh
 RUN chmod +x /usr/bin/run-java.sh
 
+# Add environment variables for application configuration
+ENV SPRING_PROFILES_ACTIVE=dev
+ENV JWT_SECRET_KEY=${JWT_SECRET_KEY}
+ENV DEV_MYSQL_USERNAME=${DEV_MYSQL_USERNAME}
+ENV DEV_MYSQL_PASSWORD=${DEV_MYSQL_PASSWORD}
+
 ENV JAVA_MAIN_CLASS org.springframework.boot.loader.launch.JarLauncher
 ENV JAVA_APP_DIR /usr/bin/app
 ENV JAVA_LIB_DIR /usr/bin/app
