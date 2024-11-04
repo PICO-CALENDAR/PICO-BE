@@ -21,7 +21,7 @@ jobs:
           java-version: '21'
 
       - name: Build project
-        run: ./gradlew clean build
+        run: ./gradlew clean build -Pspring.profiles.active=dev
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -32,7 +32,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_REPONAME }}:latest .
-          docker tag your-image-name:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
+          docker tag ${{ secrets.DOCKER_REPONAME }}:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
 
   deploy:
@@ -50,4 +50,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
             docker stop pico-server || true
             docker rm pico-server || true
-            docker run -d --name pico-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
+            docker run -d --name pico-server -p 8080:8080 -e DEV_MYSQL_USERNAME=${{ secrets.DEV_MYSQL_USERNAME }} -e DEV_MYSQL_PASSWORD=${{ secrets.DEV_MYSQL_PASSWORD }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
