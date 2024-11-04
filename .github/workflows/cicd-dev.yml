@@ -53,4 +53,12 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
             docker stop pico-server || true
             docker rm pico-server || true
-            docker run -d --name pico-server -p 8080:8080 -e DEV_MYSQL_URL=${{ secrets.DEV_MYSQL_URL }} -e DEV_MYSQL_USERNAME=${{ secrets.DEV_MYSQL_USERNAME }} -e DEV_MYSQL_PASSWORD=${{ secrets.DEV_MYSQL_PASSWORD }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
+            # Run the new container
+            docker run -d --name pico-server -p 8080:8080 \
+            -e DEV_MYSQL_URL="${{ secrets.DEV_MYSQL_URL }}" \
+            -e DEV_MYSQL_USERNAME="${{ secrets.DEV_MYSQL_USERNAME }}" \
+            -e DEV_MYSQL_PASSWORD="${{ secrets.DEV_MYSQL_PASSWORD }}" \
+            -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
+            -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
