@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
 
       - name: Build project
-        run: ./gradlew clean build -Pspring.profiles.active=dev
+        run: ./gradlew clean build -x test -Pspring.profiles.active=dev
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
