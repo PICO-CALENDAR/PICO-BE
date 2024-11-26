@@ -6,8 +6,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RepeatType {
-    D,
-    W,
-    M,
-    Y
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY,
+    BIWEEKLY;
+
+    public boolean needsRepeatDay() {
+        return this == WEEKLY || this == BIWEEKLY;
+    }
 }

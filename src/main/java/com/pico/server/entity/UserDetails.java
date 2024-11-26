@@ -30,7 +30,7 @@ public class UserDetails {
     private Long id;
 
     private Long partnerId;
-    private String partnerName;
+    private String partnerNickname;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -39,9 +39,9 @@ public class UserDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate birth;
 
-    public void updatePartnerInfo(Long partnerId, String partnerName) {
+    public void updatePartnerInfo(Long partnerId, String partnerNickname) {
         this.partnerId = partnerId;
-        this.partnerName = partnerName;
+        this.partnerNickname = partnerNickname;
     }
 
     public void updateUserInfo(Gender gender, String nickName, LocalDate birth) {

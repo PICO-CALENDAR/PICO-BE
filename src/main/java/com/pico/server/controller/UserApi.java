@@ -99,6 +99,7 @@ public interface UserApi {
         @Parameter(hidden = true)
         @LoginUserId Long userId,
 
+        @Valid
         @RequestBody PartnerUpdateRequest request
     );
 }

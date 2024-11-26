@@ -1,4 +1,4 @@
-package com.pico.server.dto;
+package com.pico.server.dto.request;
 
 import com.pico.server.security.enums.Platform;
 import lombok.Builder;

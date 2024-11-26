@@ -23,7 +23,7 @@ public record UserInfoDto(
     Long partnerId,
 
     @Nullable
-    String partnerName
+    String partnerNickname
 ) {
 
     public static UserInfoDto of(Users user, UserDetails userDetails) {
@@ -35,7 +35,7 @@ public record UserInfoDto(
             .nickName(userDetails.getNickName())
             .birth(userDetails.getBirth().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
             .partnerId(userDetails.getPartnerId())
-            .partnerName(userDetails.getPartnerName())
+            .partnerNickname(userDetails.getPartnerNickname())
             .build();
     }
 }

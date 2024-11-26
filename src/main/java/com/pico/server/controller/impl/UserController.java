@@ -1,7 +1,7 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.UserApi;
-import com.pico.server.dto.CreateUserDetailsDto;
+import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.PartnerUpdateRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
@@ -39,21 +39,18 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserInfoDto> getUserInfo(Long userId) {
         UserInfoDto userInfoDto = userService.getUserInfo(userId);
-
         return ResponseEntity.ok(userInfoDto);
     }
 
     @Override
     public ResponseEntity<UserInfoDto> updateUserInfo(Long userId, UserInfoUpdateRequest request) {
         UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request.gender(), request.nickName(), request.birth());
-
         return ResponseEntity.ok(userInfoDto);
     }
 
     @Override
     public ResponseEntity<UserInfoDto> updatePartnerInfo(Long userId, PartnerUpdateRequest request) {
-        UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerName());
-
+        UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerNickname());
         return ResponseEntity.ok(userInfoDto);
     }
 

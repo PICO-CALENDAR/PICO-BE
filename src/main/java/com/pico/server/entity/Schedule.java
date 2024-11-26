@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -31,15 +32,28 @@ public class Schedule extends BaseEntity{
     @Column(name = "schedule_id")
     private Long scheduleId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "repeat_info_id")
     private RepeatInfo repeatInfo;
 
-    private String content;
+    private String title;
     @Enumerated(EnumType.STRING)
-    private ScheduleType scheduleType;
-    private LocalDateTime scheduleStartTime;
-    private LocalDateTime scheduleEndTime;
+    private ScheduleType category;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Boolean isAllDay;
+    private String meetingPeople;
+    private Boolean isRepeat;
 
+
+    public void updateRepeatInfo(RepeatInfo repeatInfo) {
+        this.repeatInfo = repeatInfo;
+    }
+    public void deleteRepeatInfo() {
+        this.repeatInfo = null;
+    }
 }

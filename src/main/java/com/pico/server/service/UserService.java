@@ -1,6 +1,6 @@
 package com.pico.server.service;
 
-import com.pico.server.dto.CreateUserDto;
+import com.pico.server.dto.request.CreateUserDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;

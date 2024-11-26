@@ -1,4 +1,4 @@
-package com.pico.server.dto;
+package com.pico.server.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pico.server.enums.Gender;
@@ -11,7 +11,7 @@ public record CreateUserDetailsDto(
 
     String nickName,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate birth
 ) {
 

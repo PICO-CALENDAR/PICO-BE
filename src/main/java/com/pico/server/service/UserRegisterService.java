@@ -1,6 +1,6 @@
 package com.pico.server.service;
 
-import com.pico.server.dto.CreateUserDetailsDto;
+import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
