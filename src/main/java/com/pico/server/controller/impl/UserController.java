@@ -1,17 +1,22 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.UserApi;
+import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.PartnerUpdateRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
+import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
+import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserDetailsService;
 import com.pico.server.service.UserRegisterService;
 import com.pico.server.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,7 @@ public class UserController implements UserApi {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
     private final UserRegisterService userRegisterService;
+    private final ScheduleService scheduleService;
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
@@ -52,6 +58,16 @@ public class UserController implements UserApi {
     public ResponseEntity<UserInfoDto> updatePartnerInfo(Long userId, PartnerUpdateRequest request) {
         UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerNickname());
         return ResponseEntity.ok(userInfoDto);
+    }
+
+    @Override
+    public ResponseEntity<List<ScheduleResponse>> getAllSchedules(Long userId) {
+        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+        List<ScheduleDto> schedules = scheduleService.getAllSchedule(userId);
+        for(ScheduleDto scheduleDto : schedules) {
+            scheduleResponses.add(ScheduleResponse.of(true, scheduleDto));
+        }
+        return ResponseEntity.ok(scheduleResponses);
     }
 
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {

@@ -3,6 +3,7 @@ package com.pico.server.controller.impl;
 import com.pico.server.controller.ScheduleApi;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
+import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Schedule;
 import com.pico.server.service.ScheduleService;
@@ -19,6 +20,20 @@ public class ScheduleController implements ScheduleApi {
     @Override
     public ResponseEntity<ScheduleResponse> add(Long userId, CreateScheduleDto createScheduleDto) {
         ScheduleDto scheduleDto = scheduleService.createSchedule(userId, createScheduleDto);
+        ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ScheduleResponse> delete(Long userId, Long scheduleId) {
+        ScheduleDto scheduleDto = scheduleService.deleteSchedule(userId,scheduleId);
+        ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ScheduleResponse> update(Long userId, Long scheduleId, UpdateScheduleDto updateScheduleDto) {
+        ScheduleDto scheduleDto = scheduleService.updateSchedule(userId,scheduleId, updateScheduleDto);
         ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);
         return ResponseEntity.ok(response);
     }

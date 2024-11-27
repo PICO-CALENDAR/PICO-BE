@@ -17,6 +17,7 @@ import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -60,19 +61,38 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void deleteSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+    public ScheduleDto deleteSchedule(Long userId, Long scheduleId) {
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
 
         if (schedule.getRepeatInfo().getRepeatType().needsRepeatDay()) {
             repeatDayRepository.deleteByRepeatInfo(schedule.getRepeatInfo());
         }
         scheduleRepository.delete(schedule);
+        return ScheduleDto.from(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getAllSchedule(Long userId) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+        List<Schedule> schedules = scheduleRepository.findByUserId(userId);
+        for(Schedule schedule : schedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        return scheduleDtos;
+    }
+
+    @Transactional(readOnly = true)
+    public ScheduleDto getOneSchedule(Long userId, Long scheduleId) {
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId,scheduleId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+        return ScheduleDto.from(schedule);
     }
 
     @Transactional
-    public ScheduleDto updateSchedule(Long scheduleId, UpdateScheduleDto updateDto) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+    public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
 
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
