@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public interface ScheduleApi {
     ResponseEntity<ScheduleResponse> delete(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
-        @RequestParam Long scheduleId
+        @PathVariable("scheduleId") Long scheduleId
     );
 
     @PatchMapping("/update/{scheduleId}")
@@ -49,7 +50,15 @@ public interface ScheduleApi {
     ResponseEntity<ScheduleResponse> update(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
-        @RequestParam Long scheduleId,
-        @ModelAttribute UpdateScheduleDto updateScheduleDto
+        @PathVariable("scheduleId") Long scheduleId,
+        @RequestBody UpdateScheduleDto updateScheduleDto
+    );
+
+    @GetMapping("/get/detail/{scheduleId}")
+    @Operation(summary = "단일 세부 일정 조회", description = "한 일정의 세부 일정을 조회합니다.")
+    ResponseEntity<ScheduleResponse> getOneSchedule(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @PathVariable("scheduleId") Long scheduleId
     );
 }

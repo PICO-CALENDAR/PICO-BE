@@ -34,7 +34,9 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto createSchedule(Long userId, CreateScheduleDto createScheduleDto) {
-        Users user = userRepository.findById(userId).get();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_USER));
+
         RepeatInfo repeatInfo = null;
         if (createScheduleDto.isRepeat()) {
             repeatInfo = createRepeatInfo(createScheduleDto.repeat());

@@ -2,7 +2,6 @@ package com.pico.server.dto;
 
 import com.pico.server.entity.RepeatDay;
 import com.pico.server.entity.Schedule;
-import com.pico.server.enums.RepeatDayType;
 import com.pico.server.enums.RepeatType;
 import com.pico.server.enums.ScheduleType;
 import java.time.LocalDateTime;

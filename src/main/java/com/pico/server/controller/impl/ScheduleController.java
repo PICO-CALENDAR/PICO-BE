@@ -38,5 +38,12 @@ public class ScheduleController implements ScheduleApi {
         return ResponseEntity.ok(response);
     }
 
+    @Override
+    public ResponseEntity<ScheduleResponse> getOneSchedule(Long userId, Long scheduleId) {
+        ScheduleDto scheduleDto = scheduleService.getOneSchedule(userId, scheduleId);
+        ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
