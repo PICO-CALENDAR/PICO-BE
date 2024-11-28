@@ -2,7 +2,7 @@ package com.pico.server.service;
 
 import static com.pico.server.security.constants.JwtValues.JWT_PAYLOAD_VALUE_REFRESH;
 
-import com.pico.server.dto.CreateUserDto;
+import com.pico.server.dto.request.CreateUserDto;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
 import com.pico.server.security.dto.response.token.OAuth2TokenResponse;

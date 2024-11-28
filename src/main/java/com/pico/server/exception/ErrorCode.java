@@ -18,6 +18,7 @@ public enum ErrorCode {
     INVALID_ROLE(400,"CM0006", "권한이 유효하지 않습니다."),
     INVALID_SEARCH_TYPE(400,"CM0007", "잘못된 검색 타입입니다."),
     INVALID_INPUT_DATE_VALUE(400,"CM0008", "잘못된 형태의 날짜 입력입니다."),
+    INVALID_INPUT_YEAR_VALUE(400,"CM0009", "잘못된 형태의 연도 입력입니다."),
 
     /**
      * Auth Related Errors
@@ -42,7 +43,13 @@ public enum ErrorCode {
     NOT_FOUND_USER(404, "US0001", "해당 사용자를 찾을 수 없습니다."),
     ALREADY_EXIST_USER(400, "US0002", "이미 가입된 사용자입니다."),
     NOT_REGISTERED_USER(400, "US0003", "가입되지 않은 사용자입니다. 회원가입 후 이용해주세요"),
-    NOT_FOUND_USER_DETAIL(404, "US0004", "해당 사용자 세부정보를 찾을 수 없습니다.");
+    NOT_FOUND_USER_DETAIL(404, "US0004", "해당 사용자 세부정보를 찾을 수 없습니다."),
+
+    /**
+     * Schedule Errors
+     */
+    NOT_FOUND_SCHEDULE(404, "SC0001", "해당 일정을 찾을 수 없습니다."),
+    NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다.");
 
     private final int status;
     private final String code;

@@ -1,6 +1,6 @@
 package com.pico.server.service;
 
-import com.pico.server.dto.CreateUserDetailsDto;
+import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserDetailsService {
 
