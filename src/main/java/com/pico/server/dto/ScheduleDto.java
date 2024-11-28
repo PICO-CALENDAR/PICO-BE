@@ -1,6 +1,5 @@
 package com.pico.server.dto;
 
-import com.pico.server.entity.RepeatDay;
 import com.pico.server.entity.Schedule;
 import com.pico.server.enums.RepeatType;
 import com.pico.server.enums.ScheduleType;
@@ -20,8 +19,7 @@ public record ScheduleDto(
     Boolean isRepeat,
     RepeatType repeatType,
     LocalDateTime repeatStartDate,
-    LocalDateTime repeatEndDate,
-    List<RepeatDay> repeatDays
+    LocalDateTime repeatEndDate
 
 ) {
     public static ScheduleDto from(Schedule schedule) {
@@ -36,7 +34,6 @@ public record ScheduleDto(
             .repeatType(schedule.getRepeatInfo().getRepeatType())
             .repeatStartDate(schedule.getRepeatInfo().getRepeatStartDate())
             .repeatEndDate(schedule.getRepeatInfo().getRepeatEndDate())
-            .repeatDays(schedule.getRepeatInfo().getRepeatDays())
             .build();
     }
 }

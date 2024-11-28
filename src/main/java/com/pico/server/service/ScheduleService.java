@@ -3,7 +3,6 @@ package com.pico.server.service;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.UpdateScheduleDto;
-import com.pico.server.entity.RepeatDay;
 import com.pico.server.entity.RepeatInfo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
@@ -11,11 +10,9 @@ import com.pico.server.enums.RepeatDayType;
 import com.pico.server.enums.RepeatType;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.ScheduleException;
-import com.pico.server.repository.RepeatDayRepository;
 import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +36,10 @@ public class ScheduleService {
 
         RepeatInfo repeatInfo = null;
         if (createScheduleDto.isRepeat()) {
-            repeatInfo = createRepeatInfo(createScheduleDto.repeat());
+            repeatInfo = createRepeatInfo(createScheduleDto.startTime(), createScheduleDto.repeat());
             if (createScheduleDto.repeat().needsRepeatDay()) {
                 List<RepeatDay> repeatDays = createRepeatDays(repeatInfo, createScheduleDto.repeatDays());
+                repeatInfo.updateRepeatDays(repeatDays);
                 repeatDayRepository.saveAll(repeatDays);
             }
             repeatInfoRepository.save(repeatInfo);
@@ -66,13 +64,51 @@ public class ScheduleService {
     public ScheduleDto deleteSchedule(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
-
-
-        if (schedule.getRepeatInfo().getRepeatType().needsRepeatDay()) {
-            repeatDayRepository.deleteByRepeatInfo(schedule.getRepeatInfo());
-        }
         scheduleRepository.delete(schedule);
         return ScheduleDto.from(schedule);
+    }
+
+    @Transactional
+    public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        RepeatInfo repeatInfo = schedule.getRepeatInfo();
+        //repeat Info 3개 update 로직
+        //=> isRepeat x면 repeatInfo 삭제, o면 3개 update 로직
+        //Schedule Update Logic => 그대로 하되, 바뀐 repeatInfo만 update
+        //(repeatinfo에도 schedule 설정? / info랑 schedule 둘다 저장)
+
+
+        if (Boolean.TRUE.equals(updateDto.isRepeat())) {
+            if(updateDto.repeat().needsRepeatDay()) {
+                List<RepeatDay> repeatDays = createRepeatDays(repeatInfo, updateDto.repeatDays());
+                repeatInfo.updateRepeatInfo(updateDto.repeat(),updateDto.startTime(), repeatDays);
+                repeatInfoRepository.save(repeatInfo);
+            } else {
+                repeatDayRepository.deleteByRepeatInfo(repeatInfo);
+                repeatInfo.getRepeatDays().clear();
+                repeatInfoRepository.save(repeatInfo);
+            }
+        } else {
+            repeatInfoRepository.delete(repeatInfo);
+            repeatInfo = null;
+        }
+
+        Schedule updatedSchedule = Schedule.builder()
+            .scheduleId(schedule.getScheduleId())
+            .title(updateDto.title())
+            .category(updateDto.category())
+            .startTime(updateDto.startTime())
+            .endTime(updateDto.endTime())
+            .isAllDay(updateDto.isAllDay())
+            .isRepeat(updateDto.isRepeat())
+            .meetingPeople(updateDto.meetingPeople())
+            .repeatInfo(repeatInfo)
+            .build();
+
+        scheduleRepository.save(updatedSchedule);
+        return ScheduleDto.from(updatedSchedule);
     }
 
     @Transactional(readOnly = true)
@@ -92,52 +128,16 @@ public class ScheduleService {
         return ScheduleDto.from(schedule);
     }
 
-    @Transactional
-    public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
-        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
-            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
-
-        RepeatInfo repeatInfo = schedule.getRepeatInfo();
-        LocalDateTime fixtedTime = updateDto.startTime();
-        repeatDayRepository.deleteByRepeatInfo(repeatInfo);
-
-        if (updateDto.isRepeat()) {
-            if(updateDto.repeat().needsRepeatDay()) {
-                createRepeatDays(repeatInfo, updateDto.repeatDays());
-            }
-            repeatInfo.updateRepeatInfo(updateDto.repeat(), fixtedTime); //반복 시간 이렇게 정하는거 맞나? 이렇게 하는거 맞나?
-            repeatInfoRepository.save(repeatInfo);
-        } else {
-            repeatInfoRepository.delete(repeatInfo);
-            schedule.deleteRepeatInfo();
-        }
-
-        Schedule updatedSchedule = Schedule.builder()
-            .scheduleId(schedule.getScheduleId())
-            .title(updateDto.title())
-            .category(updateDto.category())
-            .startTime(updateDto.startTime())
-            .endTime(updateDto.endTime())
-            .isAllDay(updateDto.isAllDay())
-            .isRepeat(updateDto.isRepeat())
-            .meetingPeople(updateDto.meetingPeople())
-            .repeatInfo(schedule.getRepeatInfo())
-            .build();
-
-        scheduleRepository.save(updatedSchedule);
-        return ScheduleDto.from(updatedSchedule);
-    }
-
-    private RepeatInfo createRepeatInfo(RepeatType repeatType) {
+    private RepeatInfo createRepeatInfo(LocalDateTime startTime, RepeatType repeatType) {
         return RepeatInfo.builder()
             .repeatType(repeatType)
-            .repeatStartDate(LocalDate.now().atStartOfDay())
+            .repeatStartDate(startTime)
             .repeatEndDate(null)
             .build();
     }
 
-    private List<RepeatDay> createRepeatDays(RepeatInfo repeatInfo, List<RepeatDayType> repeatDays) {
-        return repeatDays.stream()
+    private List<RepeatDay> createRepeatDays(RepeatInfo repeatInfo, List<RepeatDayType> repeatDayTypes) {
+        return repeatDayTypes.stream()
             .map(dayType -> RepeatDay.builder()
                 .repeatDayType(dayType)
                 .repeatInfo(repeatInfo)

@@ -40,9 +40,6 @@ public class RepeatInfo {
     private LocalDateTime repeatStartDate;
     private LocalDateTime repeatEndDate;
 
-    @OneToMany(mappedBy = "repeatInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RepeatDay> repeatDays = new ArrayList<>();
-
     public void updateRepeatInfo(RepeatType repeatType, LocalDateTime repeatStartDate) {
         this.repeatType = repeatType;
         this.repeatStartDate = repeatStartDate;
