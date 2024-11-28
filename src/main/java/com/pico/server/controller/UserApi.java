@@ -107,11 +107,4 @@ public interface UserApi {
         @Valid
         @RequestBody PartnerUpdateRequest request
     );
-
-    @GetMapping("/schedules")
-    @Operation(summary = "개인 전체 일정 조회", description = "반복 일정을 포함해 사용자에 해당하는 전체 일정을 조회합니다.")
-    ResponseEntity<List<ScheduleResponse>> getAllSchedules(
-        @Parameter(hidden = true)
-        @LoginUserId Long userId
-    );
 }

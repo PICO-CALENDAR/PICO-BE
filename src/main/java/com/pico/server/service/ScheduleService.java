@@ -123,6 +123,16 @@ public class ScheduleService {
         return ScheduleDto.from(schedule);
     }
 
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getTodaySchedules(Long userId, LocalDateTime todayDate) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndTodayDate(userId, todayDate);
+        for(Schedule schedule : schedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        return scheduleDtos;
+    }
+
     private RepeatInfo createRepeatInfo(LocalDateTime startTime, RepeatType repeatType) {
         return RepeatInfo.builder()
             .repeatType(repeatType)

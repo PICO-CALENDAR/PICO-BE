@@ -51,7 +51,6 @@ public class Schedule extends BaseEntity{
     private String meetingPeople;
     private Boolean isRepeat;
 
-
     public void updateRepeatInfo(RepeatInfo repeatInfo) {
         this.repeatInfo = repeatInfo;
     }

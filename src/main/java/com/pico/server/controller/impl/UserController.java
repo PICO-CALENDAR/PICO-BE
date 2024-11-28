@@ -60,16 +60,6 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(userInfoDto);
     }
 
-    @Override
-    public ResponseEntity<List<ScheduleResponse>> getAllSchedules(Long userId) {
-        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
-        List<ScheduleDto> schedules = scheduleService.getAllSchedule(userId);
-        for(ScheduleDto scheduleDto : schedules) {
-            scheduleResponses.add(ScheduleResponse.of(true, scheduleDto));
-        }
-        return ResponseEntity.ok(scheduleResponses);
-    }
-
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {
         return CreateUserDetailsDto.builder()
             .gender(request.gender())

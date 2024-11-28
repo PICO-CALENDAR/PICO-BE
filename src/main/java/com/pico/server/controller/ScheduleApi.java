@@ -2,6 +2,7 @@ package com.pico.server.controller;
 
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
+import com.pico.server.dto.request.ScheduleDateRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -70,5 +72,13 @@ public interface ScheduleApi {
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @PathVariable("scheduleId") Long scheduleId
+    );
+
+    @GetMapping("/get/today/schedules")
+    @Operation(summary = "당일 전체 일정 조회", description = "요청 받은 날짜와 사용자에 해당 하는 일정을 전부 조회합니다.")
+    ResponseEntity<List<ScheduleResponse>> getTodaySchedules(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @RequestBody ScheduleDateRequest scheduleDateRequest
     );
 }

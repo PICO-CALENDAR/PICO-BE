@@ -4,10 +4,13 @@ import com.pico.server.controller.ScheduleApi;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
+import com.pico.server.dto.request.ScheduleDateRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Schedule;
 import com.pico.server.service.ScheduleService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -51,6 +54,16 @@ public class ScheduleController implements ScheduleApi {
         ScheduleDto scheduleDto = scheduleService.getOneSchedule(userId, scheduleId);
         ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<List<ScheduleResponse>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
+        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+        List<ScheduleDto> scheduleDtos = scheduleService.getTodaySchedules(userId, scheduleDateRequest.todayDate());
+        for(ScheduleDto scheduleDto : scheduleDtos) {
+            scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
+        }
+        return ResponseEntity.ok(scheduleResponses);
     }
 
 
