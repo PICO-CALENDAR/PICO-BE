@@ -1,6 +1,7 @@
 package com.pico.server.controller;
 
-import com.pico.server.dto.request.LoginRequest;
+import com.pico.server.dto.request.GoogleLoginRequest;
+import com.pico.server.dto.request.WebLoginRequest;
 import com.pico.server.dto.request.TokenReissueRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.ErrorResponse;
@@ -26,32 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 @ApiResponse(responseCode = "200", description = "OK")
 public interface AuthApi {
 
-    @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
-    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
-        mediaType = "application/json",
-        examples = {
-            @ExampleObject(name = "CM0002", description = "잘못된 플랫폼을 입력할 시 발생합니다.",
-                value = """
-                                    {"code": "CM0002", "message": "유효하지 않은 입력입니다."}
-                                    """
-            ),
-            @ExampleObject(name = "AU0006", description = "지원하지 않는 플랫폼을 입력할 시 발생합니다.",
-                value = """
-                                    {"code": "AU0006", "message": "유효하지 않은 플랫폼입니다."}
-                                    """
-            ),
-            @ExampleObject(name = "AU0002", description = "OAuth2 서버와 통신이 실패할 경우 발생합니다.",
-                value = """
-                                    {"code": "AU0002", "message": "OAuth2 요청이 실패했습니다."}
-                                    """
-            )
-        }, schema = @Schema(implementation = ErrorResponse.class)))
-    @PostMapping("/login/{provider}")
-    ResponseEntity<AuthResponse> login(
+    @Operation(summary = "구글 소셜 로그인", description = "구글 소셜 로그인을 진행합니다.")
+    @PostMapping("/app/login/google")
+    ResponseEntity<AuthResponse> loginGoogle(
         @Valid
-        @RequestBody LoginRequest request,
-        @Parameter(example = "google", description = "oAuth 제공자 이름")
-        @PathVariable("provider") String provider
+        @RequestBody GoogleLoginRequest request
     );
 
     @Operation(summary = "토큰 재발행", description = "리프레시 토큰으로 새로은 토큰을 발행합니다.")
