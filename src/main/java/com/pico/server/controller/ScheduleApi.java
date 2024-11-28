@@ -1,6 +1,7 @@
 package com.pico.server.controller;
 
 import com.pico.server.dto.request.CreateScheduleDto;
+import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
@@ -43,6 +44,15 @@ public interface ScheduleApi {
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @PathVariable("scheduleId") Long scheduleId
+    );
+
+    @PostMapping("/delete/{scheduleId}/ ")
+    @Operation(summary = "반복 일정 삭제", description = "오늘 일정, 오늘 이후 일정에 대해 반복 일정을 삭제합니다.")
+    ResponseEntity<ScheduleResponse> deleteRepeatSchedule(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @PathVariable("scheduleId") Long scheduleId,
+        @RequestBody DeleteRepeatRequest deleteRepeatRequest
     );
 
     @PatchMapping("/update/{scheduleId}")

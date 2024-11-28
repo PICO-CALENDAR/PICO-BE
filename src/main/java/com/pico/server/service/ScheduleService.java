@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final RepeatInfoRepository repeatInfoRepository;
-    private final RepeatDayRepository repeatDayRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -37,11 +36,6 @@ public class ScheduleService {
         RepeatInfo repeatInfo = null;
         if (createScheduleDto.isRepeat()) {
             repeatInfo = createRepeatInfo(createScheduleDto.startTime(), createScheduleDto.repeat());
-            if (createScheduleDto.repeat().needsRepeatDay()) {
-                List<RepeatDay> repeatDays = createRepeatDays(repeatInfo, createScheduleDto.repeatDays());
-                repeatInfo.updateRepeatDays(repeatDays);
-                repeatDayRepository.saveAll(repeatDays);
-            }
             repeatInfoRepository.save(repeatInfo);
         }
 
@@ -69,27 +63,28 @@ public class ScheduleService {
     }
 
     @Transactional
+    public ScheduleDto deleteRepeatSchedule(Long userId, Long scheduleId, LocalDateTime repeatEndDate) {
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        if(Boolean.FALSE.equals(schedule.getIsRepeat())) {
+            throw new ScheduleException(ErrorCode.NOT_REPEAT_SCHEDULE);
+        }
+        RepeatInfo repeatInfo = schedule.getRepeatInfo();
+        repeatInfo.updateRepeatEndDate(repeatEndDate);
+        repeatInfoRepository.save(repeatInfo);
+        return ScheduleDto.from(schedule);
+    }
+
+    @Transactional
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
 
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
-        //repeat Info 3개 update 로직
-        //=> isRepeat x면 repeatInfo 삭제, o면 3개 update 로직
-        //Schedule Update Logic => 그대로 하되, 바뀐 repeatInfo만 update
-        //(repeatinfo에도 schedule 설정? / info랑 schedule 둘다 저장)
-
-
         if (Boolean.TRUE.equals(updateDto.isRepeat())) {
-            if(updateDto.repeat().needsRepeatDay()) {
-                List<RepeatDay> repeatDays = createRepeatDays(repeatInfo, updateDto.repeatDays());
-                repeatInfo.updateRepeatInfo(updateDto.repeat(),updateDto.startTime(), repeatDays);
-                repeatInfoRepository.save(repeatInfo);
-            } else {
-                repeatDayRepository.deleteByRepeatInfo(repeatInfo);
-                repeatInfo.getRepeatDays().clear();
-                repeatInfoRepository.save(repeatInfo);
-            }
+            repeatInfo.updateRepeatInfo(updateDto.repeat(),updateDto.startTime());
+            repeatInfoRepository.save(repeatInfo);
         } else {
             repeatInfoRepository.delete(repeatInfo);
             repeatInfo = null;
@@ -134,15 +129,6 @@ public class ScheduleService {
             .repeatStartDate(startTime)
             .repeatEndDate(null)
             .build();
-    }
-
-    private List<RepeatDay> createRepeatDays(RepeatInfo repeatInfo, List<RepeatDayType> repeatDayTypes) {
-        return repeatDayTypes.stream()
-            .map(dayType -> RepeatDay.builder()
-                .repeatDayType(dayType)
-                .repeatInfo(repeatInfo)
-                .build())
-            .collect(Collectors.toList());
     }
 
 

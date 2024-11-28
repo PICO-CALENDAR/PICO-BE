@@ -47,7 +47,8 @@ public enum ErrorCode {
     /**
      * Schedule Errors
      */
-    NOT_FOUND_SCHEDULE(404, "SC0001", "해당 일정을 찾을 수 없습니다.");
+    NOT_FOUND_SCHEDULE(404, "SC0001", "해당 일정을 찾을 수 없습니다."),
+    NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다.");
 
     private final int status;
     private final String code;

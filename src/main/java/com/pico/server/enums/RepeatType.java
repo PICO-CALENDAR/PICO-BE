@@ -11,8 +11,4 @@ public enum RepeatType {
     MONTHLY,
     YEARLY,
     BIWEEKLY;
-
-    public boolean needsRepeatDay() {
-        return this == WEEKLY || this == BIWEEKLY;
-    }
 }

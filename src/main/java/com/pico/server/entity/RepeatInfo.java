@@ -44,4 +44,8 @@ public class RepeatInfo {
         this.repeatType = repeatType;
         this.repeatStartDate = repeatStartDate;
     }
+
+    public void updateRepeatEndDate(LocalDateTime repeatEndDate) {
+        this.repeatEndDate = repeatEndDate;
+    }
 }

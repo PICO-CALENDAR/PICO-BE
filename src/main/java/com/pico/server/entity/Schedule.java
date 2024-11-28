@@ -2,6 +2,8 @@ package com.pico.server.entity;
 
 import com.pico.server.enums.RepeatType;
 import com.pico.server.enums.ScheduleType;
+import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.ScheduleException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
