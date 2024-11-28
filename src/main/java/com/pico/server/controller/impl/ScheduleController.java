@@ -5,6 +5,7 @@ import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
+import com.pico.server.dto.request.ScheduleSixMonthsRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Schedule;
@@ -60,6 +61,16 @@ public class ScheduleController implements ScheduleApi {
     public ResponseEntity<List<ScheduleResponse>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
         List<ScheduleResponse> scheduleResponses = new ArrayList<>();
         List<ScheduleDto> scheduleDtos = scheduleService.getTodaySchedules(userId, scheduleDateRequest.todayDate());
+        for(ScheduleDto scheduleDto : scheduleDtos) {
+            scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
+        }
+        return ResponseEntity.ok(scheduleResponses);
+    }
+
+    @Override
+    public ResponseEntity<List<ScheduleResponse>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
+        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+        List<ScheduleDto> scheduleDtos = scheduleService.getSixMonthsSchedules(userId, scheduleSixMonthsRequest.year(), scheduleSixMonthsRequest.isStart());
         for(ScheduleDto scheduleDto : scheduleDtos) {
             scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
         }

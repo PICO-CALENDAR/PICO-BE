@@ -19,4 +19,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         "AND FUNCTION('DATE', s.endTime) >= FUNCTION('DATE', :todayDate)")
     List<Schedule> findSchedulesByUserIdAndTodayDate(@Param("userId") Long userId, @Param("todayDate") LocalDateTime todayDate);
 
+    @Query("SELECT s FROM Schedule s " +
+        "WHERE s.user.id = :userId " +
+        "AND FUNCTION('DATE_FORMAT', s.startTime, '%Y-%m-%d %H:%i') >= FUNCTION('DATE_FORMAT', :startDate, '%Y-%m-%d %H:%i') " +
+        "AND FUNCTION('DATE_FORMAT', s.endTime, '%Y-%m-%d %H:%i') <= FUNCTION('DATE_FORMAT', :endDate, '%Y-%m-%d %H:%i')")
+    List<Schedule> findSchedulesByUserIdAndDateRange(
+        @Param("userId") Long userId,
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate
+    );
 }

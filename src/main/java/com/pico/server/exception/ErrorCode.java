@@ -18,6 +18,7 @@ public enum ErrorCode {
     INVALID_ROLE(400,"CM0006", "권한이 유효하지 않습니다."),
     INVALID_SEARCH_TYPE(400,"CM0007", "잘못된 검색 타입입니다."),
     INVALID_INPUT_DATE_VALUE(400,"CM0008", "잘못된 형태의 날짜 입력입니다."),
+    INVALID_INPUT_YEAR_VALUE(400,"CM0009", "잘못된 형태의 연도 입력입니다."),
 
     /**
      * Auth Related Errors

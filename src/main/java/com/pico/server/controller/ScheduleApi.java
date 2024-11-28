@@ -3,6 +3,7 @@ package com.pico.server.controller;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
+import com.pico.server.dto.request.ScheduleSixMonthsRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
@@ -79,6 +80,16 @@ public interface ScheduleApi {
     ResponseEntity<List<ScheduleResponse>> getTodaySchedules(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
-        @RequestBody ScheduleDateRequest scheduleDateRequest
+        @Valid
+        @ModelAttribute ScheduleDateRequest scheduleDateRequest
+    );
+
+    @GetMapping("/get/six/months/schedules")
+    @Operation(summary = "6개월 치의 일정을 조회합니다.", description = "요청 받은 년도,상반기 하반기 여부에 따라 사용자에 해당 하는 일정을 전부 조회합니다.")
+    ResponseEntity<List<ScheduleResponse>> getSixMonthsSchedules(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @Valid
+        @ModelAttribute ScheduleSixMonthsRequest scheduleSixMonthsRequest
     );
 }

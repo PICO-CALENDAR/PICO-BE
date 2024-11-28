@@ -133,6 +133,34 @@ public class ScheduleService {
         return scheduleDtos;
     }
 
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getSixMonthsSchedules(Long userId, String year, boolean isStart) {
+        int yearInt;
+        try {
+            yearInt = Integer.parseInt(year);
+        } catch (NumberFormatException e) {
+            throw new ScheduleException(ErrorCode.INVALID_INPUT_YEAR_VALUE);
+        }
+
+        LocalDateTime startDate;
+        LocalDateTime endDate;
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+
+        if (isStart) {
+            startDate = LocalDateTime.of(yearInt, 1, 1, 0, 0);
+            endDate = LocalDateTime.of(yearInt, 6, 30, 23, 59);
+        } else {
+            startDate = LocalDateTime.of(yearInt, 7, 1, 0, 0);
+            endDate = LocalDateTime.of(yearInt, 12, 31, 23, 59);
+        }
+
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRange(userId, startDate, endDate);
+        for(Schedule schedule : schedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        return scheduleDtos;
+    }
+
     private RepeatInfo createRepeatInfo(LocalDateTime startTime, RepeatType repeatType) {
         return RepeatInfo.builder()
             .repeatType(repeatType)
