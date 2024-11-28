@@ -7,6 +7,7 @@ import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
 import com.pico.server.dto.request.ScheduleSixMonthsRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
+import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Schedule;
 import com.pico.server.service.ScheduleService;
@@ -58,23 +59,23 @@ public class ScheduleController implements ScheduleApi {
     }
 
     @Override
-    public ResponseEntity<List<ScheduleResponse>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
+    public ResponseEntity<ListResponse<ScheduleResponse>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
         List<ScheduleResponse> scheduleResponses = new ArrayList<>();
         List<ScheduleDto> scheduleDtos = scheduleService.getTodaySchedules(userId, scheduleDateRequest.todayDate());
         for(ScheduleDto scheduleDto : scheduleDtos) {
             scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
         }
-        return ResponseEntity.ok(scheduleResponses);
+        return ResponseEntity.ok(ListResponse.from(scheduleResponses));
     }
 
     @Override
-    public ResponseEntity<List<ScheduleResponse>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
+    public ResponseEntity<ListResponse<ScheduleResponse>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
         List<ScheduleResponse> scheduleResponses = new ArrayList<>();
         List<ScheduleDto> scheduleDtos = scheduleService.getSixMonthsSchedules(userId, scheduleSixMonthsRequest.year(), scheduleSixMonthsRequest.isStart());
         for(ScheduleDto scheduleDto : scheduleDtos) {
             scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
         }
-        return ResponseEntity.ok(scheduleResponses);
+        return ResponseEntity.ok(ListResponse.from(scheduleResponses));
     }
 
 

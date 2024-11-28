@@ -5,6 +5,7 @@ import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
 import com.pico.server.dto.request.ScheduleSixMonthsRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
+import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +50,7 @@ public interface ScheduleApi {
         @PathVariable("scheduleId") Long scheduleId
     );
 
-    @PostMapping("/delete/{scheduleId}/ ")
+    @PostMapping("/delete/repeat/{scheduleId}")
     @Operation(summary = "반복 일정 삭제", description = "오늘 일정, 오늘 이후 일정에 대해 반복 일정을 삭제합니다.")
     ResponseEntity<ScheduleResponse> deleteRepeatSchedule(
         @Parameter(hidden = true)
@@ -77,7 +78,7 @@ public interface ScheduleApi {
 
     @GetMapping("/get/today/schedules")
     @Operation(summary = "당일 전체 일정 조회", description = "요청 받은 날짜와 사용자에 해당 하는 일정을 전부 조회합니다.")
-    ResponseEntity<List<ScheduleResponse>> getTodaySchedules(
+    ResponseEntity<ListResponse<ScheduleResponse>> getTodaySchedules(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @Valid
@@ -85,8 +86,8 @@ public interface ScheduleApi {
     );
 
     @GetMapping("/get/six/months/schedules")
-    @Operation(summary = "6개월 치의 일정을 조회합니다.", description = "요청 받은 년도,상반기 하반기 여부에 따라 사용자에 해당 하는 일정을 전부 조회합니다.")
-    ResponseEntity<List<ScheduleResponse>> getSixMonthsSchedules(
+    @Operation(summary = "6개월치 전체 일정 조회", description = "요청 받은 년도,상반기 하반기 여부에 따라 사용자에 해당 하는 일정을 전부 조회합니다.")
+    ResponseEntity<ListResponse<ScheduleResponse>> getSixMonthsSchedules(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @Valid
