@@ -6,9 +6,9 @@ import lombok.Builder;
 @Builder
 public record ScheduleResponse(
     Boolean success,
-    ScheduleDto scheduleDto
+    ScheduleDto schedule
 ) {
-    public static ScheduleResponse of(Boolean success, ScheduleDto scheduleDto) {
-        return new ScheduleResponse(success,scheduleDto);
+    public static ScheduleResponse of(Boolean success, ScheduleDto schedule) {
+        return new ScheduleResponse(success,schedule);
     }
 }

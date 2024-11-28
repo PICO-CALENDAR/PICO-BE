@@ -59,23 +59,15 @@ public class ScheduleController implements ScheduleApi {
     }
 
     @Override
-    public ResponseEntity<ListResponse<ScheduleResponse>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
-        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+    public ResponseEntity<ListResponse<ScheduleDto>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
         List<ScheduleDto> scheduleDtos = scheduleService.getTodaySchedules(userId, scheduleDateRequest.todayDate());
-        for(ScheduleDto scheduleDto : scheduleDtos) {
-            scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
-        }
-        return ResponseEntity.ok(ListResponse.from(scheduleResponses));
+        return ResponseEntity.ok(ListResponse.from(scheduleDtos));
     }
 
     @Override
-    public ResponseEntity<ListResponse<ScheduleResponse>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
-        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+    public ResponseEntity<ListResponse<ScheduleDto>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
         List<ScheduleDto> scheduleDtos = scheduleService.getSixMonthsSchedules(userId, scheduleSixMonthsRequest.year(), scheduleSixMonthsRequest.isStart());
-        for(ScheduleDto scheduleDto : scheduleDtos) {
-            scheduleResponses.add(ScheduleResponse.of(true,scheduleDto));
-        }
-        return ResponseEntity.ok(ListResponse.from(scheduleResponses));
+        return ResponseEntity.ok(ListResponse.from(scheduleDtos));
     }
 
 
