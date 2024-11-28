@@ -35,6 +35,7 @@ public enum ErrorCode {
     UNABLE_TO_SEND_EMAIL(400, "AU0010", "이메일 전송에 실패했습니다."),
     INVALID_AUTH_CODE(400, "AU0011", "유효하지 않은 인증 코드입니다."),
     NOT_MATCHED_AUTH_CODE(400, "AU0012", "올바르지 않은 인증 코드입니다."),
+    TOKEN_VERIFY_FAILED(400, "AU0013", "토큰 검증에 실패 했습니다."),
 
 
     /**

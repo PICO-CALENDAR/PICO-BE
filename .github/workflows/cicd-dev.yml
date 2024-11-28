@@ -61,4 +61,6 @@ jobs:
             -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
             -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
             -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            -e GOOGLE_ANDROID_CLIENT_ID="${{ secrets.GOOGLE_ANDROID_CLIENT_ID }}" \
+            -e GOOGLE_IOS_CLIENT_ID="${{ secrets.GOOGLE_IOS_CLIENT_ID }}" \
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
