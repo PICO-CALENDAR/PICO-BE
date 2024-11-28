@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "유저 API", description = "유저 관련 API")
 @RestController
-@SecurityRequirement(name = "JWT")
 @RequestMapping("/api/v1/users")
 @ApiResponse(responseCode = "200", description = "OK")
 public interface UserApi {
@@ -55,6 +54,7 @@ public interface UserApi {
         @RequestBody UserRegisterRequest request
     );
 
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/info")
     @Operation(summary = "유저 정보 조회", description = "유저 정보를 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
@@ -71,6 +71,7 @@ public interface UserApi {
         @LoginUserId Long userId
     );
 
+    @SecurityRequirement(name = "JWT")
     @Operation(summary = "유저 정보 수정", description = "유저 정보를 수정합니다.")
     @PatchMapping("/info")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
@@ -89,6 +90,7 @@ public interface UserApi {
         @RequestBody UserInfoUpdateRequest request
     );
 
+    @SecurityRequirement(name = "JWT")
     @Operation(summary = "연인 정보 등록", description = "연인 정보를 등록합니다.")
     @PostMapping("/register/partner")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
