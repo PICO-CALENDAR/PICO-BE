@@ -28,6 +28,24 @@ import org.springframework.web.bind.annotation.RestController;
 public interface AuthApi {
 
     @Operation(summary = "구글 소셜 로그인", description = "구글 소셜 로그인을 진행합니다.")
+    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "AU0013", description = "Google IdToken 검증에 실패할 경우 발생합니다.",
+                value = """
+                                    {"code": "AU0013", "message": "토큰 검증에 실패 했습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "AU0005", description = "토큰이 유효하지 않은 경우 발생합니다.",
+                value = """
+                                    {"code": "AU0005", "message": "유효하지 않은 토큰입니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("/app/login/google")
     ResponseEntity<AuthResponse> loginGoogle(
         @Valid
