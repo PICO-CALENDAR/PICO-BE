@@ -1,17 +1,15 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.UserApi;
-import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.MakeCoupleRequest;
-import com.pico.server.dto.request.PartnerUpdateRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.CoupleResponse;
+import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.response.InviteCodeResponse;
-import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
 import com.pico.server.service.InviteCodeService;
@@ -19,7 +17,6 @@ import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserDetailsService;
 import com.pico.server.service.UserRegisterService;
 import com.pico.server.service.UserService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +64,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<CoupleResponse<Users>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
-        List<Users> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
+    public ResponseEntity<CoupleResponse<CoupleUserDto>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
+        List<CoupleUserDto> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 

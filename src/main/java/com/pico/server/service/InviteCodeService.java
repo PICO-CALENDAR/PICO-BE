@@ -1,5 +1,6 @@
 package com.pico.server.service;
 
+import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.InviteCodeException;
@@ -35,7 +36,7 @@ public class InviteCodeService {
     }
 
     @Transactional
-    public List<Users> makeCouple(Long userId, String inviteCode) {
+    public List<CoupleUserDto> makeCouple(Long userId, String inviteCode) {
         validateInviteCode(inviteCode);
         validateCouple(userId);
 
@@ -43,7 +44,7 @@ public class InviteCodeService {
         Long partnerUserId = Long.parseLong(
             Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
 
-        List<Users> users = new ArrayList<>();
+        List<CoupleUserDto> users = new ArrayList<>();
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
@@ -55,8 +56,8 @@ public class InviteCodeService {
         userRepository.save(user);
         userRepository.save(partner);
 
-        users.add(user);
-        users.add(partner);
+        users.add(CoupleUserDto.of(user));
+        users.add(CoupleUserDto.of(partner));
         return users;
     }
 
