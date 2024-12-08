@@ -10,6 +10,7 @@ import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.CoupleResponse;
+import com.pico.server.dto.response.InviteCodeResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
@@ -59,9 +60,10 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<String> makeInviteCode(Long userId) {
+    public ResponseEntity<InviteCodeResponse> makeInviteCode(Long userId) {
         String inviteCode = inviteCodeService.makeInviteCode(userId);
-        return ResponseEntity.ok(inviteCode);
+        InviteCodeResponse response = InviteCodeResponse.of(inviteCode);
+        return ResponseEntity.ok(response);
     }
 
     @Override

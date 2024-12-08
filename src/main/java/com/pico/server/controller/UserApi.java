@@ -9,6 +9,7 @@ import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.response.ErrorResponse;
+import com.pico.server.dto.response.InviteCodeResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.config.userid.LoginUserId;
@@ -113,7 +114,7 @@ public interface UserApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<String> makeInviteCode(
+    ResponseEntity<InviteCodeResponse> makeInviteCode(
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );
