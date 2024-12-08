@@ -11,6 +11,7 @@ import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
+import com.pico.server.service.InviteCodeService;
 import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserDetailsService;
 import com.pico.server.service.UserRegisterService;
@@ -31,6 +32,7 @@ public class UserController implements UserApi {
     private final UserDetailsService userDetailsService;
     private final UserRegisterService userRegisterService;
     private final ScheduleService scheduleService;
+    private final InviteCodeService inviteCodeService;
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
@@ -58,6 +60,12 @@ public class UserController implements UserApi {
     public ResponseEntity<UserInfoDto> updatePartnerInfo(Long userId, PartnerUpdateRequest request) {
         UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerNickname());
         return ResponseEntity.ok(userInfoDto);
+    }
+
+    @Override
+    public ResponseEntity<String> makeInviteCode(Long userId) {
+        String inviteCode = inviteCodeService.makeInviteCode(userId);
+        return ResponseEntity.ok(inviteCode);
     }
 
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {

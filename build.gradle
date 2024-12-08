@@ -53,6 +53,9 @@ dependencies {
 
     //Google Verifier
     implementation 'com.google.api-client:google-api-client:1.33.0'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

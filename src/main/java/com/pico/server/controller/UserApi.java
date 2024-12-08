@@ -109,4 +109,30 @@ public interface UserApi {
         @Valid
         @RequestBody PartnerUpdateRequest request
     );
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "초대 코드 생성", description = "로그인된 유저의 초대코드를 생성합니다.")
+    @GetMapping("/make/invite/code")
+    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0001", description = "사용자를 DB에서 찾을 수 없는 경우 발생합니다.",
+                value = """
+                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "IC0002", description = "이미 커플 관계가 맺어져있는 사용자일 경우 발생합니다.",
+                value = """
+                                    {"code": "IC0002", "message": "이미 연인관계가 맺어진 사용자 입니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    ResponseEntity<String> makeInviteCode(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId
+    );
 }
