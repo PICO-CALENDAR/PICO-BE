@@ -6,7 +6,7 @@ public record CoupleResponse<T>(
     List<T> couple
 ) {
 
-    public static <T> ListResponse<T> from(List<T> couple) {
-        return new ListResponse<>(couple);
+    public static <T> CoupleResponse<T> from(List<T> couple) {
+        return new CoupleResponse<>(couple);
     }
 }

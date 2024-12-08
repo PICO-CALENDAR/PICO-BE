@@ -1,13 +1,16 @@
 package com.pico.server.controller;
 
 import com.pico.server.dto.UserInfoDto;
+import com.pico.server.dto.request.MakeCoupleRequest;
 import com.pico.server.dto.request.PartnerUpdateRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
+import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.ScheduleResponse;
+import com.pico.server.entity.Users;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -89,27 +92,6 @@ public interface UserApi {
 
         @RequestBody UserInfoUpdateRequest request
     );
-
-    @SecurityRequirement(name = "JWT")
-    @Operation(summary = "연인 정보 등록", description = "연인 정보를 등록합니다.")
-    @PostMapping("/register/partner")
-    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
-        mediaType = "application/json",
-        examples = {
-            @ExampleObject(name = "US0001", description = "사용자를 DB에서 찾을 수 없는 경우 발생합니다.",
-                value = """
-                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
-                                    """
-            )
-        }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<UserInfoDto> updatePartnerInfo(
-        @Parameter(hidden = true)
-        @LoginUserId Long userId,
-
-        @Valid
-        @RequestBody PartnerUpdateRequest request
-    );
-
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "초대 코드 생성", description = "로그인된 유저의 초대코드를 생성합니다.")
     @GetMapping("/make/invite/code")
@@ -134,5 +116,16 @@ public interface UserApi {
     ResponseEntity<String> makeInviteCode(
         @Parameter(hidden = true)
         @LoginUserId Long userId
+    );
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "커플 관계 맺기", description = "초대코드를 활용해 두 유저간의 커플 관계를 맺습니다.")
+    @PostMapping("/make/couple")
+    ResponseEntity<CoupleResponse<Users>> makeCouple(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+
+        @Valid
+        @RequestBody MakeCoupleRequest makeCoupleRequest
     );
 }

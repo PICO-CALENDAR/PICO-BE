@@ -7,6 +7,7 @@ import com.pico.server.exception.UserException;
 import com.pico.server.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,7 +40,8 @@ public class InviteCodeService {
         validateCouple(userId);
 
         String key = "inviteCode:" + inviteCode;
-        Long partnerUserId = Long.parseLong(redisTemplate.opsForValue().get(key));
+        Long partnerUserId = Long.parseLong(
+            Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
 
         List<Users> users = new ArrayList<>();
         Users user = userRepository.findById(userId)
@@ -47,6 +49,11 @@ public class InviteCodeService {
 
         Users partner = userRepository.findById(partnerUserId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName());
+        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName());
+        userRepository.save(user);
+        userRepository.save(partner);
 
         users.add(user);
         users.add(partner);

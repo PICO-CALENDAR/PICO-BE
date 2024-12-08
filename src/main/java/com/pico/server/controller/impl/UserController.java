@@ -4,10 +4,12 @@ import com.pico.server.controller.UserApi;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
+import com.pico.server.dto.request.MakeCoupleRequest;
 import com.pico.server.dto.request.PartnerUpdateRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
+import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.response.ScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
@@ -57,15 +59,15 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserInfoDto> updatePartnerInfo(Long userId, PartnerUpdateRequest request) {
-        UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerNickname());
-        return ResponseEntity.ok(userInfoDto);
-    }
-
-    @Override
     public ResponseEntity<String> makeInviteCode(Long userId) {
         String inviteCode = inviteCodeService.makeInviteCode(userId);
         return ResponseEntity.ok(inviteCode);
+    }
+
+    @Override
+    public ResponseEntity<CoupleResponse<Users>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
+        List<Users> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
+        return ResponseEntity.ok(CoupleResponse.from(users));
     }
 
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {
