@@ -26,16 +26,18 @@ public class UserDetailsService {
             .nickName(createUserDetailsDto.nickName())
             .birth(createUserDetailsDto.birth())
             .dday(createUserDetailsDto.dday())
+            .isTermsAgreed(createUserDetailsDto.isTermsAgreed())
+            .isMarketingAgreed(createUserDetailsDto.isMarketingAgreed())
             .build();
 
         return userDetailsRepository.save(userDetails);
     }
 
     @Transactional
-    public UserInfoDto updateUserInfo(Long userId, Gender gender, String nickName, LocalDate birth, LocalDate dday) {
+    public UserInfoDto updateUserInfo(Long userId, Gender gender, String nickName, LocalDate birth, LocalDate dday, Boolean isTermsAgreed, Boolean isMarketingAgreed) {
         Users findUser = userService.findById(userId);
         UserDetails userDetails = findUser.getUserDetails();
-        userDetails.updateUserInfo(gender,nickName,birth,dday);
+        userDetails.updateUserInfo(gender,nickName,birth,dday, isTermsAgreed, isMarketingAgreed);
 
         userDetailsRepository.save(userDetails);
         return UserInfoDto.of(findUser, userDetails);

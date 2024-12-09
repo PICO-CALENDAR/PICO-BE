@@ -42,15 +42,20 @@ public class UserDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate dday;
 
+    private Boolean isTermsAgreed;
+    private Boolean isMarketingAgreed;
+
     public void updatePartnerInfo(Long partnerId, String partnerNickname) {
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
     }
 
-    public void updateUserInfo(Gender gender, String nickName, LocalDate birth, LocalDate dday) {
+    public void updateUserInfo(Gender gender, String nickName, LocalDate birth, LocalDate dday,Boolean isTermsAgreed, Boolean isMarketingAgreed) {
         this.gender = gender == null ? this.gender : gender;
         this.nickName = nickName == null ? this.nickName : nickName;
         this.birth = birth == null ? this.birth : birth;
         this.dday = dday == null ? this.dday : dday;
+        this.isTermsAgreed = isTermsAgreed == null ? this.isTermsAgreed : isTermsAgreed;
+        this.isMarketingAgreed = isMarketingAgreed == null ? this.isMarketingAgreed : isMarketingAgreed;
     }
 }

@@ -26,7 +26,10 @@ public record UserInfoDto(
     Long partnerId,
 
     @Nullable
-    String partnerNickname
+    String partnerNickname,
+
+    Boolean isTermsAgreed,
+    Boolean isMarketingAgreed
 ) {
 
     public static UserInfoDto of(Users user, UserDetails userDetails) {
@@ -40,6 +43,8 @@ public record UserInfoDto(
             .dday(userDetails.getDday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .partnerId(userDetails.getPartnerId())
             .partnerNickname(userDetails.getPartnerNickname())
+            .isTermsAgreed(userDetails.getIsTermsAgreed())
+            .isMarketingAgreed(userDetails.getIsMarketingAgreed())
             .build();
     }
 }
