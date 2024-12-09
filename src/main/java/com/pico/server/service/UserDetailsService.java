@@ -25,16 +25,17 @@ public class UserDetailsService {
             .gender(createUserDetailsDto.gender())
             .nickName(createUserDetailsDto.nickName())
             .birth(createUserDetailsDto.birth())
+            .dday(createUserDetailsDto.dday())
             .build();
 
         return userDetailsRepository.save(userDetails);
     }
 
     @Transactional
-    public UserInfoDto updateUserInfo(Long userId, Gender gender, String nickName, LocalDate birth) {
+    public UserInfoDto updateUserInfo(Long userId, Gender gender, String nickName, LocalDate birth, LocalDate dday) {
         Users findUser = userService.findById(userId);
         UserDetails userDetails = findUser.getUserDetails();
-        userDetails.updateUserInfo(gender,nickName,birth);
+        userDetails.updateUserInfo(gender,nickName,birth,dday);
 
         userDetailsRepository.save(userDetails);
         return UserInfoDto.of(findUser, userDetails);

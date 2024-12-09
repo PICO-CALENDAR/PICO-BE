@@ -10,9 +10,13 @@ public record UserInfoUpdateRequest(
     Gender gender,
     @Schema(description = "닉네임", example = "곽코딩")
     String nickName,
-    @Schema(description = "생년월일", example = "1995.10.23")
+    @Schema(description = "생년월일", example = "1995-10-23")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate birth
+    LocalDate birth,
+
+    @Schema(description = "디데이", example = "2023-10-21")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    LocalDate dday
 ) {
 
 }

@@ -1,13 +1,10 @@
 package com.pico.server.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pico.server.enums.RepeatDayType;
 import com.pico.server.enums.RepeatType;
 import com.pico.server.enums.ScheduleType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record UpdateScheduleDto(
     @Schema(description = "일정 이름", example = "공학관에서 회의")
