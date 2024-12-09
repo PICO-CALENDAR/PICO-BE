@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @ApiResponse(responseCode = "200", description = "OK")
 public interface UserApi {
 
-    @PostMapping("/register")
+    @PostMapping("/register/{userId}")
     @Operation(summary = "회원가입", description = "회원가입을 진행합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
@@ -45,8 +46,7 @@ public interface UserApi {
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
     ResponseEntity<AuthResponse> register(
-        @Parameter(hidden = true)
-        @LoginUserId Long userId,
+        @PathVariable("userId") Long userId,
 
         @Valid
         @RequestBody UserRegisterRequest request

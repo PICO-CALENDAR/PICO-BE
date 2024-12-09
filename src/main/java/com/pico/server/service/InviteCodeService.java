@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InviteCodeService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
     @Transactional
     public String makeInviteCode(Long userId) {
