@@ -52,7 +52,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<UserInfoDto> updateUserInfo(Long userId, UserInfoUpdateRequest request) {
-        UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request.gender(), request.nickName(), request.birth(), request.dday());
+        UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request.gender(), request.nickName(), request.birth(), request.dday(), request.isTermsAgreed(), request.isMarketingAgreed());
         return ResponseEntity.ok(userInfoDto);
     }
 
@@ -75,6 +75,8 @@ public class UserController implements UserApi {
             .nickName(request.nickName())
             .birth(request.birth())
             .dday(request.dday())
+            .isTermsAgreed(request.isTermsAgreed())
+            .isMarketingAgreed(request.isMarketingAgreed())
             .build();
     }
 }

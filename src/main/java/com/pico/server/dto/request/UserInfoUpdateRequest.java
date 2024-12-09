@@ -16,7 +16,13 @@ public record UserInfoUpdateRequest(
 
     @Schema(description = "디데이", example = "2023-10-21")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate dday
+    LocalDate dday,
+
+    @Schema(description = "서비스 약관 동의", example = "true")
+    Boolean isTermsAgreed,
+
+    @Schema(description = "마케팅 약관 동의", example = "true")
+    Boolean isMarketingAgreed
 ) {
 
 }
