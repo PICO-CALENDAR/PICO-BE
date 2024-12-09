@@ -74,6 +74,7 @@ public class UserController implements UserApi {
             .gender(request.gender())
             .nickName(request.nickName())
             .birth(request.birth())
+            .dday(request.dday())
             .build();
     }
 }
