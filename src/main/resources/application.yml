@@ -57,6 +57,11 @@ spring:
     properties:
       hibernate:
         show_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 
 app:
   token:
@@ -80,7 +85,10 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
+  data:
+    redis:
+      host: ${REDIS_AUTH_HOST}
+      port: ${REDIS_AUTH_PORT}
 app:
   token:
     secret-key: ${JWT_SECRET_KEY}

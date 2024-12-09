@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/dev")
+@ApiResponse(responseCode = "200", description = "OK")
 public interface DevApi {
     @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
     @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(

@@ -50,7 +50,13 @@ public enum ErrorCode {
      * Schedule Errors
      */
     NOT_FOUND_SCHEDULE(404, "SC0001", "해당 일정을 찾을 수 없습니다."),
-    NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다.");
+    NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다."),
+
+    /**
+     * Invite Code Errors
+     */
+    NOT_FOUND_INVITE_CODE(404, "IC0001", "해당 초대코드를 찾을 수 없습니다."),
+    ALREADY_PARTNER_EXISTS(400, "IC0002", "이미 연인관계가 맺어진 사용자 입니다.");
 
     private final int status;
     private final String code;

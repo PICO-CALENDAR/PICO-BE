@@ -1,21 +1,22 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.UserApi;
-import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
-import com.pico.server.dto.request.PartnerUpdateRequest;
+import com.pico.server.dto.request.MakeCoupleRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
-import com.pico.server.dto.response.ScheduleResponse;
+import com.pico.server.dto.response.CoupleResponse;
+import com.pico.server.dto.CoupleUserDto;
+import com.pico.server.dto.response.InviteCodeResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.security.dto.response.AuthToken;
+import com.pico.server.service.InviteCodeService;
 import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserDetailsService;
 import com.pico.server.service.UserRegisterService;
 import com.pico.server.service.UserService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class UserController implements UserApi {
     private final UserDetailsService userDetailsService;
     private final UserRegisterService userRegisterService;
     private final ScheduleService scheduleService;
+    private final InviteCodeService inviteCodeService;
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
@@ -55,9 +57,16 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserInfoDto> updatePartnerInfo(Long userId, PartnerUpdateRequest request) {
-        UserInfoDto userInfoDto = userDetailsService.updatePartnerInfo(userId, request.partnerId(),request.partnerNickname());
-        return ResponseEntity.ok(userInfoDto);
+    public ResponseEntity<InviteCodeResponse> makeInviteCode(Long userId) {
+        String inviteCode = inviteCodeService.makeInviteCode(userId);
+        InviteCodeResponse response = InviteCodeResponse.of(inviteCode);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<CoupleResponse<CoupleUserDto>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
+        List<CoupleUserDto> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
+        return ResponseEntity.ok(CoupleResponse.from(users));
     }
 
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {
