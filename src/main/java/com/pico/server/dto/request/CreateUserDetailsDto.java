@@ -12,7 +12,10 @@ public record CreateUserDetailsDto(
     String nickName,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate birth
+    LocalDate birth,
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    LocalDate dday
 ) {
 
 }

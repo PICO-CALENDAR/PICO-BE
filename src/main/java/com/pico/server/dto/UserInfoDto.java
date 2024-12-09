@@ -16,8 +16,11 @@ public record UserInfoDto(
     String email,
     String gender,
     String nickName,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     String birth,
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    String dday,
 
     @Nullable
     Long partnerId,
@@ -33,7 +36,8 @@ public record UserInfoDto(
             .email(user.getEmail())
             .gender(userDetails.getGender().getValue())
             .nickName(userDetails.getNickName())
-            .birth(userDetails.getBirth().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+            .birth(userDetails.getBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            .dday(userDetails.getDday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .partnerId(userDetails.getPartnerId())
             .partnerNickname(userDetails.getPartnerNickname())
             .build();
