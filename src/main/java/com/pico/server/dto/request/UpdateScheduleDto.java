@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 public record UpdateScheduleDto(
     @Schema(description = "일정 이름", example = "공학관에서 회의")
     String title,
-    @Schema(description = "일정 시작 시간", example = "2024-10-25 14:00", type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+    @Schema(description = "일정 시작 시간")
+    @JsonFormat(timezone = "Asia/Seoul")
     LocalDateTime startTime,
-    @Schema(description = "일정 종료 시간", example = "2024-10-25 16:00", type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+    @Schema(description = "일정 종료 시간")
+    @JsonFormat(timezone = "Asia/Seoul")
     LocalDateTime endTime,
     @Schema(description = "일정 카테고리", example = "MINE")
     ScheduleType category,
