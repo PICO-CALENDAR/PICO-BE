@@ -9,6 +9,7 @@ import com.pico.server.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,8 +28,15 @@ public class InviteCodeService {
         String inviteCode = UUID.randomUUID().toString();
         String key = "inviteCode:" + inviteCode;
 
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            redisTemplate.delete(key);
+        Set<String> keys = redisTemplate.keys("inviteCode:*");
+        if (keys != null) {
+            for (String existingKey : keys) {
+                String value = redisTemplate.opsForValue().get(existingKey);
+                if (String.valueOf(userId).equals(value)) {
+                    redisTemplate.delete(existingKey);
+                    break;
+                }
+            }
         }
         redisTemplate.opsForValue().set(key, userId.toString());
 
@@ -51,8 +59,8 @@ public class InviteCodeService {
         Users partner = userRepository.findById(partnerUserId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName());
-        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName());
+        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName(), partner.getProfileImage());
+        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName(), user.getProfileImage());
         userRepository.save(user);
         userRepository.save(partner);
 

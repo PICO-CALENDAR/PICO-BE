@@ -44,10 +44,10 @@ public class UserDetailsService {
     }
 
     @Transactional
-    public UserInfoDto updatePartnerInfo(Long userId, Long partnerId, String parterName) {
+    public UserInfoDto updatePartnerInfo(Long userId, Long partnerId, String parterName, String partnerProfileImage) {
         Users findUser = userService.findById(userId);
         UserDetails userDetails = findUser.getUserDetails();
-        userDetails.updatePartnerInfo(partnerId, parterName);
+        userDetails.updatePartnerInfo(partnerId, parterName,partnerProfileImage);
 
         userDetailsRepository.save(userDetails);
         return UserInfoDto.of(findUser, userDetails);

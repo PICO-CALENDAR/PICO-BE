@@ -11,6 +11,8 @@ import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.response.InviteCodeResponse;
 import com.pico.server.entity.Users;
+import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.UserException;
 import com.pico.server.security.dto.response.AuthToken;
 import com.pico.server.service.InviteCodeService;
 import com.pico.server.service.ScheduleService;
@@ -36,6 +38,9 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
+        if(Boolean.FALSE.equals(request.isTermsAgreed())) {
+            throw new UserException(ErrorCode.TERMS_NOT_AGREED);
+        }
         CreateUserDetailsDto createUserDetailsDto = generateCreateUserDetailsDto(request);
         AuthToken authToken = userRegisterService.register(userId, createUserDetailsDto);
         Users findUser = userService.findById(userId);

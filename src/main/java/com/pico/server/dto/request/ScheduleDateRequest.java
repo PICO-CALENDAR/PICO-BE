@@ -8,8 +8,8 @@ import lombok.Builder;
 
 @Builder
 public record ScheduleDateRequest(
-    @Schema(description = "일정 조회 요청 날짜", example = "2024-11-28", type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Schema(description = "일정 조회 요청 날짜")
+    @JsonFormat( timezone = "Asia/Seoul")
     @NotNull
     LocalDateTime todayDate
 ) {

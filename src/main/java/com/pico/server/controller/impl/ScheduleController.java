@@ -5,13 +5,11 @@ import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
-import com.pico.server.dto.request.ScheduleSixMonthsRequest;
+import com.pico.server.dto.request.ScheduleYearRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.ScheduleResponse;
-import com.pico.server.entity.Schedule;
 import com.pico.server.service.ScheduleService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -59,14 +57,14 @@ public class ScheduleController implements ScheduleApi {
     }
 
     @Override
-    public ResponseEntity<ListResponse<ScheduleDto>> getTodaySchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
-        List<ScheduleDto> scheduleDtos = scheduleService.getTodaySchedules(userId, scheduleDateRequest.todayDate());
+    public ResponseEntity<ListResponse<ScheduleDto>> getWeekSchedules(Long userId, ScheduleDateRequest scheduleDateRequest) {
+        List<ScheduleDto> scheduleDtos = scheduleService.getWeekSchedules(userId, scheduleDateRequest.todayDate());
         return ResponseEntity.ok(ListResponse.from(scheduleDtos));
     }
 
     @Override
-    public ResponseEntity<ListResponse<ScheduleDto>> getSixMonthsSchedules(Long userId, ScheduleSixMonthsRequest scheduleSixMonthsRequest) {
-        List<ScheduleDto> scheduleDtos = scheduleService.getSixMonthsSchedules(userId, scheduleSixMonthsRequest.year(), scheduleSixMonthsRequest.isStart());
+    public ResponseEntity<ListResponse<ScheduleDto>> getYearSchedules(Long userId, ScheduleYearRequest scheduleYearRequest) {
+        List<ScheduleDto> scheduleDtos = scheduleService.getYearSchedules(userId, scheduleYearRequest.year());
         return ResponseEntity.ok(ListResponse.from(scheduleDtos));
     }
 

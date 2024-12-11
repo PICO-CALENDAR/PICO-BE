@@ -5,6 +5,7 @@ import com.pico.server.enums.RepeatType;
 import com.pico.server.enums.ScheduleType;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale.Category;
 import lombok.Builder;
 
 @Builder
@@ -26,6 +27,23 @@ public record ScheduleDto(
         return ScheduleDto.builder()
             .scheduleId(schedule.getScheduleId())
             .title(schedule.getTitle())
+            .category(schedule.getCategory())
+            .isAllDay(schedule.getIsAllDay())
+            .startTime(schedule.getStartTime())
+            .endTime(schedule.getEndTime())
+            .meetingPeople(schedule.getMeetingPeople())
+            .isRepeat(schedule.getIsRepeat())
+            .repeatType(schedule.getRepeatInfo().getRepeatType())
+            .repeatStartDate(schedule.getRepeatInfo().getRepeatStartDate())
+            .repeatEndDate(schedule.getRepeatInfo().getRepeatEndDate())
+            .build();
+    }
+
+    public static ScheduleDto fromPartner(Schedule schedule) {
+        return ScheduleDto.builder()
+            .scheduleId(schedule.getScheduleId())
+            .title(schedule.getTitle())
+            .category(ScheduleType.YOURS)
             .isAllDay(schedule.getIsAllDay())
             .startTime(schedule.getStartTime())
             .endTime(schedule.getEndTime())
