@@ -4,7 +4,7 @@ import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.DeleteRepeatRequest;
 import com.pico.server.dto.request.ScheduleDateRequest;
-import com.pico.server.dto.request.ScheduleSixMonthsRequest;
+import com.pico.server.dto.request.ScheduleYearRequest;
 import com.pico.server.dto.request.UpdateScheduleDto;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.ScheduleResponse;
@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "일정 API", description = "일정 관련 API")
@@ -78,8 +76,8 @@ public interface ScheduleApi {
     );
 
     @GetMapping("/get/today/schedules")
-    @Operation(summary = "당일 전체 일정 조회", description = "요청 받은 날짜와 사용자에 해당 하는 일정을 전부 조회합니다.")
-    ResponseEntity<ListResponse<ScheduleDto>> getTodaySchedules(
+    @Operation(summary = "당일 포함 일주일 일정 조회", description = "요청 받은 날짜를 포함하는 1주일의 일정을 전부 조회합니다.")
+    ResponseEntity<ListResponse<ScheduleDto>> getWeekSchedules(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @Valid
@@ -87,11 +85,11 @@ public interface ScheduleApi {
     );
 
     @GetMapping("/get/six/months/schedules")
-    @Operation(summary = "6개월치 전체 일정 조회", description = "요청 받은 년도,상반기 하반기 여부에 따라 사용자에 해당 하는 일정을 전부 조회합니다.")
-    ResponseEntity<ListResponse<ScheduleDto>> getSixMonthsSchedules(
+    @Operation(summary = "1년치 전체 일정 조회", description = "사용자의 요청 받은 년도의 해당 하는 일정을 전부 조회합니다.")
+    ResponseEntity<ListResponse<ScheduleDto>> getYearSchedules(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @Valid
-        @ModelAttribute ScheduleSixMonthsRequest scheduleSixMonthsRequest
+        @ModelAttribute ScheduleYearRequest scheduleYearRequest
     );
 }

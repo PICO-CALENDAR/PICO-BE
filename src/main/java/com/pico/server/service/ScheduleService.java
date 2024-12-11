@@ -12,7 +12,9 @@ import com.pico.server.exception.ScheduleException;
 import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -68,8 +70,9 @@ public class ScheduleService {
         if(Boolean.FALSE.equals(schedule.getIsRepeat())) {
             throw new ScheduleException(ErrorCode.NOT_REPEAT_SCHEDULE);
         }
+        LocalDateTime adjustedRepeatEndDate = repeatEndDate.minusDays(1).with(LocalTime.MAX);
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
-        repeatInfo.updateRepeatEndDate(repeatEndDate);
+        repeatInfo.updateRepeatEndDate(adjustedRepeatEndDate);
         repeatInfoRepository.save(repeatInfo);
         return ScheduleDto.from(schedule);
     }
@@ -105,16 +108,6 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getAllSchedule(Long userId) {
-        List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        List<Schedule> schedules = scheduleRepository.findByUserId(userId);
-        for(Schedule schedule : schedules) {
-            scheduleDtos.add(ScheduleDto.from(schedule));
-        }
-        return scheduleDtos;
-    }
-
-    @Transactional(readOnly = true)
     public ScheduleDto getOneSchedule(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId,scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
@@ -122,39 +115,70 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getTodaySchedules(Long userId, LocalDateTime todayDate) {
+    public List<ScheduleDto> getWeekSchedules(Long userId, LocalDateTime todayDate) {
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndTodayDate(userId, todayDate);
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_USER));
+
+        LocalDateTime weekStart = todayDate.with(DayOfWeek.MONDAY).with(LocalTime.MIN);
+        LocalDateTime weekEnd = todayDate.with(DayOfWeek.SUNDAY).with(LocalTime.MAX);
+
+        //사용자 일정 조회
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRange(userId, weekStart, weekEnd);
         for(Schedule schedule : schedules) {
             scheduleDtos.add(ScheduleDto.from(schedule));
         }
+
+        //사용자 반복 일정 확인 및 추가
+        List<Schedule> recursiveSchedules = scheduleRepository.findSchedulesByUserIdAndIsRepeat(userId);
+        for (Schedule recurringSchedule : recursiveSchedules) {
+            if (isRecurringScheduleWithinRange(recurringSchedule, weekStart, weekEnd)) {
+                scheduleDtos.add(ScheduleDto.from(recurringSchedule));
+            }
+        }
+
+        //파트너 일정 조회
+        if(user.getUserDetails().getPartnerId()!= null) {
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
+            for(Schedule schedule : partnerSchedules) {
+                scheduleDtos.add(ScheduleDto.from(schedule));
+            }
+        }
+
         return scheduleDtos;
     }
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getSixMonthsSchedules(Long userId, String year, boolean isStart) {
+    public List<ScheduleDto> getYearSchedules(Long userId, String year) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_USER));
         int yearInt;
         try {
             yearInt = Integer.parseInt(year);
         } catch (NumberFormatException e) {
             throw new ScheduleException(ErrorCode.INVALID_INPUT_YEAR_VALUE);
         }
+        LocalDateTime startDate = LocalDateTime.of(yearInt, 1, 1, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(yearInt, 12, 31, 23, 59);
 
-        LocalDateTime startDate;
-        LocalDateTime endDate;
-        List<ScheduleDto> scheduleDtos = new ArrayList<>();
-
-        if (isStart) {
-            startDate = LocalDateTime.of(yearInt, 1, 1, 0, 0);
-            endDate = LocalDateTime.of(yearInt, 6, 30, 23, 59);
-        } else {
-            startDate = LocalDateTime.of(yearInt, 7, 1, 0, 0);
-            endDate = LocalDateTime.of(yearInt, 12, 31, 23, 59);
-        }
-
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRange(userId, startDate, endDate);
+        //사용자 일정 조회
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(userId, startDate, endDate);
         for(Schedule schedule : schedules) {
             scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        //사용자 반복 일정 확인 및 추가
+        List<Schedule> recursiveSchedules = scheduleRepository.findSchedulesByUserIdAndIsRepeat(userId);
+        for(Schedule recursiveSchedule : recursiveSchedules) {
+            scheduleDtos.add(ScheduleDto.from(recursiveSchedule));
+        }
+
+        //파트너 일정 조회
+        if(user.getUserDetails().getPartnerId()!= null) {
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), startDate, endDate);
+            for(Schedule schedule : partnerSchedules) {
+                scheduleDtos.add(ScheduleDto.from(schedule));
+            }
         }
         return scheduleDtos;
     }
@@ -167,7 +191,49 @@ public class ScheduleService {
             .build();
     }
 
+    private boolean isRecurringScheduleWithinRange(Schedule schedule, LocalDateTime weekStart, LocalDateTime weekEnd) {
+        RepeatInfo repeatInfo = schedule.getRepeatInfo();
+        if (repeatInfo == null) {
+            return false;
+        }
 
+        LocalDateTime repeatStartDate = repeatInfo.getRepeatStartDate();
+        LocalDateTime repeatEndDate = repeatInfo.getRepeatEndDate();
+        LocalDateTime effectiveEndDate = (repeatEndDate == null || repeatEndDate.isAfter(weekEnd))
+            ? weekEnd
+            : repeatEndDate;
+
+        RepeatType repeatType = repeatInfo.getRepeatType();
+        LocalDateTime currentDate = repeatStartDate;
+
+        while (!currentDate.isAfter(effectiveEndDate)) {
+            if (!currentDate.isBefore(weekStart) && !currentDate.isAfter(weekEnd)) {
+                return true;
+            }
+
+            switch (repeatType) {
+                case DAILY:
+                    currentDate = currentDate.plusDays(1);
+                    break;
+                case WEEKLY:
+                    currentDate = currentDate.plusWeeks(1);
+                    break;
+                case MONTHLY:
+                    currentDate = currentDate.plusMonths(1);
+                    break;
+                case YEARLY:
+                    currentDate = currentDate.plusYears(1);
+                    break;
+                case BIWEEKLY:
+                    currentDate = currentDate.plusWeeks(2);
+                    break;
+                default:
+                    throw new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE);
+            }
+        }
+
+        return false;
+    }
 
 
 }
