@@ -45,6 +45,15 @@ public interface UserApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0005", description = "사용자 약관이 동의되지않은 경우에 발생합니다.",
+                value = """
+                                    {"code": "US0005", "message": "사용자 약관이 동의되지 않았습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
     ResponseEntity<AuthResponse> register(
         @PathVariable("userId") Long userId,
 

@@ -45,6 +45,7 @@ public enum ErrorCode {
     ALREADY_EXIST_USER(400, "US0002", "이미 가입된 사용자입니다."),
     NOT_REGISTERED_USER(400, "US0003", "가입되지 않은 사용자입니다. 회원가입 후 이용해주세요"),
     NOT_FOUND_USER_DETAIL(404, "US0004", "해당 사용자 세부정보를 찾을 수 없습니다."),
+    TERMS_NOT_AGREED(400, "US0005", "사용자 약관이 동의되지 않았습니다."),
 
     /**
      * Schedule Errors
