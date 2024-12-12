@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class InviteCodeService {
     @Transactional
     public String makeInviteCode(Long userId) {
         validateCouple(userId);
-        String inviteCode = UUID.randomUUID().toString();
+        String inviteCode = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR,NanoIdUtils.DEFAULT_ALPHABET, 10);
         String key = "inviteCode:" + inviteCode;
 
         Set<String> keys = redisTemplate.keys("inviteCode:*");
