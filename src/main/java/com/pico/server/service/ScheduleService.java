@@ -141,7 +141,7 @@ public class ScheduleService {
         if(user.getUserDetails().getPartnerId()!= null) {
             List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
             for(Schedule schedule : partnerSchedules) {
-                scheduleDtos.add(ScheduleDto.from(schedule));
+                scheduleDtos.add(ScheduleDto.fromPartner(schedule));
             }
         }
 
@@ -177,7 +177,7 @@ public class ScheduleService {
         if(user.getUserDetails().getPartnerId()!= null) {
             List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), startDate, endDate);
             for(Schedule schedule : partnerSchedules) {
-                scheduleDtos.add(ScheduleDto.from(schedule));
+                scheduleDtos.add(ScheduleDto.fromPartner(schedule));
             }
         }
         return scheduleDtos;
