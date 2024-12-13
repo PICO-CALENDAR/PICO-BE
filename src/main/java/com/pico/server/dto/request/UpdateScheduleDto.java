@@ -24,7 +24,7 @@ public record UpdateScheduleDto(
     @Schema(description = "반복 일정 여부", example = "true")
     Boolean isRepeat,
     @Schema(description = "일정 반복 주기", example = "WEEKLY")
-    RepeatType repeat
+    RepeatType repeatType
 ) {
 
 }

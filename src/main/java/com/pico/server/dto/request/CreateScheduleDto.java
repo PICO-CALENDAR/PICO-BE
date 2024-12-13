@@ -31,7 +31,7 @@ public record CreateScheduleDto(
     @NotNull
     Boolean isRepeat,
     @Schema(description = "일정 반복 주기", example = "WEEKLY")
-    RepeatType repeat
+    RepeatType repeatType
 ) {
 
 }
