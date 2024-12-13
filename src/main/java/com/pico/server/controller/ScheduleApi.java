@@ -84,6 +84,7 @@ public interface ScheduleApi {
         @ModelAttribute ScheduleDateRequest scheduleDateRequest
     );
 
+
     @GetMapping("/get/year/schedules")
     @Operation(summary = "1년치 전체 일정 조회", description = "사용자의 요청 받은 년도의 해당 하는 일정을 전부 조회합니다.")
     ResponseEntity<ListResponse<ScheduleDto>> getYearSchedules(
