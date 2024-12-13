@@ -35,7 +35,7 @@ public class ScheduleService {
 
         RepeatInfo repeatInfo = null;
         if (createScheduleDto.isRepeat()) {
-            repeatInfo = createRepeatInfo(createScheduleDto.startTime(), createScheduleDto.repeat());
+            repeatInfo = createRepeatInfo(createScheduleDto.startTime(), createScheduleDto.repeatType());
             repeatInfoRepository.save(repeatInfo);
         }
 
@@ -84,7 +84,7 @@ public class ScheduleService {
 
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
         if (Boolean.TRUE.equals(updateDto.isRepeat())) {
-            repeatInfo.updateRepeatInfo(updateDto.repeat(),updateDto.startTime());
+            repeatInfo.updateRepeatInfo(updateDto.repeatType(),updateDto.startTime());
             repeatInfoRepository.save(repeatInfo);
         } else {
             repeatInfoRepository.delete(repeatInfo);
