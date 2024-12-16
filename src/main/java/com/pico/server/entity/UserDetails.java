@@ -60,4 +60,10 @@ public class UserDetails {
         this.isTermsAgreed = isTermsAgreed == null ? this.isTermsAgreed : isTermsAgreed;
         this.isMarketingAgreed = isMarketingAgreed == null ? this.isMarketingAgreed : isMarketingAgreed;
     }
+
+    public void deleteCoupleInfo() {
+        this.partnerId = null;
+        this.partnerProfileImage = null;
+        this.partnerNickname = null;
+    }
 }

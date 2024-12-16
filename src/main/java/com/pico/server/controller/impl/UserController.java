@@ -33,7 +33,6 @@ public class UserController implements UserApi {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
     private final UserRegisterService userRegisterService;
-    private final ScheduleService scheduleService;
     private final InviteCodeService inviteCodeService;
 
     @Override
@@ -71,6 +70,12 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<CoupleResponse<CoupleUserDto>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
         List<CoupleUserDto> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
+        return ResponseEntity.ok(CoupleResponse.from(users));
+    }
+
+    @Override
+    public ResponseEntity<CoupleResponse<CoupleUserDto>> deleteCouple(Long userId) {
+        List<CoupleUserDto> users = userService.deleteCouple(userId);
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 

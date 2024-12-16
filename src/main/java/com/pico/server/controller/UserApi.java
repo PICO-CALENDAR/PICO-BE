@@ -171,6 +171,41 @@ public interface UserApi {
     );
 
     @SecurityRequirement(name = "JWT")
+    @Operation(summary = "커플 관계 끊기", description = "사용자 2명의 커플 관계를 끊습니다.")
+    @PostMapping("/delete/couple")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(example = """
+        {
+          "deletedCouple": [
+            {
+              "userId": 1,
+              "name": "김피피"
+            },
+            {
+              "userId": 2,
+              "name": "김코코"
+            }
+          ]
+        }
+        """)
+    )
+    )
+    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0001", description = "사용자를 DB에서 찾을 수 없는 경우 발생합니다.",
+                value = """
+                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    ResponseEntity<CoupleResponse<CoupleUserDto>> deleteCouple(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId
+    );
+
+    @SecurityRequirement(name = "JWT")
     @Operation(summary = "유저 탈퇴", description = "유저 탈퇴를 진행합니다.")
     @DeleteMapping("/delete")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
