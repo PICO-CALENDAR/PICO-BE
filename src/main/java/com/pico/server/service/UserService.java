@@ -50,11 +50,12 @@ public class UserService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-        Users partner = userRepository.findById(user.getUserDetails().getPartnerId())
-            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
-        partner.getUserDetails().deleteCoupleInfo();
-        userRepository.save(partner);
-
+        if(user.getUserDetails().getPartnerId() != null) {
+            Users partner = userRepository.findById(user.getUserDetails().getPartnerId())
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+            partner.getUserDetails().deleteCoupleInfo();
+            userRepository.save(partner);
+        }
         userRepository.delete(user);
         return UserInfoDto.of(user, user.getUserDetails());
     }
