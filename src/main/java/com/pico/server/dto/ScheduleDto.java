@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale.Category;
 import lombok.Builder;
+import org.springframework.lang.Nullable;
 
 @Builder
 public record ScheduleDto(
@@ -16,10 +17,18 @@ public record ScheduleDto(
     LocalDateTime startTime,
     LocalDateTime endTime,
     ScheduleType category,
+
+    @Nullable
     String meetingPeople,
     Boolean isRepeat,
+
+    @Nullable
     RepeatType repeatType,
+
+    @Nullable
     LocalDateTime repeatStartDate,
+
+    @Nullable
     LocalDateTime repeatEndDate
 
 ) {
