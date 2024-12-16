@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -167,5 +168,22 @@ public interface UserApi {
 
         @Valid
         @RequestBody MakeCoupleRequest makeCoupleRequest
+    );
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "유저 탈퇴", description = "유저 탈퇴를 진행합니다.")
+    @DeleteMapping("/delete")
+    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0001", description = "사용자를 DB에서 찾을 수 없는 경우 발생합니다.",
+                value = """
+                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    ResponseEntity<UserInfoDto> deleteUserInfo(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId
     );
 }

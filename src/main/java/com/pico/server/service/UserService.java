@@ -42,6 +42,15 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    @Transactional
+    public UserInfoDto deleteUser(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        userRepository.delete(user);
+        return UserInfoDto.of(user, user.getUserDetails());
+    }
+
     public Users findById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));

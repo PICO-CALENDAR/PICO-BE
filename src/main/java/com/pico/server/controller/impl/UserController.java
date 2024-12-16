@@ -74,6 +74,12 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 
+    @Override
+    public ResponseEntity<UserInfoDto> deleteUserInfo(Long userId) {
+        UserInfoDto userInfoDto = userService.deleteUser(userId);
+        return ResponseEntity.ok(userInfoDto);
+    }
+
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {
         return CreateUserDetailsDto.builder()
             .gender(request.gender())
