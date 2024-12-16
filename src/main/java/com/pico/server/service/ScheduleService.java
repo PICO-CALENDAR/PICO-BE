@@ -43,6 +43,7 @@ public class ScheduleService {
             .user(user)
             .title(createScheduleDto.title())
             .startTime(createScheduleDto.startTime())
+            .category(createScheduleDto.category())
             .endTime(createScheduleDto.endTime())
             .isAllDay(createScheduleDto.isAllDay())
             .meetingPeople(createScheduleDto.meetingPeople())
