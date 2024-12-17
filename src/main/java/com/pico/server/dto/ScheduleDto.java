@@ -40,11 +40,11 @@ public record ScheduleDto(
             .isAllDay(schedule.getIsAllDay())
             .startTime(schedule.getStartTime())
             .endTime(schedule.getEndTime())
-            .meetingPeople(schedule.getMeetingPeople())
+            .meetingPeople(schedule.getMeetingPeople() != null ? schedule.getMeetingPeople() : null)
             .isRepeat(schedule.getIsRepeat())
-            .repeatType(schedule.getRepeatInfo().getRepeatType())
-            .repeatStartDate(schedule.getRepeatInfo().getRepeatStartDate())
-            .repeatEndDate(schedule.getRepeatInfo().getRepeatEndDate())
+            .repeatType(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatType() : null)
+            .repeatStartDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatStartDate() : null)
+            .repeatEndDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatEndDate() : null)
             .build();
     }
 
@@ -56,11 +56,11 @@ public record ScheduleDto(
             .isAllDay(schedule.getIsAllDay())
             .startTime(schedule.getStartTime())
             .endTime(schedule.getEndTime())
-            .meetingPeople(schedule.getMeetingPeople())
+            .meetingPeople(schedule.getMeetingPeople() != null ? schedule.getMeetingPeople() : null)
             .isRepeat(schedule.getIsRepeat())
-            .repeatType(schedule.getRepeatInfo().getRepeatType())
-            .repeatStartDate(schedule.getRepeatInfo().getRepeatStartDate())
-            .repeatEndDate(schedule.getRepeatInfo().getRepeatEndDate())
+            .repeatType(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatType() : null)
+            .repeatStartDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatStartDate() : null)
+            .repeatEndDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatEndDate() : null)
             .build();
     }
 }
