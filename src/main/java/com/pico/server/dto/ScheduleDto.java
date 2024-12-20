@@ -52,7 +52,7 @@ public record ScheduleDto(
         return ScheduleDto.builder()
             .scheduleId(schedule.getScheduleId())
             .title(schedule.getTitle())
-            .category(ScheduleType.YOURS)
+            .category(schedule.getCategory() != ScheduleType.OURS ? ScheduleType.YOURS : ScheduleType.OURS)
             .isAllDay(schedule.getIsAllDay())
             .startTime(schedule.getStartTime())
             .endTime(schedule.getEndTime())
