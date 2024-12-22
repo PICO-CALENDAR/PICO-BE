@@ -16,7 +16,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s " +
         "WHERE s.user.id = :userId " +
-        "AND s.isRepeat = false " +
         "AND (" +
         "  (FUNCTION('DATE_FORMAT', s.startTime, '%Y-%m-%d %H:%i') >= FUNCTION('DATE_FORMAT', :startDate, '%Y-%m-%d %H:%i') " +
         "   AND FUNCTION('DATE_FORMAT', s.startTime, '%Y-%m-%d %H:%i') <= FUNCTION('DATE_FORMAT', :endDate, '%Y-%m-%d %H:%i')) " +
@@ -33,6 +32,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s " +
         "WHERE s.user.id = :userId " +
+        "AND s.isRepeat = false " +
         "AND (" +
         "  (FUNCTION('DATE_FORMAT', s.startTime, '%Y-%m-%d %H:%i') >= FUNCTION('DATE_FORMAT', :startDate, '%Y-%m-%d %H:%i') " +
         "   AND FUNCTION('DATE_FORMAT', s.startTime, '%Y-%m-%d %H:%i') <= FUNCTION('DATE_FORMAT', :endDate, '%Y-%m-%d %H:%i')) " +
