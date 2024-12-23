@@ -7,6 +7,7 @@ import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.UserException;
+import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Transactional
     public Users saveUser(CreateUserDto createUserDto) {
@@ -56,6 +58,7 @@ public class UserService {
             partner.getUserDetails().deleteCoupleInfo();
             userRepository.save(partner);
         }
+        scheduleRepository.deleteAllByUser(user);
         userRepository.delete(user);
         return UserInfoDto.of(user, user.getUserDetails());
     }
