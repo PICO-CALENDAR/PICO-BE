@@ -34,6 +34,7 @@ google:
   oauth2:
     android-client-id: ${GOOGLE_ANDROID_CLIENT_ID}
     ios-client-id: ${GOOGLE_IOS_CLIENT_ID}
+    android-web-client-id: ${GOOGLE_ANDROID_WEB_CLIENT_ID}
 ---
 spring:
   config:

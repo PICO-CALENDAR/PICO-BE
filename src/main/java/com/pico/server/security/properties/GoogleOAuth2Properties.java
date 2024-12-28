@@ -7,7 +7,9 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 @ConfigurationProperties(prefix = "google.oauth2")
 public record GoogleOAuth2Properties(
     String androidClientId,
-    String iosClientId
+    String iosClientId,
+
+    String androidWebClientId
 ) {
     @ConstructorBinding
     public GoogleOAuth2Properties {

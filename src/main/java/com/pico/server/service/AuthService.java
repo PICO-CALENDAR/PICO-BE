@@ -48,7 +48,8 @@ public class AuthService {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Arrays.asList(
                 googleOAuth2Properties.androidClientId(),
-                googleOAuth2Properties.iosClientId()))
+                googleOAuth2Properties.iosClientId(),
+                googleOAuth2Properties.androidWebClientId()))
             .build();
 
         GoogleIdToken googleIdToken;
