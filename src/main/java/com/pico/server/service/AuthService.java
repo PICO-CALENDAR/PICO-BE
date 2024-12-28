@@ -23,6 +23,8 @@ import com.pico.server.security.validator.TokenValidator;
 import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
-
     private final JwtAuthTokenUtil jwtAuthTokenUtil;
     private final TokenValidator tokenValidator;
     private final OAuth2TokenManager oauth2TokenManager;
@@ -42,9 +43,12 @@ public class AuthService {
     private final AuthTokenGenerator authTokenGenerator;
     private final GoogleOAuth2Properties googleOAuth2Properties;
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 
     @Transactional
     public AuthToken loginGoogle(String idToken) {
+        log.info("Starting Google login process with idToken: {}", idToken);
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Arrays.asList(
                 googleOAuth2Properties.androidClientId(),
@@ -52,9 +56,17 @@ public class AuthService {
                 googleOAuth2Properties.androidWebClientId()))
             .build();
 
+        log.debug("GoogleIdTokenVerifier initialized with client IDs: {}, {}, {}",
+            googleOAuth2Properties.androidClientId(),
+            googleOAuth2Properties.iosClientId(),
+            googleOAuth2Properties.androidWebClientId());
+
         GoogleIdToken googleIdToken;
+
+
         try {
             googleIdToken = verifier.verify(idToken);
+            log.warn("Google ID Token verification failed: Token is null");
             if (googleIdToken == null) {
                 throw new AuthException(ErrorCode.INVALID_TOKEN);
             }
@@ -62,6 +74,7 @@ public class AuthService {
             throw new AuthException(ErrorCode.TOKEN_VERIFY_FAILED);
         }
         GoogleIdToken.Payload payload = googleIdToken.getPayload();
+        log.info("Google ID Token verified successfully. Payload: {}", payload);
 
         Users newUser = userService.saveUser(generateCreateUserDtoWithGoogle(payload));
 
