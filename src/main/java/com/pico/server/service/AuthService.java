@@ -23,6 +23,7 @@ import com.pico.server.security.validator.TokenValidator;
 import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthService {
     private final JwtAuthTokenUtil jwtAuthTokenUtil;
     private final TokenValidator tokenValidator;
@@ -43,12 +45,9 @@ public class AuthService {
     private final AuthTokenGenerator authTokenGenerator;
     private final GoogleOAuth2Properties googleOAuth2Properties;
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-
     @Transactional
     public AuthToken loginGoogle(String idToken) {
-        log.info("Starting Google login process with idToken: {}", idToken);
+        log.info("Service Code Starting Google login process with idToken: {}", idToken);
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Arrays.asList(
                 googleOAuth2Properties.androidClientId(),

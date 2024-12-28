@@ -12,11 +12,13 @@ import com.pico.server.security.util.JwtAuthTokenUtil;
 import com.pico.server.service.AuthService;
 import com.pico.server.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController implements AuthApi {
 
     private final AuthService authService;
@@ -25,6 +27,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<AuthResponse> loginGoogle(GoogleLoginRequest request) {
+        log.info("Starting Google login process with idToken: {}", request.idToken());
         AuthToken authToken = authService.loginGoogle(request.idToken());
         Long userId = jwtAuthTokenUtil.getId(authToken.accessToken());
         Users loginUser = userService.findById(userId);
