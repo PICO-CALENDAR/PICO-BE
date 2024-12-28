@@ -65,4 +65,5 @@ jobs:
             -e GOOGLE_IOS_CLIENT_ID="${{ secrets.GOOGLE_IOS_CLIENT_ID }}" \
             -e REDIS_AUTH_HOST="${{ secrets.REDIS_AUTH_HOST }}" \
             -e REDIS_AUTH_PORT="${{ secrets.REDIS_AUTH_PORT }}" \
+            -e GOOGLE_ANDROID_WEB_CLIENT_ID="${{ secrets.GOOGLE_ANDROID_WEB_CLIENT_ID }}" \
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
