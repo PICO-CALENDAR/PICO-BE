@@ -62,6 +62,7 @@ public class AuthService {
             throw new AuthException(ErrorCode.TOKEN_VERIFY_FAILED);
         }
         GoogleIdToken.Payload payload = googleIdToken.getPayload();
+
         Users newUser = userService.saveUser(generateCreateUserDtoWithGoogle(payload));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
