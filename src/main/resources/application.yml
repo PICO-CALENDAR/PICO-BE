@@ -38,8 +38,7 @@ google:
 
 logging:
   level:
-    root: INFO                     # 기본 로그 레벨
-    com.pico.server: DEBUG         # 특정 패키지의 로그를 DEBUG로 설정
+    root: TRACE
   file:
     name: /var/logs/pico-server.log # 로그 파일 경로
   pattern:
