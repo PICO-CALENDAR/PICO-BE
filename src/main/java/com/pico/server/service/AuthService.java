@@ -47,7 +47,6 @@ public class AuthService {
 
     @Transactional
     public AuthToken loginGoogle(String idToken) {
-        log.info("Service Code Starting Google login process with idToken: {}", idToken);
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Arrays.asList(
                 googleOAuth2Properties.androidClientId(),
@@ -65,7 +64,6 @@ public class AuthService {
 
         try {
             googleIdToken = verifier.verify(idToken);
-            log.warn("Google ID Token verification failed: Token is null");
             if (googleIdToken == null) {
                 throw new AuthException(ErrorCode.INVALID_TOKEN);
             }
@@ -73,8 +71,6 @@ public class AuthService {
             throw new AuthException(ErrorCode.TOKEN_VERIFY_FAILED);
         }
         GoogleIdToken.Payload payload = googleIdToken.getPayload();
-        log.info("Google ID Token verified successfully. Payload: {}", payload);
-
         Users newUser = userService.saveUser(generateCreateUserDtoWithGoogle(payload));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(

@@ -27,7 +27,6 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<AuthResponse> loginGoogle(GoogleLoginRequest request) {
-        log.info("Starting Google login process with idToken: {}", request.idToken());
         AuthToken authToken = authService.loginGoogle(request.idToken());
         Long userId = jwtAuthTokenUtil.getId(authToken.accessToken());
         Users loginUser = userService.findById(userId);
