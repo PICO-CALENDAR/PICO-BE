@@ -35,6 +35,16 @@ google:
     android-client-id: ${GOOGLE_ANDROID_CLIENT_ID}
     ios-client-id: ${GOOGLE_IOS_CLIENT_ID}
     android-web-client-id: ${GOOGLE_ANDROID_WEB_CLIENT_ID}
+
+logging:
+  level:
+    root: INFO
+    com.pico.server: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ""  # 로그 파일 비활성화
+    path: ""
 ---
 spring:
   config:
@@ -97,8 +107,5 @@ app:
       access-token-expiration: 86_400_000
       refresh-token-expiration: 1_209_600_000
 
-logging:
-  level:
-    root: warn
 ---
 

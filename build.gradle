@@ -62,6 +62,10 @@ dependencies {
 
     //NanoId
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+
+    //logging
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
 }
 
 tasks.named('test') {
