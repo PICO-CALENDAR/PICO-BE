@@ -36,14 +36,6 @@ google:
     ios-client-id: ${GOOGLE_IOS_CLIENT_ID}
     android-web-client-id: ${GOOGLE_ANDROID_WEB_CLIENT_ID}
 
-logging:
-  level:
-    root: TRACE
-  file:
-    name: /var/logs/pico-server.log # 로그 파일 경로
-  pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" # 로그 파일 포맷
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 ---
 spring:
   config:
@@ -106,5 +98,9 @@ app:
       access-token-expiration: 86_400_000
       refresh-token-expiration: 1_209_600_000
 
+
+logging:
+  level:
+    root: warn
 ---
 

@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class AuthService {
     private final JwtAuthTokenUtil jwtAuthTokenUtil;
     private final TokenValidator tokenValidator;
@@ -54,14 +53,7 @@ public class AuthService {
                 googleOAuth2Properties.androidWebClientId()))
             .build();
 
-        log.debug("GoogleIdTokenVerifier initialized with client IDs: {}, {}, {}",
-            googleOAuth2Properties.androidClientId(),
-            googleOAuth2Properties.iosClientId(),
-            googleOAuth2Properties.androidWebClientId());
-
         GoogleIdToken googleIdToken;
-
-
         try {
             googleIdToken = verifier.verify(idToken);
             if (googleIdToken == null) {
