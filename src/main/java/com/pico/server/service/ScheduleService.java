@@ -9,6 +9,7 @@ import com.pico.server.entity.Users;
 import com.pico.server.enums.RepeatType;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.ScheduleException;
+import com.pico.server.exception.UserException;
 import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
@@ -83,6 +84,9 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
 
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
         if (Boolean.TRUE.equals(updateDto.isRepeat())) {
             repeatInfo.updateRepeatInfo(updateDto.repeatType(),updateDto.startTime());
@@ -93,6 +97,7 @@ public class ScheduleService {
         }
 
         Schedule updatedSchedule = Schedule.builder()
+            .user(user)
             .scheduleId(schedule.getScheduleId())
             .title(updateDto.title())
             .category(updateDto.category())

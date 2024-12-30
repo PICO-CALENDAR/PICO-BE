@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class AuthController implements AuthApi {
 
     private final AuthService authService;
