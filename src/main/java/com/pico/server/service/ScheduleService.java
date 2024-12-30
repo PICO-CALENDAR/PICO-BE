@@ -88,12 +88,17 @@ public class ScheduleService {
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
-        if (Boolean.TRUE.equals(updateDto.isRepeat())) {
-            repeatInfo.updateRepeatInfo(updateDto.repeatType(),updateDto.startTime());
-            repeatInfoRepository.save(repeatInfo);
+        if(schedule.getRepeatInfo() !=null) {
+            if (Boolean.TRUE.equals(updateDto.isRepeat())) {
+                repeatInfo.updateRepeatInfo(updateDto.repeatType(),updateDto.startTime());
+                repeatInfoRepository.save(repeatInfo);
+            } else {
+                repeatInfoRepository.delete(repeatInfo);
+                repeatInfo = null;
+            }
         } else {
-            repeatInfoRepository.delete(repeatInfo);
-            repeatInfo = null;
+            repeatInfo = createRepeatInfo(updateDto.startTime(), updateDto.repeatType());
+            repeatInfoRepository.save(repeatInfo);
         }
 
         Schedule updatedSchedule = Schedule.builder()
