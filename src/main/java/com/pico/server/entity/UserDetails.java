@@ -32,6 +32,7 @@ public class UserDetails {
     private Long partnerId;
     private String partnerNickname;
     private String partnerProfileImage;
+    private String partnerName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -46,10 +47,11 @@ public class UserDetails {
     private Boolean isTermsAgreed;
     private Boolean isMarketingAgreed;
 
-    public void updatePartnerInfo(Long partnerId, String partnerNickname, String partnerProfileImage) {
+    public void updatePartnerInfo(Long partnerId, String partnerNickname, String partnerProfileImage, String partnerName) {
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
         this.partnerProfileImage = partnerProfileImage;
+        this.partnerName = partnerName;
     }
 
     public void updateUserInfo(Gender gender, String nickName, LocalDate birth, LocalDate dday,Boolean isTermsAgreed, Boolean isMarketingAgreed) {

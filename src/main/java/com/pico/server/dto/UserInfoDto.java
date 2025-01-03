@@ -24,13 +24,13 @@ public record UserInfoDto(
 
     @Nullable
     Long partnerId,
-
+    @Nullable
+    String partnerName,
     @Nullable
     String partnerNickname,
 
     @Nullable
     String partnerProfileImage,
-
     Boolean isTermsAgreed,
     Boolean isMarketingAgreed
 ) {
@@ -45,6 +45,7 @@ public record UserInfoDto(
             .birth(userDetails.getBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .dday(userDetails.getDday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .partnerId(userDetails.getPartnerId())
+            .partnerName(userDetails.getPartnerName())
             .partnerNickname(userDetails.getPartnerNickname())
             .partnerProfileImage(userDetails.getPartnerProfileImage())
             .isTermsAgreed(userDetails.getIsTermsAgreed())
