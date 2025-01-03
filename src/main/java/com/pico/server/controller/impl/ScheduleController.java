@@ -58,6 +58,14 @@ public class ScheduleController implements ScheduleApi {
     }
 
     @Override
+    public ResponseEntity<ScheduleResponse> updateAfterToday(Long userId, Long scheduleId,
+        UpdateScheduleDto updateScheduleDto) {
+        ScheduleDto scheduleDto = scheduleService.updateAfterTodaySchedule(userId, scheduleId, updateScheduleDto);
+        ScheduleResponse response = ScheduleResponse.of(true,scheduleDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
     public ResponseEntity<ScheduleResponse> getOneSchedule(Long userId, Long scheduleId) {
         ScheduleDto scheduleDto = scheduleService.getOneSchedule(userId, scheduleId);
         ScheduleResponse response = ScheduleResponse.of(true, scheduleDto);

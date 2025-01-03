@@ -182,6 +182,40 @@ public class ScheduleService {
     }
 
     @Transactional
+    public ScheduleDto updateAfterTodaySchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
+        //original schedule entTime 변경
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        RepeatInfo originalRepeatInfo = schedule.getRepeatInfo();
+        originalRepeatInfo.updateRepeatEndDate(LocalDateTime.now().minusDays(1).with(LocalTime.of(23,59)));
+        repeatInfoRepository.save(originalRepeatInfo);
+        scheduleRepository.save(schedule);
+
+        //변경된 schedule 생성
+        RepeatInfo changedRepeatInfo = createRepeatInfo(updateDto.startTime(), updateDto.repeatType());
+        Schedule changedSchdule = Schedule.builder()
+            .user(user)
+            .title(updateDto.title())
+            .category(updateDto.category())
+            .startTime(updateDto.startTime())
+            .endTime(updateDto.endTime())
+            .isAllDay(updateDto.isAllDay())
+            .isRepeat(updateDto.isRepeat())
+            .isAnniversary(false)
+            .meetingPeople(updateDto.meetingPeople())
+            .repeatInfo(changedRepeatInfo)
+            .build();
+        repeatInfoRepository.save(changedRepeatInfo);
+        scheduleRepository.save(changedSchdule);
+
+        return ScheduleDto.from(changedSchdule);
+    }
+
+    @Transactional
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
