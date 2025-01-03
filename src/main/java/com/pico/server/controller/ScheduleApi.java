@@ -76,6 +76,15 @@ public interface ScheduleApi {
         @RequestBody UpdateScheduleDto updateScheduleDto
     );
 
+    @PostMapping("/update/after/{scheduleId}")
+    @Operation(summary = "오늘 이후 일정 수정", description = "기존의 반복 일정은 그대로두고 요청날짜를 포함한 이후의 일정을 변경합니다.")
+    ResponseEntity<ScheduleResponse> updateAfterToday(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @PathVariable("scheduleId") Long scheduleId,
+        @RequestBody UpdateScheduleDto updateScheduleDto
+    );
+
 
     @GetMapping("/get/detail/{scheduleId}")
     @Operation(summary = "단일 세부 일정 조회", description = "한 일정의 세부 일정을 조회합니다.")
