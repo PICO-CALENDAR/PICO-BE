@@ -80,6 +80,46 @@ public class ScheduleService {
     }
 
     @Transactional
+    public ScheduleDto updateOnlyTodaySchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
+        //original schedule entTime 변경
+        Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
+            .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        RepeatInfo originalRepeatInfo = schedule.getRepeatInfo();
+        originalRepeatInfo.updateRepeatEndDate(LocalDateTime.now().minusDays(1).with(LocalTime.of(23,59)));
+        repeatInfoRepository.save(originalRepeatInfo);
+        scheduleRepository.save(schedule);
+
+        //변경된 schedule 생성
+        RepeatInfo changedRepeatInfo = createRepeatInfo(updateDto.startTime(), updateDto.repeatType());
+        Schedule changedSchdule = Schedule.builder()
+            .user(user)
+            .title(updateDto.title())
+            .category(updateDto.category())
+            .startTime(updateDto.startTime())
+            .endTime(updateDto.endTime())
+            .isAllDay(updateDto.isAllDay())
+            .isRepeat(updateDto.isRepeat())
+            .meetingPeople(updateDto.meetingPeople())
+            .repeatInfo(changedRepeatInfo)
+            .build();
+        repeatInfoRepository.save(changedRepeatInfo);
+        scheduleRepository.save(changedSchdule);
+
+        //new Origin 스케줄 생성
+        LocalDateTime newStartTime = checkNextStartTime(originalRepeatInfo);
+        RepeatInfo repeatInfo = createRepeatInfo(newStartTime, originalRepeatInfo.getRepeatType());
+        Schedule newOriginSchedule = makeOriginSchedule(schedule, repeatInfo, newStartTime);
+        repeatInfoRepository.save(repeatInfo);
+        scheduleRepository.save(newOriginSchedule);
+
+        return ScheduleDto.from(changedSchdule);
+    }
+
+    @Transactional
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
@@ -202,6 +242,7 @@ public class ScheduleService {
             .build();
     }
 
+
     private boolean isRecurringScheduleWithinRange(Schedule schedule, LocalDateTime weekStart, LocalDateTime weekEnd) {
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
         if (repeatInfo == null) {
@@ -246,5 +287,44 @@ public class ScheduleService {
         return false;
     }
 
+    private Schedule makeOriginSchedule(Schedule schedule, RepeatInfo repeatInfo, LocalDateTime startTime) {
+        return Schedule.builder()
+            .user(schedule.getUser())
+            .title(schedule.getTitle())
+            .category(schedule.getCategory())
+            .startTime(startTime)
+            .endTime(schedule.getEndTime())
+            .isAllDay(schedule.getIsAllDay())
+            .isRepeat(schedule.getIsRepeat())
+            .meetingPeople(schedule.getMeetingPeople())
+            .repeatInfo(repeatInfo)
+            .build();
+    }
+
+    private LocalDateTime checkNextStartTime(RepeatInfo repeatInfo) {
+        RepeatType repeatType = repeatInfo.getRepeatType();
+        LocalDateTime currentDate = repeatInfo.getRepeatStartDate();
+
+        switch (repeatType) {
+            case DAILY:
+                currentDate = currentDate.plusDays(1);
+                break;
+            case WEEKLY:
+                currentDate = currentDate.plusWeeks(1);
+                break;
+            case MONTHLY:
+                currentDate = currentDate.plusMonths(1);
+                break;
+            case YEARLY:
+                currentDate = currentDate.plusYears(1);
+                break;
+            case BIWEEKLY:
+                currentDate = currentDate.plusWeeks(2);
+                break;
+            default:
+                throw new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE);
+        }
+        return currentDate;
+    }
 
 }

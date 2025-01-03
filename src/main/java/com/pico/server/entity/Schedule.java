@@ -57,4 +57,5 @@ public class Schedule extends BaseEntity{
     public void deleteRepeatInfo() {
         this.repeatInfo = null;
     }
+
 }
