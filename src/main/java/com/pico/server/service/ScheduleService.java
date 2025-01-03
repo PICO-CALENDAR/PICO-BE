@@ -7,6 +7,7 @@ import com.pico.server.entity.RepeatInfo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
 import com.pico.server.enums.RepeatType;
+import com.pico.server.enums.ScheduleType;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.exception.UserException;
@@ -14,6 +15,7 @@ import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -49,11 +51,62 @@ public class ScheduleService {
             .isAllDay(createScheduleDto.isAllDay())
             .meetingPeople(createScheduleDto.meetingPeople())
             .isRepeat(createScheduleDto.isRepeat())
+            .isAnniversary(false)
             .repeatInfo(repeatInfo)
             .build();
 
         scheduleRepository.save(schedule);
         return ScheduleDto.from(schedule);
+    }
+
+    @Transactional
+    public void createBasicSchedules(Long userId) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+
+        RepeatInfo birthDayRepeatInfo = createRepeatInfo(user.getUserDetails().getBirth().atTime(0,1), RepeatType.YEARLY);
+        Schedule birthday = Schedule.builder()
+            .user(user)
+            .title(user.getName() + "님의 생일")
+            .category(ScheduleType.MINE)
+            .isAllDay(true)
+            .isRepeat(true)
+            .isAnniversary(false)
+            .repeatInfo(birthDayRepeatInfo)
+            .build();
+        scheduleRepository.save(birthday);
+    }
+
+    @Transactional
+    public void createAnniversarySchedules(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        String myName = user.getName();
+        String partnerName = user.getUserDetails().getPartnerName();
+
+        RepeatInfo anniverSaryRepeatInfo = createRepeatInfo(user.getUserDetails().getDday().atTime(0,1), RepeatType.YEARLY);
+        Schedule anniversary = Schedule.builder()
+            .user(user)
+            .title(myName + "과 " + partnerName+"가 만난 날")
+            .category(ScheduleType.OURS)
+            .isAllDay(true)
+            .isRepeat(true)
+            .isAnniversary(true)
+            .repeatInfo(anniverSaryRepeatInfo)
+            .build();
+        scheduleRepository.save(anniversary);
+
+
+        List<Schedule> schedules = List.of(
+            createAnniversaryNotRepeat(user,100L),
+            createAnniversaryNotRepeat(user,200L),
+            createAnniversaryNotRepeat(user,300L)
+        );
+        scheduleRepository.saveAll(schedules);
     }
 
     @Transactional
@@ -80,6 +133,14 @@ public class ScheduleService {
     }
 
     @Transactional
+    public void deleteAnniversarySchedules(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+        Long partnerId = user.getUserDetails().getPartnerId();
+        scheduleRepository.deleteAnniversarySchedulesByUserIdOrPartnerId(userId, partnerId);
+    }
+
+    @Transactional
     public ScheduleDto updateOnlyTodaySchedule(Long userId, Long scheduleId, UpdateScheduleDto updateDto) {
         //original schedule entTime 변경
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
@@ -103,6 +164,7 @@ public class ScheduleService {
             .endTime(updateDto.endTime())
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
+            .isAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(changedRepeatInfo)
             .build();
@@ -150,6 +212,7 @@ public class ScheduleService {
             .endTime(updateDto.endTime())
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
+            .isAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(repeatInfo)
             .build();
@@ -296,6 +359,7 @@ public class ScheduleService {
             .endTime(schedule.getEndTime())
             .isAllDay(schedule.getIsAllDay())
             .isRepeat(schedule.getIsRepeat())
+            .isAnniversary(false)
             .meetingPeople(schedule.getMeetingPeople())
             .repeatInfo(repeatInfo)
             .build();
@@ -325,6 +389,18 @@ public class ScheduleService {
                 throw new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE);
         }
         return currentDate;
+    }
+
+    private Schedule createAnniversaryNotRepeat(Users user, Long days) {
+        return Schedule.builder()
+            .user(user)
+            .title("만난지 "+ days.toString()+"일 째")
+            .category(ScheduleType.OURS)
+            .isAllDay(true)
+            .isRepeat(false)
+            .isAnniversary(true)
+            .repeatInfo(null)
+            .build();
     }
 
 }

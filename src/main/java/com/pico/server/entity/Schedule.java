@@ -50,6 +50,7 @@ public class Schedule extends BaseEntity{
     private Boolean isAllDay;
     private String meetingPeople;
     private Boolean isRepeat;
+    private Boolean isAnniversary;
 
     public void updateRepeatInfo(RepeatInfo repeatInfo) {
         this.repeatInfo = repeatInfo;

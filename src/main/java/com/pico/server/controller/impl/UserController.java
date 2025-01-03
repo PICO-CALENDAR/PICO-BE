@@ -34,6 +34,7 @@ public class UserController implements UserApi {
     private final UserDetailsService userDetailsService;
     private final UserRegisterService userRegisterService;
     private final InviteCodeService inviteCodeService;
+    private final ScheduleService scheduleService;
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
@@ -57,6 +58,7 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserInfoDto> updateUserInfo(Long userId, UserInfoUpdateRequest request) {
         UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request.gender(), request.nickName(), request.birth(), request.dday(), request.isTermsAgreed(), request.isMarketingAgreed());
+        scheduleService.createBasicSchedules(userId);
         return ResponseEntity.ok(userInfoDto);
     }
 
@@ -70,12 +72,14 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<CoupleResponse<CoupleUserDto>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
         List<CoupleUserDto> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
+        scheduleService.createAnniversarySchedules(userId);
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 
     @Override
     public ResponseEntity<CoupleResponse<CoupleUserDto>> deleteCouple(Long userId) {
         List<CoupleUserDto> users = userService.deleteCouple(userId);
+        scheduleService.deleteAnniversarySchedules(userId);
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 
