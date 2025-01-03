@@ -59,7 +59,7 @@ public interface ScheduleApi {
     );
 
     @PatchMapping("/update/{scheduleId}")
-    @Operation(summary = "일정 수정", description = "일정을 수정합니다.")
+    @Operation(summary = "오늘 포함 이후 일정 수정", description = "오늘을 포함해 이후 일정을 수정합니다.")
     ResponseEntity<ScheduleResponse> update(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
