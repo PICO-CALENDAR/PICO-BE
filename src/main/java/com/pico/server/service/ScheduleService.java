@@ -66,12 +66,14 @@ public class ScheduleService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-
-        RepeatInfo birthDayRepeatInfo = createRepeatInfo(user.getUserDetails().getBirth().atTime(0,1), RepeatType.YEARLY);
+        LocalDateTime birthdayDate = user.getUserDetails().getBirth().atTime(0,0,0);
+        RepeatInfo birthDayRepeatInfo = createRepeatInfo(birthdayDate, RepeatType.YEARLY);
         Schedule birthday = Schedule.builder()
             .user(user)
             .title(user.getName() + "님의 생일")
             .category(ScheduleType.MINE)
+            .startTime(birthdayDate)
+            .endTime(birthdayDate)
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(false)
@@ -88,11 +90,14 @@ public class ScheduleService {
         String myName = user.getName();
         String partnerName = user.getUserDetails().getPartnerName();
 
-        RepeatInfo anniverSaryRepeatInfo = createRepeatInfo(user.getUserDetails().getDday().atTime(0,1), RepeatType.YEARLY);
+        LocalDateTime anniversaryDate = user.getUserDetails().getDday().atTime(0,0,0);
+        RepeatInfo anniverSaryRepeatInfo = createRepeatInfo(anniversaryDate, RepeatType.YEARLY);
         Schedule anniversary = Schedule.builder()
             .user(user)
             .title(myName + "과 " + partnerName+"가 만난 날")
             .category(ScheduleType.OURS)
+            .startTime(anniversaryDate)
+            .endTime(anniversaryDate)
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(true)
@@ -102,9 +107,9 @@ public class ScheduleService {
 
 
         List<Schedule> schedules = List.of(
-            createAnniversaryNotRepeat(user,100L),
-            createAnniversaryNotRepeat(user,200L),
-            createAnniversaryNotRepeat(user,300L)
+            createAnniversaryNotRepeat(user,100L, anniversaryDate),
+            createAnniversaryNotRepeat(user,200L, anniversaryDate),
+            createAnniversaryNotRepeat(user,300L, anniversaryDate)
         );
         scheduleRepository.saveAll(schedules);
     }
@@ -425,11 +430,13 @@ public class ScheduleService {
         return currentDate;
     }
 
-    private Schedule createAnniversaryNotRepeat(Users user, Long days) {
+    private Schedule createAnniversaryNotRepeat(Users user, Long days, LocalDateTime anniversaryDate) {
         return Schedule.builder()
             .user(user)
             .title("만난지 "+ days.toString()+"일 째")
             .category(ScheduleType.OURS)
+            .startTime(anniversaryDate.plusDays(days-1))
+            .endTime(anniversaryDate.plusDays(days-1))
             .isAllDay(true)
             .isRepeat(false)
             .isAnniversary(true)
