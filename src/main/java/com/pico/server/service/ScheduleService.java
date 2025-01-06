@@ -134,6 +134,8 @@ public class ScheduleService {
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
         repeatInfo.updateRepeatEndDate(adjustedRepeatEndDate);
         repeatInfoRepository.save(repeatInfo);
+        schedule.updateRepeatInfo(repeatInfo);
+        scheduleRepository.save(schedule);
         return ScheduleDto.from(schedule);
     }
 
