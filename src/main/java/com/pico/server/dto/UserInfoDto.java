@@ -12,7 +12,6 @@ import org.springframework.lang.Nullable;
 public record UserInfoDto(
     String name,
     String profileImage,
-
     String email,
     String gender,
     String nickName,

@@ -36,6 +36,15 @@ google:
     ios-client-id: ${GOOGLE_IOS_CLIENT_ID}
     android-web-client-id: ${GOOGLE_ANDROID_WEB_CLIENT_ID}
 
+apple:
+  app:
+    id: ${APPLE_APP_ID}
+    teamId: ${APPLE_TEAM_ID}
+    keyId: ${APPLE_KEY_ID}
+    privateKey: ${APPLE_PRIVATE_KEY}
+  url:
+    public-keys: https://appleid.apple.com/auth/keys
+    issuer: https://appleid.apple.com
 ---
 spring:
   config:
