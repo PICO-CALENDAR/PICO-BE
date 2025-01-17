@@ -1,5 +1,6 @@
 package com.pico.server.controller;
 
+import com.pico.server.dto.request.AppleLoginRequest;
 import com.pico.server.dto.request.GoogleLoginRequest;
 import com.pico.server.dto.request.WebLoginRequest;
 import com.pico.server.dto.request.TokenReissueRequest;
@@ -50,6 +51,31 @@ public interface AuthApi {
     ResponseEntity<AuthResponse> loginGoogle(
         @Valid
         @RequestBody GoogleLoginRequest request
+    );
+
+    @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인을 진행합니다.")
+    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "AU0013", description = "Apple IdToken 검증에 실패할 경우 발생합니다.",
+                value = """
+                                    {"code": "AU0013", "message": "토큰 검증에 실패 했습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "AU0005", description = "토큰이 유효하지 않은 경우 발생합니다.",
+                value = """
+                                    {"code": "AU0005", "message": "유효하지 않은 토큰입니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    @PostMapping("/app/login/apple")
+    ResponseEntity<AuthResponse> loginApple(
+        @Valid
+        @RequestBody AppleLoginRequest request
     );
 
     @Operation(summary = "토큰 재발행", description = "리프레시 토큰으로 새로은 토큰을 발행합니다.")

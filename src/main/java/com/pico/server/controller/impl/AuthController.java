@@ -1,6 +1,7 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.AuthApi;
+import com.pico.server.dto.request.AppleLoginRequest;
 import com.pico.server.dto.request.GoogleLoginRequest;
 import com.pico.server.dto.request.TokenReissueRequest;
 import com.pico.server.dto.response.AuthResponse;
@@ -27,6 +28,16 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<AuthResponse> loginGoogle(GoogleLoginRequest request) {
         AuthToken authToken = authService.loginGoogle(request.idToken());
+        Long userId = jwtAuthTokenUtil.getId(authToken.accessToken());
+        Users loginUser = userService.findById(userId);
+
+        AuthResponse response = AuthResponse.of(loginUser,authToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<AuthResponse> loginApple(AppleLoginRequest request) {
+        AuthToken authToken = authService.loginApple(request.idToken(), request.authorizationCode());
         Long userId = jwtAuthTokenUtil.getId(authToken.accessToken());
         Users loginUser = userService.findById(userId);
 

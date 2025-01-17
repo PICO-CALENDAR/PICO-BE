@@ -48,6 +48,28 @@ public class UserService {
     }
 
     @Transactional
+    public Users saveAppleUser(CreateUserDto createUserDto) {
+
+        Optional<Users> existUser = userRepository.findByPlatformAndEmail(
+            createUserDto.platform(),
+            createUserDto.email());
+
+        if (existUser.isPresent()) {
+            return updateProfileOfExistUser(createUserDto, existUser.get());
+        }
+
+        Users newUser = Users.builder()
+            .name(createUserDto.name())
+            .email(createUserDto.email())
+            .platform(createUserDto.platform())
+            .isRegistered(false)
+            .build();
+
+
+        return userRepository.save(newUser);
+    }
+
+    @Transactional
     public UserInfoDto deleteUser(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
@@ -95,7 +117,7 @@ public class UserService {
     }
 
     private Users updateProfileOfExistUser(CreateUserDto createUserDto, Users existUser) {
-        existUser.updateProfile(createUserDto.email(), createUserDto.name(), createUserDto.profileImage());
+        existUser.updateNameAndEmail(createUserDto.email(), createUserDto.name());
         userRepository.save(existUser);
         return existUser;
     }

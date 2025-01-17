@@ -49,6 +49,15 @@ public class Users extends BaseEntity {
         this.profileImage = profileImage;
     }
 
+    public void updateNameAndEmail(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public void register(UserDetails userDetails) {
         this.isRegistered = true;
         this.userDetails = userDetails;

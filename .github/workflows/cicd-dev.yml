@@ -66,4 +66,8 @@ jobs:
             -e REDIS_AUTH_HOST="${{ secrets.REDIS_AUTH_HOST }}" \
             -e REDIS_AUTH_PORT="${{ secrets.REDIS_AUTH_PORT }}" \
             -e GOOGLE_ANDROID_WEB_CLIENT_ID="${{ secrets.GOOGLE_ANDROID_WEB_CLIENT_ID }}" \
+            -e APPLE_APP_ID="${{ secrets.APPLE_APP_ID }}" \
+            -e APPLE_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}" \
+            -e APPLE_KEY_ID="${{ secrets.APPLE_KEY_ID }}" \
+            -e APPLE_PRIVATE_KEY="${{ secrets.APPLE_PRIVATE_KEY }}" \
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
