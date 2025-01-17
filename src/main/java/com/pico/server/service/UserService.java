@@ -3,12 +3,17 @@ package com.pico.server.service;
 import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.request.CreateUserDto;
 import com.pico.server.dto.UserInfoDto;
+import com.pico.server.entity.AppleRefreshToken;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
+import com.pico.server.exception.AuthException;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.UserException;
+import com.pico.server.repository.AppleRefreshTokenRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
+import com.pico.server.security.enums.Platform;
+import com.pico.server.service.apple.AppleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +28,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final AppleRefreshTokenRepository appleRefreshTokenRepository;
+    private final AppleApiClient appleApiClient;
 
     @Transactional
     public Users saveUser(CreateUserDto createUserDto) {
@@ -74,6 +81,10 @@ public class UserService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
+        if(user.getPlatform() == Platform.APPLE) {
+            revokeAppleToken(userId);
+        }
+
         if(user.getUserDetails().getPartnerId() != null) {
             Users partner = userRepository.findById(user.getUserDetails().getPartnerId())
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
@@ -120,6 +131,17 @@ public class UserService {
         existUser.updateNameAndEmail(createUserDto.email(), createUserDto.name());
         userRepository.save(existUser);
         return existUser;
+    }
+
+    private void revokeAppleToken(Long userId) {
+        try {
+            AppleRefreshToken appleRefreshToken = appleRefreshTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_APPLE_REFRESH_TOKEN));
+            appleApiClient.revokeToken(appleRefreshToken.getRefreshToken());
+            appleRefreshTokenRepository.delete(appleRefreshToken);
+        } catch (Exception e) {
+            throw new UserException(ErrorCode.FAIL_TO_DELETE_APPLE_USER);
+        }
     }
 
 }

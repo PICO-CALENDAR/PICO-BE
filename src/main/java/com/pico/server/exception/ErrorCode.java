@@ -36,6 +36,7 @@ public enum ErrorCode {
     INVALID_AUTH_CODE(400, "AU0011", "유효하지 않은 인증 코드입니다."),
     NOT_MATCHED_AUTH_CODE(400, "AU0012", "올바르지 않은 인증 코드입니다."),
     TOKEN_VERIFY_FAILED(400, "AU0013", "토큰 검증에 실패 했습니다."),
+    NOT_FOUND_APPLE_REFRESH_TOKEN(404, "AU0014", "해당 리프레시 토큰을 데이터베이스에서 찾을 수 없습니다."),
 
 
     /**
@@ -46,6 +47,7 @@ public enum ErrorCode {
     NOT_REGISTERED_USER(400, "US0003", "가입되지 않은 사용자입니다. 회원가입 후 이용해주세요"),
     NOT_FOUND_USER_DETAIL(404, "US0004", "해당 사용자 세부정보를 찾을 수 없습니다."),
     TERMS_NOT_AGREED(400, "US0005", "사용자 약관이 동의되지 않았습니다."),
+    FAIL_TO_DELETE_APPLE_USER(400, "US0006", "사용자의 애플 정보를 삭제하는데 실패했습니다."),
 
     /**
      * Schedule Errors
