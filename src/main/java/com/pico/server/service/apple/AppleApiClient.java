@@ -54,8 +54,8 @@ public class AppleApiClient {
         Map<String, String> payload = tokenValidator.parsePayLoad(identityToken);
 
         String email = payload.get("email");
-
         String nameJson = (String) payload.get("name");
+        System.out.println("This is nameJson Log  ----" + nameJson);
         String firstName = null;
         String lastName = null;
         if (nameJson != null) {

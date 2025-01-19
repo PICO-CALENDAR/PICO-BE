@@ -14,6 +14,7 @@ import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import com.pico.server.security.enums.Platform;
 import com.pico.server.service.apple.AppleApiClient;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,7 @@ public class UserService {
     }
 
     @Transactional
+    @Valid
     public Users saveAppleUser(CreateUserDto createUserDto) {
 
         Optional<Users> existUser = userRepository.findByPlatformAndEmail(
@@ -68,7 +70,9 @@ public class UserService {
         Users newUser = Users.builder()
             .name(createUserDto.name())
             .email(createUserDto.email())
+            .profileImage(createUserDto.profileImage())
             .platform(Platform.APPLE)
+            .platformId(null)
             .isRegistered(false)
             .build();
 
