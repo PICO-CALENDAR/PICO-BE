@@ -38,6 +38,7 @@ public class AppleApiClient {
         return Platform.APPLE;
     }
 
+
     /**
      * identityToken 으로부터 이메일을 얻어온다.
      * @param identityToken identityToken
