@@ -9,6 +9,7 @@ import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.InviteCodeResponse;
+import com.pico.server.dto.response.TokenResponse;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
