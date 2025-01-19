@@ -72,7 +72,6 @@ public class UserService {
             .isRegistered(false)
             .build();
 
-
         return userRepository.save(newUser);
     }
 
