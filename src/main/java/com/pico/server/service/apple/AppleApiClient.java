@@ -44,11 +44,14 @@ public class AppleApiClient {
      * @return 이메일, provider 정보
      */
     public AppleUserInfoResponse requestOauthUserInfo(String identityToken) {
+        /*
         if (!isOauthTokenValid(identityToken)) {
             throw new AuthException(ErrorCode.INVALID_TOKEN);
         }
+        */
         String email = tokenValidator.parsePayLoad(identityToken).get("email");
         String name = tokenValidator.parsePayLoad(identityToken).get("name");
+        System.out.println(email + " " + name);
         return AppleUserInfoResponse.builder()
             .email(email)
             .name(name)
