@@ -68,7 +68,7 @@ public class UserService {
         Users newUser = Users.builder()
             .name(createUserDto.name())
             .email(createUserDto.email())
-            .platform(createUserDto.platform())
+            .platform(Platform.APPLE)
             .isRegistered(false)
             .build();
 
