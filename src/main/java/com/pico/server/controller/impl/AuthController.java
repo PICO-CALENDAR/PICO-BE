@@ -55,6 +55,6 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<Boolean> revokeAppleRefreshToken(AppleLoginRequest request) {
-        return ResponseEntity.ok(userService.revokeOnlyAppleToken(request.idToken()));
+        return ResponseEntity.ok(userService.revokeOnlyAppleToken(request.authorizationCode()));
     }
 }

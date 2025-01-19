@@ -116,9 +116,10 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean revokeOnlyAppleToken(String appleRefreshToken) {
+    public Boolean revokeOnlyAppleToken(String authorizationCode) {
+        String refreshToken = appleApiClient.getAppleRefreshToken(authorizationCode);
         try {
-            appleApiClient.revokeToken(appleRefreshToken);
+            appleApiClient.revokeToken(refreshToken);
             return true;
         } catch (Exception e) {
             throw new UserException(ErrorCode.FAIL_TO_DELETE_APPLE_USER);
