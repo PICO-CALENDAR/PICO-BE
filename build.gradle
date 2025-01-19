@@ -84,6 +84,11 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-api:${JJWT_VERSION}"
     runtimeOnly "io.jsonwebtoken:jjwt-gson:${JJWT_VERSION}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${JJWT_VERSION}"
+
+    //aws s3
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.1.1'
+    implementation platform('software.amazon.awssdk:bom:2.25.46')
+    implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {
