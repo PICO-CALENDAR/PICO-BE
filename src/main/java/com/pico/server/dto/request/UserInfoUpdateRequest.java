@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 
 public record UserInfoUpdateRequest(
+
+    @Schema(description = "이름", example = "김코딩")
+    String name,
     @Schema(description = "성별", example = "MALE")
     Gender gender,
     @Schema(description = "닉네임", example = "곽코딩")

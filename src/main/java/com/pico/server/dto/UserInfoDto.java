@@ -37,7 +37,7 @@ public record UserInfoDto(
 
     public static UserInfoDto of(Users user, UserDetails userDetails) {
         return UserInfoDto.builder()
-            .name(user.getName())
+            .name(userDetails.getName())
             .profileImage(user.getProfileImage())
             .email(user.getEmail())
             .gender(userDetails.getGender().getValue())

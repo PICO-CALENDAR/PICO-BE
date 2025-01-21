@@ -4,6 +4,8 @@ public class JwtValues {
     public static final String JWT_PAYLOAD_KEY_CATEGORY = "category";
     public static final String JWT_PAYLOAD_KEY_ID = "id";
     public static final String JWT_PAYLOAD_KEY_NAME = "name";
+
+    public static final String JWT_PAYLOAD_KEY_EMAIL = "email";
     public static final String JWT_PAYLOAD_KEY_ROLE = "role";
     public static final String JWT_PAYLOAD_KEY_REGISTERED = "isRegistered";
     public static final String JWT_PAYLOAD_KEY_UUID = "uuid";

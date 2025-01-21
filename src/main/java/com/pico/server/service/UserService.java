@@ -44,7 +44,6 @@ public class UserService {
         }
 
         Users newUser = Users.builder()
-            .name(createUserDto.name())
             .email(createUserDto.email())
             .profileImage(createUserDto.profileImage())
             .platform(createUserDto.platform())
@@ -68,7 +67,6 @@ public class UserService {
         }
 
         Users newUser = Users.builder()
-            .name(createUserDto.name())
             .email(createUserDto.email())
             .profileImage(createUserDto.profileImage())
             .platform(Platform.APPLE)
@@ -142,7 +140,7 @@ public class UserService {
     }
 
     private Users updateProfileOfExistUser(CreateUserDto createUserDto, Users existUser) {
-        existUser.updateNameAndEmail(createUserDto.email(), createUserDto.name());
+        existUser.updateEmail(createUserDto.email());
         userRepository.save(existUser);
         return existUser;
     }

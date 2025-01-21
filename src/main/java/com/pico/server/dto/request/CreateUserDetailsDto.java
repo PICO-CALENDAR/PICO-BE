@@ -8,6 +8,7 @@ import lombok.Builder;
 
 @Builder
 public record CreateUserDetailsDto(
+    String name,
     Gender gender,
 
     String nickName,

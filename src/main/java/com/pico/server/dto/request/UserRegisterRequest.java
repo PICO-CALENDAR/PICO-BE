@@ -10,7 +10,9 @@ import lombok.Builder;
 
 @Builder
 public record UserRegisterRequest(
-
+    @Schema(description = "이름", example = "김피코")
+    @NotNull(message = "name은 null 일 수 없습니다.")
+    String name,
 
     @Schema(description = "성별", example = "MALE")
     @NotNull(message = "gender는 null 일 수 없습니다.")

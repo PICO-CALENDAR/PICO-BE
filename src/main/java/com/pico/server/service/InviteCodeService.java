@@ -22,11 +22,13 @@ public class InviteCodeService {
 
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final String INVITE_CODE_KEY = "inviteCode:";
+
     @Transactional
     public String makeInviteCode(Long userId) {
         validateCouple(userId);
         String inviteCode = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR,NanoIdUtils.DEFAULT_ALPHABET, 10);
-        String key = "inviteCode:" + inviteCode;
+        String key = INVITE_CODE_KEY + inviteCode;
 
         Set<String> keys = redisTemplate.keys("inviteCode:*");
         if (keys != null) {
@@ -48,7 +50,7 @@ public class InviteCodeService {
         validateInviteCode(inviteCode);
         validateCouple(userId);
 
-        String key = "inviteCode:" + inviteCode;
+        String key = INVITE_CODE_KEY + inviteCode;
         Long partnerUserId = Long.parseLong(
             Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
 
@@ -59,8 +61,8 @@ public class InviteCodeService {
         Users partner = userRepository.findById(partnerUserId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName(), partner.getProfileImage(), partner.getName());
-        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName(), user.getProfileImage(), user.getName());
+        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName(), partner.getProfileImage(), partner.getUserDetails().getName());
+        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName(), user.getProfileImage(), user.getUserDetails().getName());
         userRepository.save(user);
         userRepository.save(partner);
 
@@ -81,7 +83,7 @@ public class InviteCodeService {
     }
 
     private void validateInviteCode(String inviteCode) {
-        String key = "inviteCode:" + inviteCode;
+        String key = INVITE_CODE_KEY + inviteCode;
         if(Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
             throw new InviteCodeException(ErrorCode.NOT_FOUND_INVITE_CODE);
         }

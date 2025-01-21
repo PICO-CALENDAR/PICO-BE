@@ -35,7 +35,6 @@ public class Users extends BaseEntity {
     private UserDetails userDetails;
 
 
-    private String name;
     private String email;
     private String profileImage;
     @Enumerated(EnumType.STRING)
@@ -43,15 +42,13 @@ public class Users extends BaseEntity {
     private String platformId;
     private Boolean isRegistered;
 
-    public void updateProfile(String email, String name, String profileImage) {
+    public void updateProfile(String email,  String profileImage) {
         this.email = email;
-        this.name = name;
         this.profileImage = profileImage;
     }
 
-    public void updateNameAndEmail(String email, String name) {
+    public void updateEmail(String email) {
         this.email = email;
-        this.name = name;
     }
 
     public void updateProfileImage(String profileImage) {
