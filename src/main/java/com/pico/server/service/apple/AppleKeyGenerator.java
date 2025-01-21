@@ -120,7 +120,8 @@ public class AppleKeyGenerator {
      */
     private PrivateKey getPrivateKey() {
         try {
-            Reader pemReader = new StringReader(privateKey.replace("\\n", "\n"));
+            Reader pemReader = new StringReader(privateKey);
+            //privateKey hotfix
             PEMParser pemParser = new PEMParser(pemReader);
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
             PrivateKeyInfo object = (PrivateKeyInfo)pemParser.readObject();

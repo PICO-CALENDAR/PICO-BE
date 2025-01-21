@@ -16,10 +16,10 @@ public class AuthTokenGenerator {
         UserDto userDto = generateUserDto(user);
 
         Long userId = userDto.userId();
-        String name = userDto.name();
+        String email = userDto.email();
         Boolean isRegistered = userDto.isRegistered();
 
-        String newAccessToken = jwtAuthTokenUtil.createAccessToken(userId,name, isRegistered);
+        String newAccessToken = jwtAuthTokenUtil.createAccessToken(userId,email, isRegistered);
         String newRefreshToken = jwtAuthTokenUtil.createRefreshToken();
 
         return AuthToken.of(newAccessToken, newRefreshToken, isRegistered);
@@ -28,7 +28,7 @@ public class AuthTokenGenerator {
     private UserDto generateUserDto(Users user) {
         return UserDto.builder()
             .userId(user.getId())
-            .name(user.getName())
+            .email(user.getEmail())
             .isRegistered(user.getIsRegistered())
             .build();
     }

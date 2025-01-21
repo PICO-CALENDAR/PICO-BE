@@ -34,6 +34,12 @@ public class JwtAuthTokenUtil {
             .get(JwtValues.JWT_PAYLOAD_KEY_NAME, String.class);
     }
 
+    public String getEmail(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+            .get(JwtValues.JWT_PAYLOAD_KEY_EMAIL, String.class);
+    }
+
     public String getRole(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
@@ -65,13 +71,13 @@ public class JwtAuthTokenUtil {
         return true;
     }
 
-    public String createAccessToken(Long userId, String name, Boolean isRegistered) {
+    public String createAccessToken(Long userId, String email, Boolean isRegistered) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()
             .claim(JwtValues.JWT_PAYLOAD_KEY_CATEGORY, JwtValues.JWT_PAYLOAD_VALUE_ACCESS)
             .claim(JwtValues.JWT_PAYLOAD_KEY_ID, userId)
-            .claim(JwtValues.JWT_PAYLOAD_KEY_NAME, name)
+            .claim(JwtValues.JWT_PAYLOAD_KEY_EMAIL, email)
             .claim(JwtValues.JWT_PAYLOAD_KEY_REGISTERED, isRegistered)
             .issuedAt(new Date(now))
             .expiration(getAccessTokenExpiration(now))
@@ -79,13 +85,13 @@ public class JwtAuthTokenUtil {
             .compact();
     }
 
-    public String createAccessToken(Long userId, String name, Boolean isRegistered, Long expiration) {
+    public String createAccessToken(Long userId, String email, Boolean isRegistered, Long expiration) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()
             .claim(JwtValues.JWT_PAYLOAD_KEY_CATEGORY, JwtValues.JWT_PAYLOAD_VALUE_ACCESS)
             .claim(JwtValues.JWT_PAYLOAD_KEY_ID, userId)
-            .claim(JwtValues.JWT_PAYLOAD_KEY_NAME, name)
+            .claim(JwtValues.JWT_PAYLOAD_KEY_EMAIL, email)
             .claim(JwtValues.JWT_PAYLOAD_KEY_REGISTERED, isRegistered)
             .issuedAt(new Date(now))
             .expiration(new Date(expiration))

@@ -1,6 +1,7 @@
 package com.pico.server.service.apple;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pico.server.dto.response.AppleTokenResponse;
 import com.pico.server.dto.response.AppleUserInfoResponse;
 import com.pico.server.exception.AuthException;
@@ -38,17 +39,46 @@ public class AppleApiClient {
         return Platform.APPLE;
     }
 
+
     /**
      * identityToken 으로부터 이메일을 얻어온다.
      * @param identityToken identityToken
      * @return 이메일, provider 정보
      */
     public AppleUserInfoResponse requestOauthUserInfo(String identityToken) {
+        /*
         if (!isOauthTokenValid(identityToken)) {
             throw new AuthException(ErrorCode.INVALID_TOKEN);
         }
-        String email = tokenValidator.parsePayLoad(identityToken).get("email");
-        String name = tokenValidator.parsePayLoad(identityToken).get("name");
+        */
+        Map<String, String> payload = tokenValidator.parsePayLoad(identityToken);
+
+        String email = payload.get("email");
+        String nameJson = (String) payload.get("name");
+        System.out.println("This is nameJson Log  ----" + nameJson);
+        String firstName = null;
+        String lastName = null;
+        if (nameJson != null) {
+            try {
+                Map<String, String> nameMap = new ObjectMapper().readValue(nameJson, Map.class);
+                firstName = nameMap.get("firstName");
+                lastName = nameMap.get("lastName");
+            } catch (JsonProcessingException e) {
+                throw new AuthException(ErrorCode.INVALID_TOKEN);
+            }
+        }
+
+        String name = null;
+        if (firstName != null && lastName != null) {
+            name = firstName + " " + lastName;
+        } else if (firstName != null) {
+            name = firstName;
+        } else if (lastName != null) {
+            name = lastName;
+        }
+
+        System.out.println("This is Log" + email + " ---- " + name);
+
         return AppleUserInfoResponse.builder()
             .email(email)
             .name(name)

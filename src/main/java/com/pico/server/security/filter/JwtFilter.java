@@ -76,12 +76,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private UserDto generateUserDto(String accessToken) {
         Long userId = jwtAuthTokenUtil.getId(accessToken);
-        String name = jwtAuthTokenUtil.getName(accessToken);
+        String email = jwtAuthTokenUtil.getEmail(accessToken);
         String role = jwtAuthTokenUtil.getRole(accessToken);
 
         return UserDto.builder()
             .userId(userId)
-            .name(name)
+            .email(email)
             .build();
     }
 }

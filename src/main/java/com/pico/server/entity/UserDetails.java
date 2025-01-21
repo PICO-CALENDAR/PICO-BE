@@ -29,6 +29,7 @@ public class UserDetails {
     @Column(name = "user_details_id")
     private Long id;
 
+    private String name;
     private Long partnerId;
     private String partnerNickname;
     private String partnerProfileImage;
@@ -54,7 +55,8 @@ public class UserDetails {
         this.partnerName = partnerName;
     }
 
-    public void updateUserInfo(Gender gender, String nickName, LocalDate birth, LocalDate dday,Boolean isTermsAgreed, Boolean isMarketingAgreed) {
+    public void updateUserInfo(String name, Gender gender, String nickName, LocalDate birth, LocalDate dday,Boolean isTermsAgreed, Boolean isMarketingAgreed) {
+        this.name = name == null ? this.name : name;
         this.gender = gender == null ? this.gender : gender;
         this.nickName = nickName == null ? this.nickName : nickName;
         this.birth = birth == null ? this.birth : birth;

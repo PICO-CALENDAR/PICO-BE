@@ -7,6 +7,7 @@ import com.pico.server.dto.request.TokenReissueRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.TokenResponse;
+import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -125,4 +126,11 @@ public interface AuthApi {
         @Valid
         @RequestBody TokenReissueRequest request
     );
+
+    @Operation(summary = "애플 refreshToken 삭제", description = "애플 resource 서버에서 사용자에 해당하는 refreshToken을 삭제합니다.")
+    @PostMapping(value = "/revoke/apple/token")
+    ResponseEntity<Boolean> revokeAppleRefreshToken(
+        @Valid
+        @RequestBody AppleLoginRequest request
+        );
 }

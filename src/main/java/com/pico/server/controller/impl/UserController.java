@@ -57,7 +57,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<UserInfoDto> updateUserInfo(Long userId, UserInfoUpdateRequest request) {
-        UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request.gender(), request.nickName(), request.birth(), request.dday(), request.isTermsAgreed(), request.isMarketingAgreed());
+        UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request);
         scheduleService.createBasicSchedules(userId);
         return ResponseEntity.ok(userInfoDto);
     }
@@ -91,6 +91,7 @@ public class UserController implements UserApi {
 
     private CreateUserDetailsDto generateCreateUserDetailsDto(UserRegisterRequest request) {
         return CreateUserDetailsDto.builder()
+            .name(request.name())
             .gender(request.gender())
             .nickName(request.nickName())
             .birth(request.birth())

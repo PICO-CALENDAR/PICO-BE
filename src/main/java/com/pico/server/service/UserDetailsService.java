@@ -2,6 +2,7 @@ package com.pico.server.service;
 
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
+import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.enums.Gender;
@@ -22,6 +23,7 @@ public class UserDetailsService {
     public UserDetails saveUserDetails(CreateUserDetailsDto createUserDetailsDto) {
 
         UserDetails userDetails = UserDetails.builder()
+            .name(createUserDetailsDto.name())
             .gender(createUserDetailsDto.gender())
             .nickName(createUserDetailsDto.nickName())
             .birth(createUserDetailsDto.birth())
@@ -34,10 +36,10 @@ public class UserDetailsService {
     }
 
     @Transactional
-    public UserInfoDto updateUserInfo(Long userId, Gender gender, String nickName, LocalDate birth, LocalDate dday, Boolean isTermsAgreed, Boolean isMarketingAgreed) {
+    public UserInfoDto updateUserInfo(Long userId, UserInfoUpdateRequest request) {
         Users findUser = userService.findById(userId);
         UserDetails userDetails = findUser.getUserDetails();
-        userDetails.updateUserInfo(gender,nickName,birth,dday, isTermsAgreed, isMarketingAgreed);
+        userDetails.updateUserInfo(request.name(), request.gender(),request.nickName(),request.birth(),request.dday(), request.isTermsAgreed(), request.isMarketingAgreed());
 
         userDetailsRepository.save(userDetails);
         return UserInfoDto.of(findUser, userDetails);

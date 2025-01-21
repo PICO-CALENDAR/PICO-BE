@@ -14,6 +14,7 @@ import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import com.pico.server.security.enums.Platform;
 import com.pico.server.service.apple.AppleApiClient;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,6 @@ public class UserService {
         }
 
         Users newUser = Users.builder()
-            .name(createUserDto.name())
             .email(createUserDto.email())
             .profileImage(createUserDto.profileImage())
             .platform(createUserDto.platform())
@@ -55,6 +55,7 @@ public class UserService {
     }
 
     @Transactional
+    @Valid
     public Users saveAppleUser(CreateUserDto createUserDto) {
 
         Optional<Users> existUser = userRepository.findByPlatformAndEmail(
@@ -66,12 +67,12 @@ public class UserService {
         }
 
         Users newUser = Users.builder()
-            .name(createUserDto.name())
             .email(createUserDto.email())
-            .platform(createUserDto.platform())
+            .profileImage(createUserDto.profileImage())
+            .platform(Platform.APPLE)
+            .platformId(null)
             .isRegistered(false)
             .build();
-
 
         return userRepository.save(newUser);
     }
@@ -115,6 +116,17 @@ public class UserService {
         return users;
     }
 
+    @Transactional
+    public Boolean revokeOnlyAppleToken(String authorizationCode) {
+        String refreshToken = appleApiClient.getAppleRefreshToken(authorizationCode);
+        try {
+            appleApiClient.revokeToken(refreshToken);
+            return true;
+        } catch (Exception e) {
+            throw new UserException(ErrorCode.FAIL_TO_DELETE_APPLE_USER);
+        }
+    }
+
     public Users findById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
@@ -128,7 +140,7 @@ public class UserService {
     }
 
     private Users updateProfileOfExistUser(CreateUserDto createUserDto, Users existUser) {
-        existUser.updateNameAndEmail(createUserDto.email(), createUserDto.name());
+        existUser.updateEmail(createUserDto.email());
         userRepository.save(existUser);
         return existUser;
     }
