@@ -94,7 +94,7 @@ public class AuthService {
         }
 
         Optional<Users> existUser = userRepository.findByPlatformAndEmail(Platform.APPLE, oauthUserInfo.email());
-        Users newUser = userService.saveAppleUser(generateCreateUserDtoWithApple(oauthUserInfo.name(),oauthUserInfo.email()));
+        Users newUser = userService.saveAppleUser(generateCreateUserDtoWithApple(oauthUserInfo.email()));
 
         if(existUser.isEmpty()) {
             registerAppleRefreshToken(newUser.getId(), authorizationCode);
@@ -159,12 +159,10 @@ public class AuthService {
             .build();
     }
 
-    private CreateUserDto generateCreateUserDtoWithApple(String name, String email) {
+    private CreateUserDto generateCreateUserDtoWithApple(String email) {
         return CreateUserDto.builder()
             .platform(Platform.APPLE)
             .email(email)
-            .name(name)
-            .profileImage("NONE")
             .build();
     }
 }
