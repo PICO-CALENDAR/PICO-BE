@@ -15,12 +15,14 @@ import com.pico.server.repository.UserRepository;
 import com.pico.server.security.enums.Platform;
 import com.pico.server.service.apple.AppleApiClient;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,6 +33,9 @@ public class UserService {
     private final ScheduleRepository scheduleRepository;
     private final AppleRefreshTokenRepository appleRefreshTokenRepository;
     private final AppleApiClient appleApiClient;
+    private final S3Service s3Service;
+
+    private final String USER_PROFILE_PREFIX = "USER_";
 
     @Transactional
     public Users saveUser(CreateUserDto createUserDto) {
@@ -75,6 +80,20 @@ public class UserService {
             .build();
 
         return userRepository.save(newUser);
+    }
+
+    @Transactional
+    public UserInfoDto updateUserProfile(Long userId, MultipartFile uploadFile) throws IOException {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        String fileName = USER_PROFILE_PREFIX + userId.toString();
+        s3Service.deleteUserMultipartImage(fileName);
+        String putImageUrl = s3Service.putUserMultipartImage(uploadFile, fileName);
+
+        user.updateProfileImage(putImageUrl);
+        userRepository.save(user);
+        return UserInfoDto.of(user, user.getUserDetails());
     }
 
     @Transactional

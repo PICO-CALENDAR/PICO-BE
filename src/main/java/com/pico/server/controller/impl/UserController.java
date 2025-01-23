@@ -19,11 +19,13 @@ import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserDetailsService;
 import com.pico.server.service.UserRegisterService;
 import com.pico.server.service.UserService;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller
@@ -86,6 +88,13 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserInfoDto> deleteUserInfo(Long userId) {
         UserInfoDto userInfoDto = userService.deleteUser(userId);
+        return ResponseEntity.ok(userInfoDto);
+    }
+
+    @Override
+    public ResponseEntity<UserInfoDto> updateUserProfile(Long userId, MultipartFile imageFile)
+        throws IOException {
+        UserInfoDto userInfoDto = userService.updateUserProfile(userId, imageFile);
         return ResponseEntity.ok(userInfoDto);
     }
 
