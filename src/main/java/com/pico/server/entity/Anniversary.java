@@ -23,8 +23,6 @@ public class Anniversary {
     @Column(name = "anniversary_id")
     private Long id;
 
-    //추억함
-
     private String title;
     private LocalDate date;
 }
