@@ -70,7 +70,7 @@ public class ScheduleService {
         RepeatInfo birthDayRepeatInfo = createRepeatInfo(birthdayDate, RepeatType.YEARLY);
         Schedule birthday = Schedule.builder()
             .user(user)
-            .title(user.getName() + "님의 생일")
+            .title(user.getUserDetails().getName() + "님의 생일")
             .category(ScheduleType.MINE)
             .startTime(birthdayDate)
             .endTime(birthdayDate)
@@ -87,7 +87,7 @@ public class ScheduleService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-        String myName = user.getName();
+        String myName = user.getUserDetails().getName();
         String partnerName = user.getUserDetails().getPartnerName();
 
         LocalDateTime anniversaryDate = user.getUserDetails().getDday().atTime(0,0,0);

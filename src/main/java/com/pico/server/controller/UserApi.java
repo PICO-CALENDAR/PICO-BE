@@ -20,6 +20,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "유저 API", description = "유저 관련 API")
 @RestController
@@ -222,4 +226,22 @@ public interface UserApi {
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "유저 프로필 사진 변경", description = "유저의 프로필 사진 변경을 진행합니다.")
+    @PostMapping(value = "/update/profile/image", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0001", description = "사용자를 DB에서 찾을 수 없는 경우 발생합니다.",
+                value = """
+                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    ResponseEntity<UserInfoDto> updateUserProfile(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @RequestPart(value = "file") MultipartFile imageFile
+    ) throws IOException;
 }

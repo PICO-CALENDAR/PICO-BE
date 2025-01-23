@@ -9,6 +9,6 @@ public record CoupleUserDto(
     String name
 ) {
     public static CoupleUserDto of(Users user) {
-        return new CoupleUserDto(user.getId(), user.getName());
+        return new CoupleUserDto(user.getId(), user.getUserDetails().getName());
     }
 }

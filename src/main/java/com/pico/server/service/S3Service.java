@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -38,7 +40,12 @@ public class S3Service {
         throws IOException {
         PutObjectRequest objectRequest =  putObjectRequest(uploadFile, USER_IMAGE, fileName);
         s3Client.putObject(objectRequest, RequestBody.fromBytes(uploadFile.getBytes()));
-        return s3Client.utilities().getUrl(builder -> builder.bucket(s3Properties.bucket()).key(fileName)).toExternalForm();
+        return s3Client.utilities().getUrl(builder -> builder.bucket(s3Properties.bucket()).key(String.join("/", USER_IMAGE, fileName))).toExternalForm();
+    }
+
+    public void deleteUserMultipartImage(String fileName) {
+        DeleteObjectRequest objectRequest = deleteObjectRequest(USER_IMAGE, fileName);
+        s3Client.deleteObject(objectRequest);
     }
 
     private PutObjectRequest putObjectRequest(MultipartFile uploadFile, String folder, String filename) {
@@ -47,6 +54,14 @@ public class S3Service {
             .key(String.join("/", folder, filename))
             .contentType(uploadFile.getContentType())
             .contentLength(uploadFile.getSize())
+            .acl(ObjectCannedACL.PUBLIC_READ)
+            .build();
+    }
+
+    private DeleteObjectRequest deleteObjectRequest(String folder, String filename) {
+        return DeleteObjectRequest.builder()
+            .bucket(s3Properties.bucket())
+            .key(String.join("/", folder, filename))
             .build();
     }
 
