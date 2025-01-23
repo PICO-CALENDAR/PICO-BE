@@ -103,6 +103,7 @@ public class UserService {
 
         if(user.getPlatform() == Platform.APPLE) {
             revokeAppleToken(userId);
+            appleRefreshTokenRepository.deleteAppleRefreshTokenByUserId(userId);
         }
 
         if(user.getUserDetails().getPartnerId() != null) {

@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AppleRefreshTokenRepository extends JpaRepository<AppleRefreshToken, Long> {
     Optional<AppleRefreshToken> findByUserId(Long userId);
+    void deleteAppleRefreshTokenByUserId(Long userId);
 }
