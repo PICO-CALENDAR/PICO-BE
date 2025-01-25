@@ -64,7 +64,12 @@ public enum ErrorCode {
     /**
      * Anniversary Errors
      */
-    NOT_FOUND_ANNIVERSARY(404, "AN0001", "해당 기념일을 찾을 수 없습니다.");
+    NOT_FOUND_ANNIVERSARY(404, "AN0001", "해당 기념일을 찾을 수 없습니다."),
+
+    /**
+     * Memorybox Errors
+     */
+    NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;

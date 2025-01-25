@@ -3,6 +3,7 @@ package com.pico.server.service;
 import com.pico.server.dto.LetterDto;
 import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
+import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.entity.Anniversary;
 import com.pico.server.entity.Letter;
@@ -11,6 +12,7 @@ import com.pico.server.entity.Photo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.MemoryboxException;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.repository.AnniversaryRepository;
 import com.pico.server.repository.LetterRepository;
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,12 +78,43 @@ public class MemoryboxService {
 
         return MemoryboxDto.of(memorybox, schedule);
     }
-    //memorybox 저장 -> anniversary update
+
+    @Transactional
+    public MemoryboxDto addPartnerMemory(Long memoryboxId, MemoryboxPartnerRequest request)
+        throws IOException {
+        Memorybox memorybox = memoryboxRepository.findById(memoryboxId)
+            .orElseThrow(() -> new MemoryboxException(ErrorCode.NOT_FOUND_MEMORYBOX));
+        Schedule schedule = memorybox.getSchedule();
+        Hibernate.initialize(schedule);
+        Users user = memorybox.getUser();
+        Hibernate.initialize(user);
+
+        String fileName = USER_PREFIX + memorybox.getUser().getId().toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+        String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
+
+        Letter letter = Letter.builder()
+            .memorybox(memorybox)
+            .content(request.letter())
+            .build();
+
+        Photo photo = Photo.builder()
+            .memorybox(memorybox)
+            .url(url)
+            .build();
+
+        memorybox.addLetters(letter);
+        memorybox.addPhotos(photo);
+        memoryboxRepository.save(memorybox);
+        letterRepository.save(letter);
+        photoRepository.save(photo);
+
+        return MemoryboxDto.of(memorybox, schedule);
+    }
 
 
     @Transactional(readOnly = true)
     public List<Memorybox> findMemoryBoxes(Long anniversaryId, Long userId, Long partnerId) {
-        List<Memorybox>
+
     }
     //anniversary, userId, partnerId 따라서 memorybox 조회
 }

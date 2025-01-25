@@ -4,6 +4,7 @@ import com.pico.server.controller.MemoryboxApi;
 import com.pico.server.dto.LetterDto;
 import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
+import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.ListResponse;
@@ -44,6 +45,17 @@ public class MemoryboxController implements MemoryboxApi {
         Anniversary anniversary = anniversaryService.findById(anniversaryId);
         Users user = userService.findById(userId);
         MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user,anniversary, request);
+
+        List<LetterDto> letters = LetterDto.from(memoryBox.letters());
+        List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<MemoryboxResponse> addPartnerMemory(Long memoryboxId, MemoryboxPartnerRequest request)
+        throws IOException {
+        MemoryboxDto memoryBox = memoryboxService.addPartnerMemory(memoryboxId, request);
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
