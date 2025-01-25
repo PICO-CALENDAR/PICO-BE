@@ -53,7 +53,7 @@ public class MemoryboxService {
     @Transactional
     public MemoryboxDto saveMemoryBox(Users user, Anniversary anniversary, MemoryboxRequest request)
         throws IOException {
-        if(memoryboxRepository.existsByScheduleIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), request.scheduleStartTime(), request.scheduleEndTime())) {
+        if(memoryboxRepository.existsByScheduleScheduleIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), request.scheduleStartTime(), request.scheduleEndTime())) {
             throw new MemoryboxException(ErrorCode.DUPLICATE_MEMORYBOX);
         }
 
