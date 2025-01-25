@@ -40,7 +40,6 @@ public class MemoryboxService {
 
     private final MemoryboxRepository memoryboxRepository;
     private final PhotoRepository photoRepository;
-    private final AnniversaryRepository anniversaryRepository;
     private final LetterRepository letterRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
@@ -130,17 +129,20 @@ public class MemoryboxService {
         Schedule schedule = memorybox.getSchedule();
         Hibernate.initialize(schedule);
 
-        Letter letter =letterService.findById(request.letterId());
-        letter.updateContent(request.letter());
+        if(request.letterId() != null) {
+            Letter letter =letterService.findById(request.letterId());
+            letter.updateContent(request.letter());
+            letterRepository.save(letter);
+        }
 
-        Photo photo = photoService.findById(request.photoId());
-        String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
-        s3Service.deletePhotoMultipartImage(fileName);
-        String url = s3Service.putPhotoMultipartImage(request.photo(), fileName);
-        photo.updateUrl(url);
-
-        photoRepository.save(photo);
-        letterRepository.save(letter);
+        if(request.photoId() != null) {
+            Photo photo = photoService.findById(request.photoId());
+            String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+            s3Service.deletePhotoMultipartImage(fileName);
+            String url = s3Service.putPhotoMultipartImage(request.photo(), fileName);
+            photo.updateUrl(url);
+            photoRepository.save(photo);
+        }
         return MemoryboxDto.of(memorybox, schedule);
     }
 
