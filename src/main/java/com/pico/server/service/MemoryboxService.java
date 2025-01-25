@@ -6,6 +6,7 @@ import com.pico.server.dto.PhotoDto;
 import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
+import com.pico.server.dto.response.MemoryboxResponse;
 import com.pico.server.entity.Anniversary;
 import com.pico.server.entity.Letter;
 import com.pico.server.entity.Memorybox;
@@ -16,14 +17,17 @@ import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.LetterException;
 import com.pico.server.exception.MemoryboxException;
 import com.pico.server.exception.ScheduleException;
+import com.pico.server.exception.UserException;
 import com.pico.server.repository.AnniversaryRepository;
 import com.pico.server.repository.LetterRepository;
 import com.pico.server.repository.MemoryboxRepository;
 import com.pico.server.repository.PhotoRepository;
 import com.pico.server.repository.ScheduleRepository;
+import com.pico.server.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -39,6 +43,7 @@ public class MemoryboxService {
     private final AnniversaryRepository anniversaryRepository;
     private final LetterRepository letterRepository;
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
     private final S3Service s3Service;
     private final LetterService letterService;
     private final PhotoService photoService;
@@ -135,10 +140,51 @@ public class MemoryboxService {
         return MemoryboxDto.of(memorybox, schedule);
     }
 
+    @Transactional
+    public void deleteMemorybox(Long memoryboxId) {
+        Memorybox memorybox = memoryboxRepository.findById(memoryboxId)
+            .orElseThrow(() -> new MemoryboxException(ErrorCode.NOT_FOUND_MEMORYBOX));
+        memoryboxRepository.delete(memorybox);
+    }
+
+    @Transactional
+    public void deleteAllMemoryBox(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+        memoryboxRepository.deleteByUserIdAndPartnerId(userId, user.getUserDetails().getPartnerId());
+    }
 
     @Transactional(readOnly = true)
-    public List<Memorybox> findMemoryBoxes(Long anniversaryId, Long userId, Long partnerId) {
+    public List<MemoryboxResponse> getAnniversaryMemoryboxes(Long userId, Long anniversaryId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
+        List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
+        List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndPartnerIdAnniversaryId(userId, user.getUserDetails().getPartnerId() ,anniversaryId);
+        for(Memorybox memorybox : memoryboxes) {
+            List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
+            List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
+            MemoryboxDto memoryboxDto = MemoryboxDto.of(memorybox, memorybox.getSchedule());
+            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos));
+        }
+        return memoryboxResponses;
     }
-    //anniversary, userId, partnerId 따라서 memorybox 조회
+
+
+    @Transactional(readOnly = true)
+    public List<MemoryboxResponse> getAllMemoryboxes(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
+        List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndPartnerId(userId, user.getUserDetails().getPartnerId());
+        for(Memorybox memorybox : memoryboxes) {
+            List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
+            List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
+            MemoryboxDto memoryboxDto = MemoryboxDto.of(memorybox, memorybox.getSchedule());
+            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos));
+        }
+        return memoryboxResponses;
+    }
+
 }

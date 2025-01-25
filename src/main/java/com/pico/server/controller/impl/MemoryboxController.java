@@ -76,9 +76,28 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<MemoryboxResponse> deleteMemorybox(Long userId, Long memoryboxId) {
-        return null;
+    public ResponseEntity<Boolean> deleteMemorybox(Long userId, Long memoryboxId) {
+        memoryboxService.deleteMemorybox(memoryboxId);
+        return ResponseEntity.ok(true);
     }
 
-    //조회 로직
+    @Override
+    public ResponseEntity<Boolean> deleteCoupleMemorybox(Long userId) {
+        memoryboxService.deleteAllMemoryBox(userId);
+        return ResponseEntity.ok(true);
+    }
+
+    @Override
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(Long userId, Long anniveraryId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAnniversaryMemoryboxes(userId, anniveraryId);
+        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(Long userId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
+        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+        return ResponseEntity.ok(response);
+    }
 }

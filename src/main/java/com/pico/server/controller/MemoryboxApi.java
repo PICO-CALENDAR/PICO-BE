@@ -72,14 +72,32 @@ public interface MemoryboxApi {
 
     @DeleteMapping("/delete/{memoryboxId}")
     @Operation(summary = "추억함 삭제", description = "기념일에 해당하는 추억함을 삭제합니다.")
-    ResponseEntity<MemoryboxResponse> deleteMemorybox(
+    ResponseEntity<Boolean> deleteMemorybox(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @PathVariable("memoryboxId") Long memoryboxId
     );
 
-    //전체 delete 추가
+    @DeleteMapping("/delete/couple")
+    @Operation(summary = "커플 유저에 해당하는 추억함 삭제", description = "내가 생성한 추억함과 상대방이 생성한 추억함 모두를 삭제합니다.")
+    ResponseEntity<Boolean> deleteCoupleMemorybox(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId
+    );
 
+    @GetMapping("/get/anniversary/{anniveraryId}")
+    @Operation(summary = "기념일에 해당하는 추억함 조회", description = "나와 연인이 생성한 해당 기념일의 추억함들을 조회합니다.")
+    ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+        @PathVariable("anniveraryId") Long anniveraryId
+    );
 
-    //조회 로직 전부 생성
+    @GetMapping("/get/all")
+    @Operation(summary = "나와 상대방의 전체 추억함 조회", description = "나와 연인이 생성한 전체 추억함들을 조회합니다.")
+    ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId
+    );
+
 }

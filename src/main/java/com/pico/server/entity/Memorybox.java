@@ -1,5 +1,6 @@
 package com.pico.server.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,9 +35,9 @@ public class Memorybox extends BaseEntity{
     private LocalDateTime scheduleEndTime;
     private LocalDateTime opendate;
 
-    @OneToMany(mappedBy = "memorybox")
+    @OneToMany(mappedBy = "memorybox", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Letter> letters = new ArrayList<>();
-    @OneToMany(mappedBy = "memorybox")
+    @OneToMany(mappedBy = "memorybox", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Photo> photos = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
