@@ -24,6 +24,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class S3Service {
 
     private static final String USER_IMAGE = "user-image";
+    private static final String PHOTO = "photos";
 
     private final S3Presigner preSigner;
     private final S3Properties s3Properties;
@@ -34,6 +35,18 @@ public class S3Service {
 
     public String putUserImage(MultipartFile uploadFile, String fileName) {
         return putPreSignedUrl(uploadFile, USER_IMAGE, fileName);
+    }
+
+    public String putPhotoMultipartImage(MultipartFile uploadFile, String fileName)
+        throws IOException {
+        PutObjectRequest objectRequest =  putObjectRequest(uploadFile, PHOTO, fileName);
+        s3Client.putObject(objectRequest, RequestBody.fromBytes(uploadFile.getBytes()));
+        return s3Client.utilities().getUrl(builder -> builder.bucket(s3Properties.bucket()).key(String.join("/", USER_IMAGE, fileName))).toExternalForm();
+    }
+
+    public void deletePhotoMultipartImage(String fileName) {
+        DeleteObjectRequest objectRequest = deleteObjectRequest(PHOTO, fileName);
+        s3Client.deleteObject(objectRequest);
     }
 
     public String putUserMultipartImage(MultipartFile uploadFile, String fileName)

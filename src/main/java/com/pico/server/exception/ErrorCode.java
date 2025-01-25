@@ -59,7 +59,28 @@ public enum ErrorCode {
      * Invite Code Errors
      */
     NOT_FOUND_INVITE_CODE(404, "IC0001", "해당 초대코드를 찾을 수 없습니다."),
-    ALREADY_PARTNER_EXISTS(400, "IC0002", "이미 연인관계가 맺어진 사용자 입니다.");
+    ALREADY_PARTNER_EXISTS(400, "IC0002", "이미 연인관계가 맺어진 사용자 입니다."),
+
+    /**
+     * Anniversary Errors
+     */
+    NOT_FOUND_ANNIVERSARY(404, "AN0001", "해당 기념일을 찾을 수 없습니다."),
+
+    /**
+     * Memorybox Errors
+     */
+    NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다."),
+    DUPLICATE_MEMORYBOX(400, "MB0002", "같은 일정에 대해서는 추억함을 1개만 생성할 수 있습니다."),
+
+    /**
+     * Letter Errors
+     */
+    NOT_FOUND_LETTER(404, "LT0001", "해당 편지를 찾을 수 없습니다."),
+
+    /**
+     * Photo Errors
+     */
+    NOT_FOUND_PHOTO(404, "PH0001", "해당 사진을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;
