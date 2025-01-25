@@ -29,4 +29,6 @@ public class Letter {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memorybox_id", nullable = false)
     private Memorybox memorybox;
+
+    public void updateContent(String content) { this.content = content;}
 }

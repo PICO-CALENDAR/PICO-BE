@@ -29,4 +29,6 @@ public class Photo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memorybox_id", nullable = false)
     private Memorybox memorybox;
+
+    public void updateUrl(String url) { this.url = url;}
 }

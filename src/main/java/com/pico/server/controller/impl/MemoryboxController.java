@@ -6,6 +6,7 @@ import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
 import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
+import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
@@ -53,9 +54,9 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<MemoryboxResponse> addPartnerMemory(Long memoryboxId, MemoryboxPartnerRequest request)
+    public ResponseEntity<MemoryboxResponse> addPartnerMemory(Long userId, Long memoryboxId, MemoryboxPartnerRequest request)
         throws IOException {
-        MemoryboxDto memoryBox = memoryboxService.addPartnerMemory(memoryboxId, request);
+        MemoryboxDto memoryBox = memoryboxService.addPartnerMemory(userId, memoryboxId, request);
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
@@ -65,12 +66,19 @@ public class MemoryboxController implements MemoryboxApi {
 
     @Override
     public ResponseEntity<MemoryboxResponse> updateMemorybox(Long userId, Long memoryboxId,
-        MemoryboxUpdateRequest request) {
-        return null;
+        MemoryboxUpdateRequest request) throws IOException {
+        MemoryboxDto memoryBox = memoryboxService.updateMemorybox(userId, memoryboxId, request);
+
+        List<LetterDto> letters = LetterDto.from(memoryBox.letters());
+        List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<MemoryboxResponse> deleteMemorybox(Long userId, Long memoryboxId) {
         return null;
     }
+
+    //조회 로직
 }

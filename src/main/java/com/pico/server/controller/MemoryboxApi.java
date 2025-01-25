@@ -2,6 +2,7 @@ package com.pico.server.controller;
 
 import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
+import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.ErrorResponse;
@@ -50,20 +51,22 @@ public interface MemoryboxApi {
     @PostMapping("/add/partner/{memoryboxId}")
     @Operation(summary = "기존 추억함에 상대방 편지 및 사진 추가", description = "이미 연인이 생성한 추억함에 편지와 사진을 추가합니다.")
     ResponseEntity<MemoryboxResponse> addPartnerMemory(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
         @PathVariable("memoryboxId") Long memoryboxId,
         @Valid
         @RequestBody MemoryboxPartnerRequest request
     ) throws IOException;
 
     @PatchMapping("/update/{memoryboxId}")
-    @Operation(summary = "추억함 수정", description = "기념일에 해당하는 추억함을 수정합니다.")
+    @Operation(summary = "추억함 수정", description = "기념일에 해당하는 추억함의 편지와 사진을 수정합니다.")
     ResponseEntity<MemoryboxResponse> updateMemorybox(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
         @PathVariable("memoryboxId") Long memoryboxId,
         @Valid
         @RequestBody MemoryboxUpdateRequest request
-    );
+    ) throws IOException;
 
     //update 한개 추가
 

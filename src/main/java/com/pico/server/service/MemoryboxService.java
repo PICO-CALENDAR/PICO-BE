@@ -5,6 +5,7 @@ import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
 import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
+import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.entity.Anniversary;
 import com.pico.server.entity.Letter;
 import com.pico.server.entity.Memorybox;
@@ -12,6 +13,7 @@ import com.pico.server.entity.Photo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.LetterException;
 import com.pico.server.exception.MemoryboxException;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.repository.AnniversaryRepository;
@@ -38,6 +40,8 @@ public class MemoryboxService {
     private final LetterRepository letterRepository;
     private final ScheduleRepository scheduleRepository;
     private final S3Service s3Service;
+    private final LetterService letterService;
+    private final PhotoService photoService;
 
     private final String PHOTO_PREFIX = "PHOTO_";
     private final String USER_PREFIX = "USER_";
@@ -80,16 +84,14 @@ public class MemoryboxService {
     }
 
     @Transactional
-    public MemoryboxDto addPartnerMemory(Long memoryboxId, MemoryboxPartnerRequest request)
+    public MemoryboxDto addPartnerMemory(Long userId, Long memoryboxId, MemoryboxPartnerRequest request)
         throws IOException {
         Memorybox memorybox = memoryboxRepository.findById(memoryboxId)
             .orElseThrow(() -> new MemoryboxException(ErrorCode.NOT_FOUND_MEMORYBOX));
         Schedule schedule = memorybox.getSchedule();
         Hibernate.initialize(schedule);
-        Users user = memorybox.getUser();
-        Hibernate.initialize(user);
 
-        String fileName = USER_PREFIX + memorybox.getUser().getId().toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+        String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
         String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
 
         Letter letter = Letter.builder()
@@ -108,6 +110,28 @@ public class MemoryboxService {
         letterRepository.save(letter);
         photoRepository.save(photo);
 
+        return MemoryboxDto.of(memorybox, schedule);
+    }
+
+    @Transactional
+    public MemoryboxDto updateMemorybox(Long userId, Long memoryboxId, MemoryboxUpdateRequest request)
+        throws IOException {
+        Memorybox memorybox = memoryboxRepository.findById(memoryboxId)
+            .orElseThrow(() -> new MemoryboxException(ErrorCode.NOT_FOUND_MEMORYBOX));
+        Schedule schedule = memorybox.getSchedule();
+        Hibernate.initialize(schedule);
+
+        Letter letter =letterService.findById(request.letterId());
+        letter.updateContent(request.letter());
+
+        Photo photo = photoService.findById(request.photoId());
+        String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+        s3Service.deletePhotoMultipartImage(fileName);
+        String url = s3Service.putPhotoMultipartImage(request.photo(), fileName);
+        photo.updateUrl(url);
+
+        photoRepository.save(photo);
+        letterRepository.save(letter);
         return MemoryboxDto.of(memorybox, schedule);
     }
 

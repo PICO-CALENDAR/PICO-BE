@@ -69,7 +69,17 @@ public enum ErrorCode {
     /**
      * Memorybox Errors
      */
-    NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다.");
+    NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다."),
+
+    /**
+     * Letter Errors
+     */
+    NOT_FOUND_LETTER(404, "LT0001", "해당 편지를 찾을 수 없습니다."),
+
+    /**
+     * Photo Errors
+     */
+    NOT_FOUND_PHOTO(404, "PH0001", "해당 사진을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;
