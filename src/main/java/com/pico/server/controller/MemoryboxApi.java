@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "추억함 API", description = "추억함 관련 API")
 @RestController
+@SecurityRequirement(name = "JWT")
 @RequestMapping("/api/v1/memorybox")
 @ApiResponse(responseCode = "200", description = "OK")
 public interface MemoryboxApi {
