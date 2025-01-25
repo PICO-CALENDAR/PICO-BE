@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +30,32 @@ public class Memorybox extends BaseEntity{
     @Column(name = "memorybox_id")
     private Long id;
 
-    private String letter;
     private LocalDateTime scheduleStartTime;
     private LocalDateTime scheduleEndTime;
     private LocalDateTime opendate;
 
     @OneToMany(mappedBy = "memorybox")
+    List<Letter> letters = new ArrayList<>();
+    @OneToMany(mappedBy = "memorybox")
     List<Photo> photos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    Users user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id", nullable = false)
+    Schedule schedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anniversary_id", nullable = false)
     Anniversary anniversary;
+
+    public void addLetters(Letter letter) {
+        this.letters.add(letter);
+    }
+
+    public void addPhotos(Photo photo) {
+        this.photos.add(photo);
+    }
 }

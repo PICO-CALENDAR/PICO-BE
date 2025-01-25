@@ -59,7 +59,12 @@ public enum ErrorCode {
      * Invite Code Errors
      */
     NOT_FOUND_INVITE_CODE(404, "IC0001", "해당 초대코드를 찾을 수 없습니다."),
-    ALREADY_PARTNER_EXISTS(400, "IC0002", "이미 연인관계가 맺어진 사용자 입니다.");
+    ALREADY_PARTNER_EXISTS(400, "IC0002", "이미 연인관계가 맺어진 사용자 입니다."),
+
+    /**
+     * Anniversary Errors
+     */
+    NOT_FOUND_ANNIVERSARY(404, "AN0001", "해당 기념일을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;

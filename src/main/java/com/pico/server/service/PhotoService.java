@@ -10,6 +10,4 @@ import org.springframework.transaction.annotation.Transactional;
 public class PhotoService {
     private final PhotoRepository photoRepository;
 
-    @Transactional
-    public
 }
