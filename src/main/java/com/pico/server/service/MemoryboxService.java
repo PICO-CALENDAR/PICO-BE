@@ -54,6 +54,10 @@ public class MemoryboxService {
     @Transactional
     public MemoryboxDto saveMemoryBox(Users user, Anniversary anniversary, MemoryboxRequest request)
         throws IOException {
+        if(memoryboxRepository.existsByScheduleIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), request.scheduleStartTime(), request.scheduleEndTime())) {
+            throw new MemoryboxException(ErrorCode.DUPLICATE_MEMORYBOX);
+        }
+
         Schedule schedule = scheduleRepository.findById(request.scheduleId()).orElseThrow(() -> new ScheduleException(
             ErrorCode.NOT_FOUND_SCHEDULE));
         LocalDateTime opendate = anniversary.getDate().atTime(LocalTime.of(9,0));

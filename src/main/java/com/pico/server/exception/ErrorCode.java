@@ -70,6 +70,7 @@ public enum ErrorCode {
      * Memorybox Errors
      */
     NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다."),
+    DUPLICATE_MEMORYBOX(400, "MB0002", "같은 일정에 대해서는 추억함을 1개만 생성할 수 있습니다."),
 
     /**
      * Letter Errors
