@@ -10,6 +10,7 @@ import com.pico.server.exception.AuthException;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.UserException;
 import com.pico.server.repository.AppleRefreshTokenRepository;
+import com.pico.server.repository.MemoryboxRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import com.pico.server.security.enums.Platform;
@@ -32,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final AppleRefreshTokenRepository appleRefreshTokenRepository;
+    private final MemoryboxRepository memoryboxRepository;
     private final AppleApiClient appleApiClient;
     private final S3Service s3Service;
 
@@ -114,6 +116,7 @@ public class UserService {
         }
         scheduleRepository.deleteAllByUser(user);
         userRepository.delete(user);
+        memoryboxRepository.deleteByUserId(userId);
         return UserInfoDto.of(user, user.getUserDetails());
     }
 

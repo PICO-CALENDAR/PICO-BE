@@ -47,8 +47,9 @@ public class MemoryboxService {
     private final LetterService letterService;
     private final PhotoService photoService;
 
-    private final String PHOTO_PREFIX = "PHOTO_";
+    private final String PHOTO_PREFIX = "PHOTO_OPEN";
     private final String USER_PREFIX = "USER_";
+    private final String SCHEDULE_PREFIX = "SCHEDULE_START_";
 
     @Transactional
     public MemoryboxDto saveMemoryBox(Users user, Anniversary anniversary, MemoryboxRequest request)
@@ -60,7 +61,7 @@ public class MemoryboxService {
         Schedule schedule = scheduleRepository.findById(request.scheduleId()).orElseThrow(() -> new ScheduleException(
             ErrorCode.NOT_FOUND_SCHEDULE));
         LocalDateTime opendate = anniversary.getDate().atTime(LocalTime.of(9,0));
-        String fileName = USER_PREFIX + user.getId().toString() + PHOTO_PREFIX + opendate.toString();
+        String fileName = USER_PREFIX + user.getId().toString() + SCHEDULE_PREFIX + request.scheduleStartTime().toString() + PHOTO_PREFIX + opendate.toString();
         String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
 
         Memorybox memorybox =  Memorybox.builder()
@@ -99,7 +100,7 @@ public class MemoryboxService {
         Schedule schedule = memorybox.getSchedule();
         Hibernate.initialize(schedule);
 
-        String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+        String fileName = USER_PREFIX + userId.toString() +SCHEDULE_PREFIX + memorybox.getScheduleStartTime().toString() +PHOTO_PREFIX + memorybox.getOpendate().toString();
         String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
 
         Letter letter = Letter.builder()
@@ -137,7 +138,7 @@ public class MemoryboxService {
 
         if(request.photoId() != null) {
             Photo photo = photoService.findById(request.photoId());
-            String fileName = USER_PREFIX + userId.toString() + PHOTO_PREFIX + memorybox.getOpendate().toString();
+            String fileName = USER_PREFIX + userId.toString() +SCHEDULE_PREFIX + memorybox.getScheduleStartTime().toString() +PHOTO_PREFIX + memorybox.getOpendate().toString();
             s3Service.deletePhotoMultipartImage(fileName);
             String url = s3Service.putPhotoMultipartImage(request.photo(), fileName);
             photo.updateUrl(url);
