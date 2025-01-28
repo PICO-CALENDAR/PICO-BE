@@ -11,6 +11,9 @@ spring:
         order_inserts: true
         order_updates: true
         default_batch_fetch_size: 100
+  servlet:
+    multipart:
+      enabled: true
   cloud:
     aws:
       s3:
