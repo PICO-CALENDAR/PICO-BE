@@ -94,6 +94,11 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserInfoDto> updateUserProfile(Long userId, MultipartFile imageFile)
         throws IOException {
+        System.out.println("Received file:");
+        System.out.println("Original Filename: " + imageFile.getOriginalFilename());
+        System.out.println("File Size: " + imageFile.getSize());
+        System.out.println("Content Type: " + imageFile.getContentType());
+
         UserInfoDto userInfoDto = userService.updateUserProfile(userId, imageFile);
         return ResponseEntity.ok(userInfoDto);
     }
