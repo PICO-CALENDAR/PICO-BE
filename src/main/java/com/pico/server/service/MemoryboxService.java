@@ -3,7 +3,6 @@ package com.pico.server.service;
 import com.pico.server.dto.LetterDto;
 import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
-import com.pico.server.dto.request.MemoryboxPartnerRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.MemoryboxResponse;
@@ -14,11 +13,9 @@ import com.pico.server.entity.Photo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
-import com.pico.server.exception.LetterException;
 import com.pico.server.exception.MemoryboxException;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.exception.UserException;
-import com.pico.server.repository.AnniversaryRepository;
 import com.pico.server.repository.LetterRepository;
 import com.pico.server.repository.MemoryboxRepository;
 import com.pico.server.repository.PhotoRepository;
@@ -56,11 +53,13 @@ public class MemoryboxService {
         throws IOException {
         if(memoryboxRepository.existsByScheduleScheduleIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), request.scheduleStartTime(), request.scheduleEndTime())) {
             throw new MemoryboxException(ErrorCode.DUPLICATE_MEMORYBOX);
+            //얘도 바꿔야함(userID로 구분되어야함)
         }
 
         Schedule schedule = scheduleRepository.findById(request.scheduleId()).orElseThrow(() -> new ScheduleException(
             ErrorCode.NOT_FOUND_SCHEDULE));
         LocalDateTime opendate = anniversary.getDate().atTime(LocalTime.of(9,0));
+        //schedule로 변경
         String fileName = USER_PREFIX + user.getId().toString() + SCHEDULE_PREFIX + request.scheduleStartTime().toString() + PHOTO_PREFIX + opendate.toString();
         String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
 
@@ -72,36 +71,6 @@ public class MemoryboxService {
             .schedule(schedule)
             .anniversary(anniversary)
             .build();
-
-        Letter letter = Letter.builder()
-            .memorybox(memorybox)
-            .content(request.letter())
-            .build();
-
-        Photo photo = Photo.builder()
-            .memorybox(memorybox)
-            .url(url)
-            .build();
-
-        memorybox.addLetters(letter);
-        memorybox.addPhotos(photo);
-        memoryboxRepository.save(memorybox);
-        letterRepository.save(letter);
-        photoRepository.save(photo);
-
-        return MemoryboxDto.of(memorybox, schedule);
-    }
-
-    @Transactional
-    public MemoryboxDto addPartnerMemory(Long userId, Long memoryboxId, MemoryboxPartnerRequest request)
-        throws IOException {
-        Memorybox memorybox = memoryboxRepository.findById(memoryboxId)
-            .orElseThrow(() -> new MemoryboxException(ErrorCode.NOT_FOUND_MEMORYBOX));
-        Schedule schedule = memorybox.getSchedule();
-        Hibernate.initialize(schedule);
-
-        String fileName = USER_PREFIX + userId.toString() +SCHEDULE_PREFIX + memorybox.getScheduleStartTime().toString() +PHOTO_PREFIX + memorybox.getOpendate().toString();
-        String url = s3Service.putPhotoMultipartImage(request.photo(),fileName);
 
         Letter letter = Letter.builder()
             .memorybox(memorybox)
