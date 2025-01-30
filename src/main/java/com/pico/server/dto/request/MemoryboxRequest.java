@@ -8,7 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 public record MemoryboxRequest(
-    @Schema(name = "관련된 일정 원본 ID", description = "1")
+    @Schema(description = "관련된 일정 원본 ID", example = "1")
     Long scheduleId,
     @Schema(description = "일정 시작 시간")
     @JsonFormat(timezone = "Asia/Seoul")
@@ -16,10 +16,10 @@ public record MemoryboxRequest(
     @Schema(description = "일정 종료 시간")
     @JsonFormat(timezone = "Asia/Seoul")
     LocalDateTime scheduleEndTime,
-    @Schema(name = "편지", description = "추억함에 등록할 편지 내용 입니다.")
+    @Schema(description = "편지", example = "추억함에 등록할 편지 내용 입니다.")
     @NotNull
     String letter,
-    @Schema(name = "사진", description = "추억함에 등록할 사진 입니다.")
+    @Schema(description = "사진", example = "추억함에 등록할 사진 입니다.")
     @Nullable
     MultipartFile photo
 

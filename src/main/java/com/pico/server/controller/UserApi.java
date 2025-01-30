@@ -229,7 +229,7 @@ public interface UserApi {
 
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "유저 프로필 사진 변경", description = "유저의 프로필 사진 변경을 진행합니다.")
-    @PostMapping(value = "/update/profile/image", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/update/profile/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {

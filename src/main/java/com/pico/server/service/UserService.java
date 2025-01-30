@@ -90,7 +90,9 @@ public class UserService {
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         String fileName = USER_PROFILE_PREFIX + userId.toString();
-        s3Service.deleteUserMultipartImage(fileName);
+        if(user.getProfileImage().contains(USER_PROFILE_PREFIX)) {
+            s3Service.deleteUserMultipartImage(fileName);
+        }
         String putImageUrl = s3Service.putUserMultipartImage(uploadFile, fileName);
 
         user.updateProfileImage(putImageUrl);
