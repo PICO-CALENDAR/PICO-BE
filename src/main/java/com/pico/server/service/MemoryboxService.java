@@ -51,9 +51,8 @@ public class MemoryboxService {
     @Transactional
     public MemoryboxDto saveMemoryBox(Users user, Anniversary anniversary, MemoryboxRequest request)
         throws IOException {
-        if(memoryboxRepository.existsByScheduleScheduleIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), request.scheduleStartTime(), request.scheduleEndTime())) {
+        if(memoryboxRepository.existsByScheduleScheduleIdAndScheduleUserIdAndScheduleStartTimeAndScheduleEndTime(request.scheduleId(), user.getId(),request.scheduleStartTime(), request.scheduleEndTime())) {
             throw new MemoryboxException(ErrorCode.DUPLICATE_MEMORYBOX);
-            //얘도 바꿔야함(userID로 구분되어야함)
         }
 
         Schedule schedule = scheduleRepository.findById(request.scheduleId()).orElseThrow(() -> new ScheduleException(

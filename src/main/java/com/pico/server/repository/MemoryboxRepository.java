@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
 
-    boolean existsByScheduleScheduleIdAndScheduleStartTimeAndScheduleEndTime(Long scheduleId, LocalDateTime startTime, LocalDateTime endTime);
+    boolean existsByScheduleScheduleIdAndScheduleUserIdAndScheduleStartTimeAndScheduleEndTime(Long scheduleId, Long userId,LocalDateTime startTime, LocalDateTime endTime);
     void deleteByUserId(Long userId);
 
     @Query("DELETE FROM Memorybox m where m.user.id = :userId OR m.user.id = :partnerId")
