@@ -1,5 +1,6 @@
 package com.pico.server.controller.handler;
 
+import com.pico.server.dto.ErrorReportDto;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.exception.AuthException;
 import com.pico.server.exception.BaseException;
@@ -89,6 +90,7 @@ public class WebExceptionHandler {
 
         log.error("[UnhandledException] {} \n", dump);
 
+        eventPublisher.publishEvent(new ErrorReportDto(exception.getMessage(), dump.toString()));
         return ResponseEntity
             .internalServerError()
             .body(ErrorResponse.of(ErrorCode.UNKNOWN_SERVER_ERROR));
