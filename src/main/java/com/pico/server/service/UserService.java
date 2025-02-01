@@ -142,8 +142,7 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean revokeOnlyAppleToken(String authorizationCode) {
-        String refreshToken = appleApiClient.getAppleRefreshToken(authorizationCode);
+    public Boolean revokeOnlyAppleToken(String refreshToken) {
         try {
             appleApiClient.revokeToken(refreshToken);
             return true;

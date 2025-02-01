@@ -1,6 +1,7 @@
 package com.pico.server.controller.impl;
 
 import com.pico.server.controller.AuthApi;
+import com.pico.server.dto.request.AppleDeleteRequest;
 import com.pico.server.dto.request.AppleLoginRequest;
 import com.pico.server.dto.request.GoogleLoginRequest;
 import com.pico.server.dto.request.TokenReissueRequest;
@@ -54,7 +55,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> revokeAppleRefreshToken(AppleLoginRequest request) {
-        return ResponseEntity.ok(userService.revokeOnlyAppleToken(request.authorizationCode()));
+    public ResponseEntity<Boolean> revokeAppleRefreshToken(AppleDeleteRequest request) {
+        return ResponseEntity.ok(userService.revokeOnlyAppleToken(request.refreshToken()));
     }
 }
