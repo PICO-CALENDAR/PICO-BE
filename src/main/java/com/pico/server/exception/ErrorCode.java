@@ -54,6 +54,8 @@ public enum ErrorCode {
      */
     NOT_FOUND_SCHEDULE(404, "SC0001", "해당 일정을 찾을 수 없습니다."),
     NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다."),
+    NOT_ANNIVERSARY_SCHEDULE(400, "SC0003", "해당 일정은 기념일이 아닙니다."),
+    NOT_COUPLE_ANNIVERSARY_SCHEDULE(400, "SC0004", "해당 일정은 커플 기념일이 아닙니다."),
 
     /**
      * Invite Code Errors

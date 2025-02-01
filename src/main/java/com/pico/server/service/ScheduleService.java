@@ -3,6 +3,7 @@ package com.pico.server.service;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.UpdateScheduleDto;
+import com.pico.server.entity.Anniversary;
 import com.pico.server.entity.RepeatInfo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
@@ -11,6 +12,7 @@ import com.pico.server.enums.ScheduleType;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.exception.UserException;
+import com.pico.server.repository.AnniversaryRepository;
 import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
@@ -30,6 +32,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final RepeatInfoRepository repeatInfoRepository;
     private final UserRepository userRepository;
+    private final AnniversaryRepository anniversaryRepository;
 
     @Transactional
     public ScheduleDto createSchedule(Long userId, CreateScheduleDto createScheduleDto) {
@@ -52,6 +55,7 @@ public class ScheduleService {
             .meetingPeople(createScheduleDto.meetingPeople())
             .isRepeat(createScheduleDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .repeatInfo(repeatInfo)
             .build();
 
@@ -77,9 +81,37 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .repeatInfo(birthDayRepeatInfo)
             .build();
         scheduleRepository.save(birthday);
+    }
+    @Transactional
+    public void createBasicAnniversarySchedules(Long userId) {
+        List<Schedule> schedules = new ArrayList<>();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        List<Anniversary> anniversaries = anniversaryRepository.findAll();
+        for(Anniversary anniversary : anniversaries) {
+            Schedule schedule = Schedule.builder()
+                .user(user)
+                .title(anniversary.getTitle())
+                .category(ScheduleType.OURS)
+                .startTime(anniversary.getDate().atTime(0,0,0))
+                .endTime(anniversary.getDate().atTime(0,0,0))
+                .isAllDay(true)
+                .isRepeat(true)
+                .isAnniversary(true)
+                .isCoupleAnniversary(false)
+                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0)))
+                .build();
+
+            schedules.add(schedule);
+        }
+
+
+        scheduleRepository.saveAll(schedules);
     }
 
     @Transactional
@@ -101,6 +133,7 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(true)
+            .isCoupleAnniversary(true)
             .repeatInfo(anniverSaryRepeatInfo)
             .build();
         scheduleRepository.save(anniversary);
@@ -172,6 +205,7 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(changedRepeatInfo)
             .build();
@@ -213,6 +247,7 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(changedRepeatInfo)
             .build();
@@ -254,12 +289,29 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(repeatInfo)
             .build();
 
         scheduleRepository.save(updatedSchedule);
         return ScheduleDto.from(updatedSchedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getThreeMonthsAnniversarySchedules(Long userId) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        Long partnerId = user.getUserDetails().getPartnerId();
+        LocalDate afterThreeMonths = LocalDate.now().plusMonths(3);
+        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(afterThreeMonths, userId, partnerId);
+        //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
+        for(Schedule schedule : schedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        return scheduleDtos;
     }
 
     @Transactional(readOnly = true)
@@ -279,7 +331,7 @@ public class ScheduleService {
         LocalDateTime weekEnd = todayDate.with(DayOfWeek.SUNDAY).with(LocalTime.MAX);
 
         //사용자 일정 조회
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRange(userId, weekStart, weekEnd);
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(userId, weekStart, weekEnd);
         for(Schedule schedule : schedules) {
             scheduleDtos.add(ScheduleDto.from(schedule));
         }
@@ -294,9 +346,16 @@ public class ScheduleService {
 
         //파트너 일정 조회
         if(user.getUserDetails().getPartnerId()!= null) {
-            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
             for(Schedule schedule : partnerSchedules) {
                 scheduleDtos.add(ScheduleDto.fromPartner(schedule));
+            }
+
+            List<Schedule> partnerRecursiveSchedules = scheduleRepository.findPartnerSchedules(user.getUserDetails().getPartnerId());
+            for(Schedule schedule : partnerRecursiveSchedules) {
+                if (isRecurringScheduleWithinRange(schedule, weekStart, weekEnd)) {
+                    scheduleDtos.add(ScheduleDto.from(schedule));
+                }
             }
         }
 
@@ -330,8 +389,13 @@ public class ScheduleService {
 
         //파트너 일정 조회
         if(user.getUserDetails().getPartnerId()!= null) {
-            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), startDate, endDate);
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(user.getUserDetails().getPartnerId(), startDate, endDate);
             for(Schedule schedule : partnerSchedules) {
+                scheduleDtos.add(ScheduleDto.fromPartner(schedule));
+            }
+
+            List<Schedule> partnerRecursiveSchedules = scheduleRepository.findPartnerSchedules(user.getUserDetails().getPartnerId());
+            for(Schedule schedule : partnerRecursiveSchedules) {
                 scheduleDtos.add(ScheduleDto.fromPartner(schedule));
             }
         }
@@ -341,6 +405,14 @@ public class ScheduleService {
     private RepeatInfo createRepeatInfo(LocalDateTime startTime, RepeatType repeatType) {
         return RepeatInfo.builder()
             .repeatType(repeatType)
+            .repeatStartDate(startTime)
+            .repeatEndDate(null)
+            .build();
+    }
+
+    private RepeatInfo createYearlyRepeatInfo(LocalDateTime startTime) {
+        return RepeatInfo.builder()
+            .repeatType(RepeatType.YEARLY)
             .repeatStartDate(startTime)
             .repeatEndDate(null)
             .build();
@@ -401,6 +473,7 @@ public class ScheduleService {
             .isAllDay(schedule.getIsAllDay())
             .isRepeat(schedule.getIsRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(schedule.getMeetingPeople())
             .repeatInfo(repeatInfo)
             .build();
@@ -442,6 +515,7 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(false)
             .isAnniversary(true)
+            .isCoupleAnniversary(true)
             .repeatInfo(null)
             .build();
     }

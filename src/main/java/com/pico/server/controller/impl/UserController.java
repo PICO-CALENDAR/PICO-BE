@@ -46,6 +46,7 @@ public class UserController implements UserApi {
         CreateUserDetailsDto createUserDetailsDto = generateCreateUserDetailsDto(request);
         AuthToken authToken = userRegisterService.register(userId, createUserDetailsDto);
         Users findUser = userService.findById(userId);
+        scheduleService.createBasicAnniversarySchedules(userId);
 
         AuthResponse response = AuthResponse.of(findUser,authToken);
         return ResponseEntity.ok(response);

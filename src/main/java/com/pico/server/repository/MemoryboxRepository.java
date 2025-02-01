@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
 
-    boolean existsByScheduleScheduleIdAndScheduleStartTimeAndScheduleEndTime(Long scheduleId, LocalDateTime startTime, LocalDateTime endTime);
+    boolean existsByScheduleScheduleIdAndScheduleUserIdAndScheduleStartTimeAndScheduleEndTime(Long scheduleId, Long userId,LocalDateTime startTime, LocalDateTime endTime);
     void deleteByUserId(Long userId);
 
     @Query("DELETE FROM Memorybox m where m.user.id = :userId OR m.user.id = :partnerId")
@@ -21,8 +21,12 @@ public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
     @Param("partnerId") Long partnerId);
 
     @Query("SELECT m FROM Memorybox m " +
-        "WHERE m.anniversary.id = :anniversaryId " +
+        "WHERE m.schedule.scheduleId = :scheduleId " +
         "AND (m.user.id = :userId OR m.user.id = :partnerId)")
-    List<Memorybox> findByUserIdAndPartnerIdAnniversaryId(@Param("userId") Long userId,
-        @Param("partnerId") Long partnerId, @Param("anniversaryId") Long anniversaryId);
+    List<Memorybox> findByUserIdAndPartnerIdAndScheduleId(@Param("userId") Long userId,
+        @Param("partnerId") Long partnerId, @Param("scheduleId") Long scheduleId);
+
+    List<Memorybox> findByUserIdAndOpendateIsBefore(Long userId, LocalDateTime opendate);
+
+    List<Memorybox> findByUserIdAndOpendateIsAfter(Long userId, LocalDateTime opendate);
 }

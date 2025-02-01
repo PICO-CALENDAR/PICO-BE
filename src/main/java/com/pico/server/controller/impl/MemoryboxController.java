@@ -2,20 +2,17 @@ package com.pico.server.controller.impl;
 
 import com.pico.server.controller.MemoryboxApi;
 import com.pico.server.dto.LetterDto;
+import com.pico.server.dto.MemoryUserDto;
 import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
-import com.pico.server.dto.request.MemoryboxPartnerRequest;
+import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
-import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
-import com.pico.server.entity.Anniversary;
-import com.pico.server.entity.Letter;
-import com.pico.server.entity.Photo;
 import com.pico.server.entity.Users;
-import com.pico.server.service.AnniversaryService;
 import com.pico.server.service.MemoryboxService;
+import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserService;
 import java.io.IOException;
 import java.util.List;
@@ -29,38 +26,27 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class MemoryboxController implements MemoryboxApi {
 
-    private final AnniversaryService anniversaryService;
     private final MemoryboxService memoryboxService;
+    private final ScheduleService scheduleService;
     private final UserService userService;
 
     @Override
-    public ResponseEntity<ListResponse<AnniversaryResponse>> getThreeMonthsAnniversaries() {
-        List<AnniversaryResponse> anniverssaryList = anniversaryService.findThreeMonthsAnniversaries();
-        ListResponse<AnniversaryResponse> response =ListResponse.from(anniverssaryList);
+    public ResponseEntity<ListResponse<ScheduleDto>> getThreeMonthsAnniversaries(Long userId) {
+        List<ScheduleDto> schedulDtos =  scheduleService.getThreeMonthsAnniversarySchedules(userId);
+        ListResponse<ScheduleDto> response =ListResponse.from(schedulDtos);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<MemoryboxResponse> saveMemorybox(Long userId, Long anniversaryId, MemoryboxRequest request)
+    public ResponseEntity<MemoryboxResponse> saveMemorybox(Long userId, MemoryboxRequest request)
         throws IOException {
-        Anniversary anniversary = anniversaryService.findById(anniversaryId);
         Users user = userService.findById(userId);
-        MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user,anniversary, request);
+        MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user, request);
+        MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
-        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos);
-        return ResponseEntity.ok(response);
-    }
-
-    @Override
-    public ResponseEntity<MemoryboxResponse> addPartnerMemory(Long userId, Long memoryboxId, MemoryboxPartnerRequest request)
-        throws IOException {
-        MemoryboxDto memoryBox = memoryboxService.addPartnerMemory(userId, memoryboxId, request);
-
-        List<LetterDto> letters = LetterDto.from(memoryBox.letters());
-        List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
-        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos);
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author);
         return ResponseEntity.ok(response);
     }
 
@@ -68,10 +54,11 @@ public class MemoryboxController implements MemoryboxApi {
     public ResponseEntity<MemoryboxResponse> updateMemorybox(Long userId, Long memoryboxId,
         MemoryboxUpdateRequest request) throws IOException {
         MemoryboxDto memoryBox = memoryboxService.updateMemorybox(userId, memoryboxId, request);
+        MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
-        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos);
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author);
         return ResponseEntity.ok(response);
     }
 
@@ -88,15 +75,29 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(Long userId, Long anniveraryId) {
-        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAnniversaryMemoryboxes(userId, anniveraryId);
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(Long userId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
         ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(Long userId) {
-        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(Long userId, Long scheduleId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAnniversaryMemoryboxes(userId, scheduleId);
+        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getMyPastMemoryboxes(Long userId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getMyPastMemoryboxes(userId);
+        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ListResponse<MemoryboxResponse>> getMyUpcomingMemoryboxes(Long userId) {
+        List<MemoryboxResponse> memoryBoxes = memoryboxService.getMyUpcomingMemoryboxes(userId);
         ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
     }
