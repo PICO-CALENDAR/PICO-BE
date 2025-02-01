@@ -1,5 +1,6 @@
 package com.pico.server.controller;
 
+import com.pico.server.dto.request.AppleDeleteRequest;
 import com.pico.server.dto.request.AppleLoginRequest;
 import com.pico.server.dto.request.GoogleLoginRequest;
 import com.pico.server.dto.request.WebLoginRequest;
@@ -131,6 +132,6 @@ public interface AuthApi {
     @PostMapping(value = "/revoke/apple/token")
     ResponseEntity<Boolean> revokeAppleRefreshToken(
         @Valid
-        @RequestBody AppleLoginRequest request
+        @RequestBody AppleDeleteRequest request
         );
 }
