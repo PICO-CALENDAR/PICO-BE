@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,7 @@ public class ScheduleService {
             .meetingPeople(createScheduleDto.meetingPeople())
             .isRepeat(createScheduleDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .repeatInfo(repeatInfo)
             .build();
 
@@ -77,6 +79,7 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .repeatInfo(birthDayRepeatInfo)
             .build();
         scheduleRepository.save(birthday);
@@ -101,6 +104,7 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(true)
             .isAnniversary(true)
+            .isCoupleAnniversary(true)
             .repeatInfo(anniverSaryRepeatInfo)
             .build();
         scheduleRepository.save(anniversary);
@@ -172,6 +176,7 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(changedRepeatInfo)
             .build();
@@ -213,6 +218,7 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(changedRepeatInfo)
             .build();
@@ -254,12 +260,28 @@ public class ScheduleService {
             .isAllDay(updateDto.isAllDay())
             .isRepeat(updateDto.isRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(updateDto.meetingPeople())
             .repeatInfo(repeatInfo)
             .build();
 
         scheduleRepository.save(updatedSchedule);
         return ScheduleDto.from(updatedSchedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getThreeMonthsAnniversarySchedules(Long userId) {
+        List<ScheduleDto> scheduleDtos = new ArrayList<>();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        Long partnerId = user.getUserDetails().getPartnerId();
+        LocalDateTime afterThreeMonths = LocalDateTime.now().plusMonths(3);
+        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(afterThreeMonths, userId, partnerId);
+        for(Schedule schedule : schedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
+        }
+        return scheduleDtos;
     }
 
     @Transactional(readOnly = true)
@@ -401,6 +423,7 @@ public class ScheduleService {
             .isAllDay(schedule.getIsAllDay())
             .isRepeat(schedule.getIsRepeat())
             .isAnniversary(false)
+            .isCoupleAnniversary(false)
             .meetingPeople(schedule.getMeetingPeople())
             .repeatInfo(repeatInfo)
             .build();
@@ -442,6 +465,7 @@ public class ScheduleService {
             .isAllDay(true)
             .isRepeat(false)
             .isAnniversary(true)
+            .isCoupleAnniversary(true)
             .repeatInfo(null)
             .build();
     }

@@ -13,6 +13,9 @@ import org.springframework.data.repository.query.Param;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByUserIdAndScheduleId(Long userId, Long scheduleId);
 
+    @Query("SELECT s FROM Schedule s WHERE s.isAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.startTime <= :afterThreeMonths")
+    List<Schedule> findThreeMonthsAnniversarys(@Param("afterThreeMonths") LocalDateTime afterThreeMonths, @Param("userId") Long userId, @Param("partnerId")Long partnerId);
+
     List<Schedule> findByUserId(Long userId);
 
     void deleteAllByUser(Users user);

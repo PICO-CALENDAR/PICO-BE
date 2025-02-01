@@ -51,6 +51,11 @@ public class Schedule extends BaseEntity{
     private String meetingPeople;
     private Boolean isRepeat;
     private Boolean isAnniversary;
+    private Boolean isCoupleAnniversary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "anniversary_id", nullable = true)
+    Anniversary anniversary;
 
     public void updateRepeatInfo(RepeatInfo repeatInfo) {
         this.repeatInfo = repeatInfo;

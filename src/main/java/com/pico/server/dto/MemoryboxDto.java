@@ -15,16 +15,20 @@ import lombok.Builder;
 @Builder
 public record MemoryboxDto(
     Long memoryboxId,
+    Boolean isOpen,
     String scheduleTitle,
     LocalDateTime scheduleStartTime,
     LocalDateTime scheduleEndTime,
     LocalDateTime opendate,
     List<Letter> letters,
-    List<Photo> photos
+    List<Photo> photos,
+
+    MemoryUserDto author
 ) {
-    public static MemoryboxDto of(Memorybox memorybox, Schedule schedule) {
+    public static MemoryboxDto of(Memorybox memorybox, Boolean isOpen, Schedule schedule) {
         return MemoryboxDto.builder()
             .memoryboxId(memorybox.getId())
+            .isOpen(isOpen)
             .scheduleTitle(schedule.getTitle())
             .scheduleStartTime(memorybox.getScheduleStartTime())
             .scheduleEndTime(memorybox.getScheduleEndTime())

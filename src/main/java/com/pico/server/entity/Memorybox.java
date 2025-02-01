@@ -48,10 +48,6 @@ public class Memorybox extends BaseEntity{
     @JoinColumn(name = "schedule_id", nullable = false)
     Schedule schedule;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "anniversary_id", nullable = false)
-    Anniversary anniversary;
-
     public void addLetters(Letter letter) {
         this.letters.add(letter);
     }
