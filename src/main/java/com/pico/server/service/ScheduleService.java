@@ -3,6 +3,7 @@ package com.pico.server.service;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.dto.request.CreateScheduleDto;
 import com.pico.server.dto.request.UpdateScheduleDto;
+import com.pico.server.entity.Anniversary;
 import com.pico.server.entity.RepeatInfo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
@@ -11,17 +12,16 @@ import com.pico.server.enums.ScheduleType;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.exception.UserException;
+import com.pico.server.repository.AnniversaryRepository;
 import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +31,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final RepeatInfoRepository repeatInfoRepository;
     private final UserRepository userRepository;
+    private final AnniversaryRepository anniversaryRepository;
 
     @Transactional
     public ScheduleDto createSchedule(Long userId, CreateScheduleDto createScheduleDto) {
@@ -83,6 +84,33 @@ public class ScheduleService {
             .repeatInfo(birthDayRepeatInfo)
             .build();
         scheduleRepository.save(birthday);
+    }
+    @Transactional
+    public void createBasicAnniversarySchedules(Long userId) {
+        List<Schedule> schedules = new ArrayList<>();
+        Users user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        List<Anniversary> anniversaries = anniversaryRepository.findAll();
+        for(Anniversary anniversary : anniversaries) {
+            Schedule schedule = Schedule.builder()
+                .user(user)
+                .title(anniversary.getTitle())
+                .category(ScheduleType.OURS)
+                .startTime(anniversary.getDate().atTime(0,0,0))
+                .endTime(anniversary.getDate().atTime(0,0,0))
+                .isAllDay(true)
+                .isRepeat(true)
+                .isAnniversary(true)
+                .isCoupleAnniversary(false)
+                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0)))
+                .build();
+
+            schedules.add(schedule);
+        }
+
+
+        scheduleRepository.saveAll(schedules);
     }
 
     @Transactional
@@ -301,7 +329,7 @@ public class ScheduleService {
         LocalDateTime weekEnd = todayDate.with(DayOfWeek.SUNDAY).with(LocalTime.MAX);
 
         //사용자 일정 조회
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRange(userId, weekStart, weekEnd);
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(userId, weekStart, weekEnd);
         for(Schedule schedule : schedules) {
             scheduleDtos.add(ScheduleDto.from(schedule));
         }
@@ -316,9 +344,16 @@ public class ScheduleService {
 
         //파트너 일정 조회
         if(user.getUserDetails().getPartnerId()!= null) {
-            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(user.getUserDetails().getPartnerId(), weekStart, weekEnd);
             for(Schedule schedule : partnerSchedules) {
                 scheduleDtos.add(ScheduleDto.fromPartner(schedule));
+            }
+
+            List<Schedule> partnerRecursiveSchedules = scheduleRepository.findPartnerSchedules(user.getUserDetails().getPartnerId());
+            for(Schedule schedule : partnerRecursiveSchedules) {
+                if (isRecurringScheduleWithinRange(schedule, weekStart, weekEnd)) {
+                    scheduleDtos.add(ScheduleDto.from(schedule));
+                }
             }
         }
 
@@ -352,8 +387,13 @@ public class ScheduleService {
 
         //파트너 일정 조회
         if(user.getUserDetails().getPartnerId()!= null) {
-            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRange(user.getUserDetails().getPartnerId(), startDate, endDate);
+            List<Schedule> partnerSchedules = scheduleRepository.findSchedulesByUserIdAndDateRangeAndIsRepeatNot(user.getUserDetails().getPartnerId(), startDate, endDate);
             for(Schedule schedule : partnerSchedules) {
+                scheduleDtos.add(ScheduleDto.fromPartner(schedule));
+            }
+
+            List<Schedule> partnerRecursiveSchedules = scheduleRepository.findPartnerSchedules(user.getUserDetails().getPartnerId());
+            for(Schedule schedule : partnerRecursiveSchedules) {
                 scheduleDtos.add(ScheduleDto.fromPartner(schedule));
             }
         }
@@ -363,6 +403,14 @@ public class ScheduleService {
     private RepeatInfo createRepeatInfo(LocalDateTime startTime, RepeatType repeatType) {
         return RepeatInfo.builder()
             .repeatType(repeatType)
+            .repeatStartDate(startTime)
+            .repeatEndDate(null)
+            .build();
+    }
+
+    private RepeatInfo createYearlyRepeatInfo(LocalDateTime startTime) {
+        return RepeatInfo.builder()
+            .repeatType(RepeatType.YEARLY)
             .repeatStartDate(startTime)
             .repeatEndDate(null)
             .build();

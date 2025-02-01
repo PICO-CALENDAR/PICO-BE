@@ -60,6 +60,17 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Param("userId") Long userId
     );
 
+    @Query("""
+    SELECT s FROM Schedule s
+    WHERE s.user.id = :partnerId
+    AND ((s.isCoupleAnniversary = true AND s.isAnniversary = true)
+          OR (s.isCoupleAnniversary = false AND s.isAnniversary = false))
+""")
+    List<Schedule> findPartnerSchedules(@Param("partnerId") Long partnerId);
+
+
+    List<Schedule> findSchedulesByUserIdAndIsRepeatTrueAndIsAnniversaryFalse(Long userId, Boolean isRepeat, Boolean isAnniversary);
+
     @Query("DELETE FROM Schedule s WHERE (s.user.id = :userId OR s.user.userDetails.partnerId = :partnerId) AND s.isAnniversary = true")
     void deleteAnniversarySchedulesByUserIdOrPartnerId(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
 }
