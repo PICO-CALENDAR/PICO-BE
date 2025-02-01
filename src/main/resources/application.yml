@@ -85,13 +85,16 @@ spring:
       host: localhost
       port: 6379
 
-
 app:
   token:
     secret-key: testestsetsetsetsetsetsetsetsetestset
     expiration:
       access-token-expiration: 1_200_000
       refresh-token-expiration: 7_200_000
+
+logging:
+  level:
+    root: warn
 ---
 spring:
   jackson:

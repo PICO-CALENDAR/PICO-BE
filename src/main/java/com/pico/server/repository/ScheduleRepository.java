@@ -3,6 +3,7 @@ package com.pico.server.repository;
 import com.pico.server.dto.ScheduleDto;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +14,8 @@ import org.springframework.data.repository.query.Param;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByUserIdAndScheduleId(Long userId, Long scheduleId);
 
-    @Query("SELECT s FROM Schedule s WHERE s.isAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.startTime <= :afterThreeMonths")
-    List<Schedule> findThreeMonthsAnniversarys(@Param("afterThreeMonths") LocalDateTime afterThreeMonths, @Param("userId") Long userId, @Param("partnerId")Long partnerId);
+    @Query("SELECT s FROM Schedule s WHERE s.isAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.anniversary.date <= :afterThreeMonths")
+    List<Schedule> findThreeMonthsAnniversarys(@Param("afterThreeMonths") LocalDate afterThreeMonths, @Param("userId") Long userId, @Param("partnerId") Long partnerId);
 
     List<Schedule> findByUserId(Long userId);
 
@@ -67,9 +68,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
           OR (s.isCoupleAnniversary = false AND s.isAnniversary = false))
 """)
     List<Schedule> findPartnerSchedules(@Param("partnerId") Long partnerId);
-
-
-    List<Schedule> findSchedulesByUserIdAndIsRepeatTrueAndIsAnniversaryFalse(Long userId, Boolean isRepeat, Boolean isAnniversary);
 
     @Query("DELETE FROM Schedule s WHERE (s.user.id = :userId OR s.user.userDetails.partnerId = :partnerId) AND s.isAnniversary = true")
     void deleteAnniversarySchedulesByUserIdOrPartnerId(@Param("userId") Long userId, @Param("partnerId") Long partnerId);

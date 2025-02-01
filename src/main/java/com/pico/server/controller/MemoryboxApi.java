@@ -43,7 +43,7 @@ public interface MemoryboxApi {
     );
 
 
-    @PostMapping("/add")
+    @PostMapping(value =  "/add" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "추억함 추가", description = "기념일에 해당하는 추억함을 생성합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",

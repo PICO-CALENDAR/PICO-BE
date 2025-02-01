@@ -17,6 +17,7 @@ import com.pico.server.repository.RepeatInfoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -304,8 +305,9 @@ public class ScheduleService {
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         Long partnerId = user.getUserDetails().getPartnerId();
-        LocalDateTime afterThreeMonths = LocalDateTime.now().plusMonths(3);
+        LocalDate afterThreeMonths = LocalDate.now().plusMonths(3);
         List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(afterThreeMonths, userId, partnerId);
+        //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
         for(Schedule schedule : schedules) {
             scheduleDtos.add(ScheduleDto.from(schedule));
         }
