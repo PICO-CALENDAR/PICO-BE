@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "추억함 API", description = "추억함 관련 API")
+@Tag(name = "타입캡슐 API", description = "타입캡슐 관련 API")
 @RestController
 @SecurityRequirement(name = "JWT")
 @RequestMapping("/api/v1/memorybox")
@@ -44,7 +44,7 @@ public interface MemoryboxApi {
 
 
     @PostMapping(value =  "/add" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "추억함 추가", description = "기념일에 해당하는 추억함을 생성합니다.")
+    @Operation(summary = "타입캡슐 추가", description = "기념일에 해당하는 타입캡슐을 생성합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -76,7 +76,7 @@ public interface MemoryboxApi {
     ) throws IOException;
 
     @PatchMapping(value = "/update/{memoryboxId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "추억함 수정", description = "기념일에 해당하는 추억함의 편지와 사진을 수정합니다.")
+    @Operation(summary = "타입캡슐 수정", description = "기념일에 해당하는 타입캡슐의 편지와 사진을 수정합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -107,7 +107,7 @@ public interface MemoryboxApi {
     //update 한개 추가
 
     @DeleteMapping("/delete/{memoryboxId}")
-    @Operation(summary = "추억함 삭제", description = "기념일에 해당하는 추억함을 삭제합니다.")
+    @Operation(summary = "타입캡슐 삭제", description = "기념일에 해당하는 타입캡슐을 삭제합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -124,7 +124,7 @@ public interface MemoryboxApi {
     );
 
     @DeleteMapping("/delete/couple")
-    @Operation(summary = "커플 유저에 해당하는 추억함 삭제", description = "내가 생성한 추억함과 상대방이 생성한 추억함 모두를 삭제합니다.")
+    @Operation(summary = "커플 유저에 해당하는 타입캡슐 삭제", description = "내가 생성한 타입캡슐과 상대방이 생성한 타입캡슐 모두를 삭제합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -140,7 +140,7 @@ public interface MemoryboxApi {
     );
 
     @GetMapping("/get/all")
-    @Operation(summary = "나와 상대방의 전체 추억함 조회", description = "나와 연인이 생성한 전체 추억함들을 조회합니다.")
+    @Operation(summary = "나와 상대방의 전체 타입캡슐 조회", description = "나와 연인이 생성한 전체 타입캡슐들을 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -156,7 +156,7 @@ public interface MemoryboxApi {
     );
 
     @GetMapping("/get/anniversary/{scheduleId}")
-    @Operation(summary = "기념일에 해당하는 추억함 조회", description = "나와 연인이 생성한 해당 기념일의 추억함들을 조회합니다.")
+    @Operation(summary = "기념일에 해당하는 타입캡슐 조회", description = "나와 연인이 생성한 해당 기념일의 타입캡슐들을 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -173,7 +173,7 @@ public interface MemoryboxApi {
     );
 
     @GetMapping("/get/opendate/past")
-    @Operation(summary = "오픈 날짜가 지난 추억함 조회", description = "오픈 날짜가 지난 나의 추억함들을 조회합니다.")
+    @Operation(summary = "오픈 날짜가 지난 타입캡슐 조회", description = "오픈 날짜가 지난 나의 타입캡슐들을 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -189,7 +189,7 @@ public interface MemoryboxApi {
     );
 
     @GetMapping("/get/opendate/upcoming")
-    @Operation(summary = "오픈 날짜가 지나지않은 추억함 조회", description = "오픈 날짜가 지나지않은 나의 추억함들을 조회합니다.")
+    @Operation(summary = "오픈 날짜가 지나지않은 타입캡슐 조회", description = "오픈 날짜가 지나지않은 나의 타입캡슐들을 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
