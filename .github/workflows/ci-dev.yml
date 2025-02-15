@@ -1,4 +1,4 @@
-name: Ticket-App CI
+name: PICO-App CI
 
 on:
   pull_request:
