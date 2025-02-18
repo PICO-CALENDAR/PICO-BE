@@ -10,6 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -55,28 +61,3 @@ jobs:
             docker-compose up -d
             # Cleaning up unused Docker images
             docker image prune -f
-
-            docker stop pico-server || true
-            docker rm pico-server || true
-            # Run the new container
-            docker run -d --name pico-server -p 8080:8080 \
-            -e DEV_MYSQL_URL="${{ secrets.DEV_MYSQL_URL }}" \
-            -e DEV_MYSQL_USERNAME="${{ secrets.DEV_MYSQL_USERNAME }}" \
-            -e DEV_MYSQL_PASSWORD="${{ secrets.DEV_MYSQL_PASSWORD }}" \
-            -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
-            -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
-            -e GOOGLE_ANDROID_CLIENT_ID="${{ secrets.GOOGLE_ANDROID_CLIENT_ID }}" \
-            -e GOOGLE_IOS_CLIENT_ID="${{ secrets.GOOGLE_IOS_CLIENT_ID }}" \
-            -e REDIS_AUTH_HOST="${{ secrets.REDIS_AUTH_HOST }}" \
-            -e REDIS_AUTH_PORT="${{ secrets.REDIS_AUTH_PORT }}" \
-            -e GOOGLE_ANDROID_WEB_CLIENT_ID="${{ secrets.GOOGLE_ANDROID_WEB_CLIENT_ID }}" \
-            -e APPLE_APP_ID="${{ secrets.APPLE_APP_ID }}" \
-            -e APPLE_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}" \
-            -e APPLE_KEY_ID="${{ secrets.APPLE_KEY_ID }}" \
-            -e APPLE_PRIVATE_KEY="${{ secrets.APPLE_PRIVATE_KEY }}" \
-            -e AWS_S3_ACCESS_KEY="${{ secrets.AWS_S3_ACCESS_KEY }}" \
-            -e AWS_S3_SECRET_KEY="${{ secrets.AWS_S3_SECRET_KEY }}" \
-            -e AWS_S3_BUCKET="${{ secrets.AWS_S3_BUCKET }}" \
-            -e SLACK_WEBHOOK_URL="${{ secrets.SLACK_WEBHOOK_URL }}" \
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
