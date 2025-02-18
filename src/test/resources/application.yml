@@ -26,10 +26,40 @@ spring:
     password:
     hikari:
       maximum-pool-size: 40
+  cloud:
+    aws:
+      s3:
+        access-key: test
+        secret-key: test
+        bucket: test
 
 app:
+  google:
+    token_uri: https://www.googleapis.com/oauth2/v4/token
+    user-info-uri: https://www.googleapis.com/oauth2/v1/userinfo
+    client-id: test
+    client-secret: test
+  slack:
+    webhook:
+      url: test
   token:
     secret-key: testestsetsetsetsetsetsetsetsetestset
     expiration:
       access-token-expiration: 1_200_000
       refresh-token-expiration: 7_200_000
+
+google:
+  oauth2:
+    android-client-id: test
+    ios-client-id: test
+    android-web-client-id: test
+
+apple:
+  app:
+    id: test
+    teamId: test
+    keyId: test
+    privateKey: test
+  url:
+    public-keys: https://appleid.apple.com/auth/keys
+    issuer: https://appleid.apple.com

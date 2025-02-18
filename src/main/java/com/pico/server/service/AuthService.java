@@ -1,7 +1,6 @@
 package com.pico.server.service;
 
 import static com.pico.server.security.constants.JwtValues.JWT_PAYLOAD_VALUE_REFRESH;
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -30,9 +29,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
