@@ -17,7 +17,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @Query("SELECT s FROM Schedule s WHERE (s.user.id = :userId OR s.user.id = :partnerId) AND s.isAnniversary = true")
     List<Schedule> findByUserIdAndPartnerIdAndIsAnniversaryTrue(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
 
-    @Query("SELECT s FROM Schedule s WHERE s.isAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.anniversary.date <= :afterThreeMonths")
+    @Query("SELECT s FROM Schedule s JOIN FETCH s.anniversary WHERE s.isAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.anniversary.date <= :afterThreeMonths")
     List<Schedule> findThreeMonthsAnniversarys(@Param("afterThreeMonths") LocalDate afterThreeMonths, @Param("userId") Long userId, @Param("partnerId") Long partnerId);
 
     List<Schedule> findByUserId(Long userId);

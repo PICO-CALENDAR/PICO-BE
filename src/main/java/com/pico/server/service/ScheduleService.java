@@ -309,7 +309,12 @@ public class ScheduleService {
         List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(afterThreeMonths, userId, partnerId);
         //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
         for(Schedule schedule : schedules) {
-            scheduleDtos.add(ScheduleDto.from(schedule));
+            LocalDateTime updatedTime = schedule.getStartTime()
+                .withYear(schedule.getAnniversary().getDate().getYear())
+                .withMonth(schedule.getAnniversary().getDate().getMonthValue())
+                .withDayOfMonth(schedule.getAnniversary().getDate().getDayOfMonth());
+
+            scheduleDtos.add(ScheduleDto.of(schedule, updatedTime));
         }
         return scheduleDtos;
     }
