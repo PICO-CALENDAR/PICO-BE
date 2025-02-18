@@ -10,6 +10,7 @@ import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
+import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.service.MemoryboxService;
 import com.pico.server.service.ScheduleService;
@@ -75,9 +76,9 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(Long userId) {
-        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
-        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+    public ResponseEntity<ListResponse<MemoryboxScheduleResponse>> getAllMemoryboxes(Long userId) {
+        List<MemoryboxScheduleResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
+        ListResponse<MemoryboxScheduleResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
     }
 

@@ -7,6 +7,7 @@ import com.pico.server.dto.PhotoDto;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.MemoryboxResponse;
+import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.entity.Letter;
 import com.pico.server.entity.Memorybox;
 import com.pico.server.entity.Photo;
@@ -34,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MemoryboxService {
-
     private final MemoryboxRepository memoryboxRepository;
     private final PhotoRepository photoRepository;
     private final LetterRepository letterRepository;
@@ -145,23 +145,34 @@ public class MemoryboxService {
     }
 
     @Transactional(readOnly = true)
-    public List<MemoryboxResponse> getAllMemoryboxes(Long userId) {
+    public List<MemoryboxScheduleResponse> getAllMemoryboxes(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+        Long partnerId = user.getUserDetails().getPartnerId();
 
-        List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
-        List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndPartnerId(userId, user.getUserDetails().getPartnerId());
-        for(Memorybox memorybox : memoryboxes) {
-            List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
-            List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
-            Boolean isOpen = !LocalDateTime.now().isBefore(memorybox.getOpendate());
-            MemoryboxDto memoryboxDto = MemoryboxDto.of(memorybox,isOpen, memorybox.getSchedule());
+        //isAnniversary인 일정 불러오기(내 id, 상대방 id)
+        //해당 일정에 대해 forEach로 schedule에 해당하는 id로 memoryboxes찾기 -> List<MemoryboxResponse> 에 넣기
+        //MemoryScheduleResponse -> schedule 이름, List<MemoryboxResponse>
+        //응답 -> List<MemoryScheduleResponse>
 
-            MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
+        List<MemoryboxScheduleResponse> memoryboxScheduleResponses = new ArrayList<>();
+        List<Schedule> anniversarySchedules = scheduleRepository.findByUserIdAndPartnerIdAndIsAnniversaryTrue(userId, partnerId);
+        for(Schedule schedule : anniversarySchedules) {
+            List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
+            List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndPartnerIdAndScheduleId(userId, partnerId, schedule.getScheduleId());
+            for(Memorybox memorybox : memoryboxes) {
+                List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
+                List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
+                Boolean isOpen = !LocalDateTime.now().isBefore(memorybox.getOpendate());
+                MemoryboxDto memoryboxDto = MemoryboxDto.of(memorybox,isOpen, memorybox.getSchedule());
+
+                MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
                     .getUserDetails());
-            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+                memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+            }
+            memoryboxScheduleResponses.add(MemoryboxScheduleResponse.of(schedule.getTitle(), memoryboxResponses));
         }
-        return memoryboxResponses;
+        return memoryboxScheduleResponses;
     }
 
     @Transactional(readOnly = true)

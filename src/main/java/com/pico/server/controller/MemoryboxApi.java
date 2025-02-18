@@ -7,6 +7,7 @@ import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
+import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -150,7 +151,7 @@ public interface MemoryboxApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(
+    ResponseEntity<ListResponse<MemoryboxScheduleResponse>> getAllMemoryboxes(
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );
