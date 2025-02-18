@@ -1,0 +1,65 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    properties:
+      hibernate:
+        create_empty_composites:
+          enabled: true
+        format_sql: true
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 40
+  cloud:
+    aws:
+      s3:
+        access-key: test
+        secret-key: test
+        bucket: test
+
+app:
+  google:
+    token_uri: https://www.googleapis.com/oauth2/v4/token
+    user-info-uri: https://www.googleapis.com/oauth2/v1/userinfo
+    client-id: test
+    client-secret: test
+  slack:
+    webhook:
+      url: test
+  token:
+    secret-key: testestsetsetsetsetsetsetsetsetestset
+    expiration:
+      access-token-expiration: 1_200_000
+      refresh-token-expiration: 7_200_000
+
+google:
+  oauth2:
+    android-client-id: test
+    ios-client-id: test
+    android-web-client-id: test
+
+apple:
+  app:
+    id: test
+    teamId: test
+    keyId: test
+    privateKey: test
+  url:
+    public-keys: https://appleid.apple.com/auth/keys
+    issuer: https://appleid.apple.com
