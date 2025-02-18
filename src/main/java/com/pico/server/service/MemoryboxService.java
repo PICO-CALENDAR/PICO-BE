@@ -134,7 +134,7 @@ public class MemoryboxService {
     public void deleteAllMemoryBox(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
-        memoryboxRepository.deleteByUserIdAndPartnerId(userId, user.getUserDetails().getPartnerId());
+        memoryboxRepository.deleteAllByUserId(userId);
     }
 
     @Transactional(readOnly = true)

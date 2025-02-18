@@ -123,8 +123,8 @@ public interface MemoryboxApi {
         @PathVariable("memoryboxId") Long memoryboxId
     );
 
-    @DeleteMapping("/delete/couple")
-    @Operation(summary = "커플 유저에 해당하는 타입캡슐 삭제", description = "내가 생성한 타입캡슐과 상대방이 생성한 타입캡슐 모두를 삭제합니다.")
+    @DeleteMapping("/delete/all")
+    @Operation(summary = "내가 작성한 타입캡슐 전체 삭제", description = "내가 생성한 타입캡슐 모두를 삭제합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -134,7 +134,7 @@ public interface MemoryboxApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<Boolean> deleteCoupleMemorybox(
+    ResponseEntity<Boolean> deleteAllMemoryboxes(
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );

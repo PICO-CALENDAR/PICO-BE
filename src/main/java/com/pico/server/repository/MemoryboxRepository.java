@@ -15,6 +15,8 @@ public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
     @Query("DELETE FROM Memorybox m where m.user.id = :userId OR m.user.id = :partnerId")
     void deleteByUserIdAndPartnerId(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
 
+    void deleteAllByUserId(Long userId);
+
     @Query("SELECT m FROM Memorybox m " +
         "WHERE m.user.id = :userId OR m.user.id = :partnerId")
     List<Memorybox> findByUserIdAndPartnerId(@Param("userId") Long userId,

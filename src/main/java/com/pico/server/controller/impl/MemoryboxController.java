@@ -69,7 +69,7 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> deleteCoupleMemorybox(Long userId) {
+    public ResponseEntity<Boolean> deleteAllMemoryboxes(Long userId) {
         memoryboxService.deleteAllMemoryBox(userId);
         return ResponseEntity.ok(true);
     }
