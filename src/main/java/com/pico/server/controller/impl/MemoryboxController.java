@@ -6,10 +6,12 @@ import com.pico.server.dto.MemoryUserDto;
 import com.pico.server.dto.MemoryboxDto;
 import com.pico.server.dto.PhotoDto;
 import com.pico.server.dto.ScheduleDto;
+import com.pico.server.dto.request.AnniversaryMemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
+import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.entity.Users;
 import com.pico.server.service.MemoryboxService;
 import com.pico.server.service.ScheduleService;
@@ -69,22 +71,21 @@ public class MemoryboxController implements MemoryboxApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> deleteCoupleMemorybox(Long userId) {
+    public ResponseEntity<Boolean> deleteAllMemoryboxes(Long userId) {
         memoryboxService.deleteAllMemoryBox(userId);
         return ResponseEntity.ok(true);
     }
 
     @Override
-    public ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(Long userId) {
-        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
-        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+    public ResponseEntity<ListResponse<MemoryboxScheduleResponse>> getAllMemoryboxes(Long userId) {
+        List<MemoryboxScheduleResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
+        ListResponse<MemoryboxScheduleResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(Long userId, Long scheduleId) {
-        List<MemoryboxResponse> memoryBoxes = memoryboxService.getAnniversaryMemoryboxes(userId, scheduleId);
-        ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
+    public ResponseEntity<MemoryboxScheduleResponse> getAnniversaryMemoryboxes(Long userId, AnniversaryMemoryboxRequest request) {
+        MemoryboxScheduleResponse response = memoryboxService.getAnniversaryMemoryboxes(userId, request.title());
         return ResponseEntity.ok(response);
     }
 

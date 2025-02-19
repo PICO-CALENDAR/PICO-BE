@@ -63,4 +63,20 @@ public record ScheduleDto(
             .repeatEndDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatEndDate() : null)
             .build();
     }
+
+    public static ScheduleDto of(Schedule schedule, LocalDateTime updatedTime) {
+        return ScheduleDto.builder()
+            .scheduleId(schedule.getScheduleId())
+            .title(schedule.getTitle())
+            .category(schedule.getCategory())
+            .isAllDay(schedule.getIsAllDay())
+            .startTime(updatedTime)
+            .endTime(updatedTime)
+            .meetingPeople(schedule.getMeetingPeople() != null ? schedule.getMeetingPeople() : null)
+            .isRepeat(schedule.getIsRepeat())
+            .repeatType(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatType() : null)
+            .repeatStartDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatStartDate() : null)
+            .repeatEndDate(schedule.getRepeatInfo() != null ? schedule.getRepeatInfo().getRepeatEndDate() : null)
+            .build();
+    }
 }

@@ -1,12 +1,14 @@
 package com.pico.server.controller;
 
 import com.pico.server.dto.ScheduleDto;
+import com.pico.server.dto.request.AnniversaryMemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxRequest;
 import com.pico.server.dto.request.MemoryboxUpdateRequest;
 import com.pico.server.dto.response.AnniversaryResponse;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
+import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -123,8 +125,8 @@ public interface MemoryboxApi {
         @PathVariable("memoryboxId") Long memoryboxId
     );
 
-    @DeleteMapping("/delete/couple")
-    @Operation(summary = "커플 유저에 해당하는 타입캡슐 삭제", description = "내가 생성한 타입캡슐과 상대방이 생성한 타입캡슐 모두를 삭제합니다.")
+    @DeleteMapping("/delete/all")
+    @Operation(summary = "내가 작성한 타입캡슐 전체 삭제", description = "내가 생성한 타입캡슐 모두를 삭제합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -134,7 +136,7 @@ public interface MemoryboxApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<Boolean> deleteCoupleMemorybox(
+    ResponseEntity<Boolean> deleteAllMemoryboxes(
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );
@@ -150,12 +152,12 @@ public interface MemoryboxApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<ListResponse<MemoryboxResponse>> getAllMemoryboxes(
+    ResponseEntity<ListResponse<MemoryboxScheduleResponse>> getAllMemoryboxes(
         @Parameter(hidden = true)
         @LoginUserId Long userId
     );
 
-    @GetMapping("/get/anniversary/{scheduleId}")
+    @GetMapping("/get/anniversary")
     @Operation(summary = "기념일에 해당하는 타입캡슐 조회", description = "나와 연인이 생성한 해당 기념일의 타입캡슐들을 조회합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
@@ -166,10 +168,10 @@ public interface MemoryboxApi {
                                     """
             )
         }, schema = @Schema(implementation = ErrorResponse.class)))
-    ResponseEntity<ListResponse<MemoryboxResponse>> getAnniversaryMemoryboxes(
+    ResponseEntity<MemoryboxScheduleResponse> getAnniversaryMemoryboxes(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
-        @PathVariable("scheduleId") Long scheduleId
+        @RequestBody AnniversaryMemoryboxRequest anniversaryMemoryboxRequest
     );
 
     @GetMapping("/get/opendate/past")

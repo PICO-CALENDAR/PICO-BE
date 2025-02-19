@@ -20,7 +20,7 @@ public record MemoryboxRequest(
     @NotNull
     String letter,
     @Schema(description = "사진", example = "추억함에 등록할 사진 입니다.")
-    @Nullable
+    @NotNull
     MultipartFile photo
 
 ) {

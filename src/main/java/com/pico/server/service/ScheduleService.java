@@ -97,14 +97,15 @@ public class ScheduleService {
             Schedule schedule = Schedule.builder()
                 .user(user)
                 .title(anniversary.getTitle())
-                .category(ScheduleType.OURS)
-                .startTime(anniversary.getDate().atTime(0,0,0))
-                .endTime(anniversary.getDate().atTime(0,0,0))
+                .category(ScheduleType.MINE)
+                .startTime(anniversary.getDate().atTime(0,0,0).withYear(2000))
+                .endTime(anniversary.getDate().atTime(0,0,0).withYear(2000))
                 .isAllDay(true)
                 .isRepeat(true)
                 .isAnniversary(true)
                 .isCoupleAnniversary(false)
-                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0)))
+                .anniversary(anniversary)
+                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0).withYear(2000)))
                 .build();
 
             schedules.add(schedule);
@@ -306,10 +307,16 @@ public class ScheduleService {
 
         Long partnerId = user.getUserDetails().getPartnerId();
         LocalDate afterThreeMonths = LocalDate.now().plusMonths(3);
-        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(afterThreeMonths, userId, partnerId);
+        LocalDate now = LocalDate.now();
+        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(now, afterThreeMonths, userId, partnerId);
         //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
         for(Schedule schedule : schedules) {
-            scheduleDtos.add(ScheduleDto.from(schedule));
+            LocalDateTime updatedTime = schedule.getStartTime()
+                .withYear(schedule.getAnniversary().getDate().getYear())
+                .withMonth(schedule.getAnniversary().getDate().getMonthValue())
+                .withDayOfMonth(schedule.getAnniversary().getDate().getDayOfMonth());
+
+            scheduleDtos.add(ScheduleDto.of(schedule, updatedTime));
         }
         return scheduleDtos;
     }
