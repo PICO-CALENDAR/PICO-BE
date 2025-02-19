@@ -104,7 +104,8 @@ public class ScheduleService {
                 .isRepeat(true)
                 .isAnniversary(true)
                 .isCoupleAnniversary(false)
-                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0)))
+                .anniversary(anniversary)
+                .repeatInfo(createYearlyRepeatInfo(anniversary.getDate().atTime(0,0,0).withYear(2000)))
                 .build();
 
             schedules.add(schedule);

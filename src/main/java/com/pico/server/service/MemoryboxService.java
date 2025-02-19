@@ -23,6 +23,7 @@ import com.pico.server.repository.PhotoRepository;
 import com.pico.server.repository.ScheduleRepository;
 import com.pico.server.repository.UserRepository;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -104,6 +105,10 @@ public class MemoryboxService {
         Schedule schedule = memorybox.getSchedule();
         Hibernate.initialize(schedule);
 
+        LocalDate openDate = memorybox.getOpendate().toLocalDate();
+        if(LocalDate.now().isAfter(openDate)) {
+            throw new MemoryboxException(ErrorCode.NOT_BEFORE_OPENDATE);
+        }
         Boolean isOpen = !LocalDateTime.now().isBefore(memorybox.getOpendate());
 
         if(request.letterId() != null) {

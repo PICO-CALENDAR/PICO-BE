@@ -47,6 +47,7 @@ public class UserController implements UserApi {
         AuthToken authToken = userRegisterService.register(userId, createUserDetailsDto);
         Users findUser = userService.findById(userId);
         scheduleService.createBasicAnniversarySchedules(userId);
+        scheduleService.createBasicSchedules(userId);
 
         AuthResponse response = AuthResponse.of(findUser,authToken);
         return ResponseEntity.ok(response);
@@ -61,7 +62,6 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserInfoDto> updateUserInfo(Long userId, UserInfoUpdateRequest request) {
         UserInfoDto userInfoDto = userDetailsService.updateUserInfo(userId, request);
-        scheduleService.createBasicSchedules(userId);
         return ResponseEntity.ok(userInfoDto);
     }
 
