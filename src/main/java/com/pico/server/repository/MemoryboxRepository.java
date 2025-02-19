@@ -1,6 +1,7 @@
 package com.pico.server.repository;
 
 import com.pico.server.entity.Memorybox;
+import com.pico.server.entity.Schedule;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,4 +32,7 @@ public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
     List<Memorybox> findByUserIdAndOpendateIsBefore(Long userId, LocalDateTime opendate);
 
     List<Memorybox> findByUserIdAndOpendateIsAfter(Long userId, LocalDateTime opendate);
+
+    @Query("SELECT m FROM Memorybox m WHERE m.schedule IN :schedules")
+    List<Memorybox> findBySchedules(@Param("schedules") List<Schedule> schedules);
 }

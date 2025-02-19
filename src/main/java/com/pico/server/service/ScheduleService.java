@@ -97,7 +97,7 @@ public class ScheduleService {
             Schedule schedule = Schedule.builder()
                 .user(user)
                 .title(anniversary.getTitle())
-                .category(ScheduleType.OURS)
+                .category(ScheduleType.MINE)
                 .startTime(anniversary.getDate().atTime(0,0,0).withYear(2000))
                 .endTime(anniversary.getDate().atTime(0,0,0).withYear(2000))
                 .isAllDay(true)
