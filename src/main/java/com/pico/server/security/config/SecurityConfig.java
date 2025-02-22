@@ -90,7 +90,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
             )
             .authorizeHttpRequests(registry -> registry
-                .requestMatchers("/api/v1/dev/web/login/**").permitAll()
+                .requestMatchers("/api/v1/dev/**").permitAll()
                 .requestMatchers("/api/v1/users/register/**").permitAll()
             )
             .authorizeHttpRequests(registry -> registry
