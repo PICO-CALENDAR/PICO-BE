@@ -50,5 +50,5 @@ public interface DevApi {
     );
 
     @PostMapping("/revoke/token/auth/code")
-    ResponseEntity<Boolean> revokeAppleTokenByAuthCode(String authorizationCode);
+    ResponseEntity<Boolean> revokeAppleTokenByAuthCode(@RequestBody String authorizationCode);
 }
