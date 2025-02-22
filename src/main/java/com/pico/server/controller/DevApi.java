@@ -48,4 +48,7 @@ public interface DevApi {
         @Parameter(example = "google", description = "oAuth 제공자 이름")
         @PathVariable("provider") String provider
     );
+
+    @PostMapping("/revoke/token/auth/code")
+    ResponseEntity<Boolean> revokeAppleTokenByAuthCode(String authorizationCode);
 }
