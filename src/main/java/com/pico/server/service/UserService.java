@@ -151,6 +151,17 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public Boolean revokeAppleTokenByAuthCode(String authorizationCode) {
+        String refreshToken = appleApiClient.getAppleRefreshToken(authorizationCode);
+        try {
+            appleApiClient.revokeToken(refreshToken);
+            return true;
+        } catch (Exception e) {
+            throw new UserException(ErrorCode.FAIL_TO_DELETE_APPLE_USER);
+        }
+    }
+
     public Users findById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));

@@ -31,4 +31,9 @@ public class DevController implements DevApi {
         AuthResponse response = AuthResponse.of(loginUser,authToken);
         return ResponseEntity.ok(response);
     }
+
+    public ResponseEntity<Boolean> revokeAppleTokenByAuthCode(String authorizationCode) {
+        userService.revokeAppleTokenByAuthCode(authorizationCode);
+        return ResponseEntity.ok(true);
+    }
 }
