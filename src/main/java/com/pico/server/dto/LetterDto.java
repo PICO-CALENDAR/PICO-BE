@@ -8,11 +8,13 @@ import lombok.Builder;
 @Builder
 public record LetterDto(
     Long letterId,
+    String title,
     String content
 ) {
     public static LetterDto from(Letter letter) {
         return LetterDto.builder()
             .letterId(letter.getId())
+            .title(letter.getTitle())
             .content(letter.getContent())
             .build();
     }

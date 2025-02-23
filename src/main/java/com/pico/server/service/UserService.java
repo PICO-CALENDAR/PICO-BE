@@ -1,6 +1,7 @@
 package com.pico.server.service;
 
 import com.pico.server.dto.CoupleUserDto;
+import com.pico.server.dto.MemoryUserDto;
 import com.pico.server.dto.request.CreateUserDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.entity.AppleRefreshToken;
@@ -163,9 +164,16 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Users findById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+    }
+
+    @Transactional(readOnly = true)
+    public MemoryUserDto findPartner(Long userId) {
+        Users partner = userRepository.findByPartnerId(userId);
+        return MemoryUserDto.from(partner, partner.getUserDetails());
     }
 
     public UserInfoDto getUserInfo(Long userId) {

@@ -19,9 +19,10 @@ public record MemoryboxResponse(
     List<LetterDto> letters,
     List<PhotoDto> photos,
 
-    MemoryUserDto author
+    MemoryUserDto author,
+    MemoryUserDto toWhom
 ) {
-    public static MemoryboxResponse of(MemoryboxDto memorybox, List<LetterDto> letters, List<PhotoDto> photos, MemoryUserDto author) {
+    public static MemoryboxResponse of(MemoryboxDto memorybox, List<LetterDto> letters, List<PhotoDto> photos, MemoryUserDto author, MemoryUserDto toWhom) {
         return MemoryboxResponse.builder()
             .memoryboxId(memorybox.memoryboxId())
             .isOpen(memorybox.isOpen())
@@ -32,6 +33,7 @@ public record MemoryboxResponse(
             .letters(letters)
             .photos(photos)
             .author(author)
+            .toWhom(toWhom)
             .build();
     }
 }

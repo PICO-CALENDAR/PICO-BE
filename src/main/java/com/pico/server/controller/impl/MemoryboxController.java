@@ -45,10 +45,11 @@ public class MemoryboxController implements MemoryboxApi {
         Users user = userService.findById(userId);
         MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user, request);
         MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
+        MemoryUserDto toWhom = userService.findPartner(userId);
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
-        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author);
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author, toWhom);
         return ResponseEntity.ok(response);
     }
 
@@ -57,10 +58,11 @@ public class MemoryboxController implements MemoryboxApi {
         MemoryboxUpdateRequest request) throws IOException {
         MemoryboxDto memoryBox = memoryboxService.updateMemorybox(userId, memoryboxId, request);
         MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
+        MemoryUserDto toWhom = userService.findPartner(userId);
 
         List<LetterDto> letters = LetterDto.from(memoryBox.letters());
         List<PhotoDto> photos = PhotoDto.from(memoryBox.photos());
-        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author);
+        MemoryboxResponse response = MemoryboxResponse.of(memoryBox, letters, photos,author, toWhom);
         return ResponseEntity.ok(response);
     }
 

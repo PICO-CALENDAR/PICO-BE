@@ -308,7 +308,8 @@ public class ScheduleService {
         Long partnerId = user.getUserDetails().getPartnerId();
         LocalDate afterThreeMonths = LocalDate.now().plusMonths(3);
         LocalDate now = LocalDate.now();
-        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(now, afterThreeMonths, userId, partnerId);
+        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(now, afterThreeMonths, userId);
+        List<Schedule> coupleSchedules = scheduleRepository.findCoupleAnniversarys(now,afterThreeMonths,userId, partnerId);
         //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
         for(Schedule schedule : schedules) {
             LocalDateTime updatedTime = schedule.getStartTime()
@@ -317,6 +318,9 @@ public class ScheduleService {
                 .withDayOfMonth(schedule.getAnniversary().getDate().getDayOfMonth());
 
             scheduleDtos.add(ScheduleDto.of(schedule, updatedTime));
+        }
+        for(Schedule schedule : coupleSchedules) {
+            scheduleDtos.add(ScheduleDto.from(schedule));
         }
         return scheduleDtos;
     }

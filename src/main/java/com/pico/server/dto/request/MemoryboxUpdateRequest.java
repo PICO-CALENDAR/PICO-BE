@@ -9,6 +9,10 @@ public record MemoryboxUpdateRequest(
     @Schema(description = "수정을 원하는 편지 ID", example = "수정할 편지 ID입니다.")
     @Nullable
     Long letterId,
+
+    @Schema(description = "편지 제목", example = "추억함에 등록할 편지 제목 입니다.")
+    @Nullable
+    String letterTitle,
     @Schema(description = "편지", example = "추억함에 등록할 편지 내용 입니다.")
     @Nullable
     String letter,

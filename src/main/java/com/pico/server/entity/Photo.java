@@ -30,5 +30,7 @@ public class Photo {
     @JoinColumn(name = "memorybox_id", nullable = false)
     private Memorybox memorybox;
 
-    public void updateUrl(String url) { this.url = url;}
+    public void updateUrl(String url) {
+        this.url = url == null ? this.url : url;
+    }
 }

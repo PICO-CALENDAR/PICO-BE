@@ -47,6 +47,7 @@ public class MemoryboxService {
     private final S3Service s3Service;
     private final LetterService letterService;
     private final PhotoService photoService;
+    private final UserService userService;
 
     private final String PHOTO_PREFIX = "PHOTO_OPEN";
     private final String USER_PREFIX = "USER_";
@@ -83,6 +84,7 @@ public class MemoryboxService {
 
         Letter letter = Letter.builder()
             .memorybox(memorybox)
+            .title(request.letterTitle())
             .content(request.letter())
             .build();
 
@@ -116,7 +118,7 @@ public class MemoryboxService {
 
         if(request.letterId() != null) {
             Letter letter =letterService.findById(request.letterId());
-            letter.updateContent(request.letter());
+            letter.updateContent(request.letterTitle(),request.letter());
             letterRepository.save(letter);
         }
 
@@ -157,6 +159,7 @@ public class MemoryboxService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
         Long partnerId = user.getUserDetails().getPartnerId();
+        MemoryUserDto partnerInfo = userService.findPartner(userId);
 
         //1. 전체 기념일을 조회한다
         //2. 기념일 List에서 각 기념일 마다 for each 구문을 실행 해 해당 title,userId,partnerId를 활용해 일정 List를 찾는다
@@ -181,7 +184,7 @@ public class MemoryboxService {
 
                 MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
                     .getUserDetails());
-                memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+                memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author,partnerInfo));
             }
             memoryboxScheduleResponses.add(MemoryboxScheduleResponse.of(title, memoryboxResponses));
         }
@@ -193,6 +196,7 @@ public class MemoryboxService {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
         Long partnerId = user.getUserDetails().getPartnerId();
+        MemoryUserDto partnerInfo = userService.findPartner(userId);
 
         List<Schedule> schedules = scheduleRepository.findByTitleAndUserIdAndPartnerId(title, userId, partnerId);
         List<Memorybox> memoryboxes = memoryboxRepository.findBySchedules(schedules);
@@ -206,7 +210,7 @@ public class MemoryboxService {
 
             MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
                 .getUserDetails());
-            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author, partnerInfo));
         }
         return MemoryboxScheduleResponse.of(title, memoryboxResponses);
     }
@@ -214,6 +218,7 @@ public class MemoryboxService {
     public List<MemoryboxResponse> getMyPastMemoryboxes(Long userId) {
         List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
         List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndOpendateIsBefore(userId, LocalDateTime.now());
+        MemoryUserDto partnerInfo = userService.findPartner(userId);
         for(Memorybox memorybox : memoryboxes) {
             List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
             List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
@@ -222,7 +227,7 @@ public class MemoryboxService {
 
             MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
                 .getUserDetails());
-            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author, partnerInfo));
         }
         return memoryboxResponses;
     }
@@ -231,6 +236,7 @@ public class MemoryboxService {
     public List<MemoryboxResponse> getMyUpcomingMemoryboxes(Long userId) {
         List<MemoryboxResponse> memoryboxResponses = new ArrayList<>();
         List<Memorybox> memoryboxes = memoryboxRepository.findByUserIdAndOpendateIsAfter(userId, LocalDateTime.now());
+        MemoryUserDto partnerInfo = userService.findPartner(userId);
         for(Memorybox memorybox : memoryboxes) {
             List<LetterDto> letters = LetterDto.from(memorybox.getLetters());
             List<PhotoDto> photos = PhotoDto.from(memorybox.getPhotos());
@@ -239,7 +245,7 @@ public class MemoryboxService {
 
             MemoryUserDto author = MemoryUserDto.from(memorybox.getUser(), memorybox.getUser()
                 .getUserDetails());
-            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author));
+            memoryboxResponses.add(MemoryboxResponse.of(memoryboxDto, letters, photos,author, partnerInfo));
         }
         return memoryboxResponses;
     }

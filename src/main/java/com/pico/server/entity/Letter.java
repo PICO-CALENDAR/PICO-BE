@@ -24,11 +24,16 @@ public class Letter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "letter_id")
     private Long id;
+
+    private String title;
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memorybox_id", nullable = false)
     private Memorybox memorybox;
 
-    public void updateContent(String content) { this.content = content;}
+    public void updateContent(String title, String content) {
+        this.title = title == null ? this.title : title;
+        this.content = content == null ? this.content : content;
+    }
 }
