@@ -56,6 +56,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            cat <<EOF > .env
+            APPLE_PRIVATE_KEY="${{ secrets.APPLE_PRIVATE_KEY }}"
+            EOF
+  
             docker-compose down
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
             docker-compose up -d
