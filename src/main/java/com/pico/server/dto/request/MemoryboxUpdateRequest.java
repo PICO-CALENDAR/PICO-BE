@@ -2,6 +2,7 @@ package com.pico.server.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 

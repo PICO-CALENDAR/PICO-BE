@@ -15,6 +15,7 @@ import com.pico.server.entity.Photo;
 import com.pico.server.entity.Schedule;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.LetterException;
 import com.pico.server.exception.MemoryboxException;
 import com.pico.server.exception.ScheduleException;
 import com.pico.server.exception.UserException;
@@ -117,6 +118,9 @@ public class MemoryboxService {
         Boolean isOpen = !LocalDateTime.now().isBefore(memorybox.getOpendate());
 
         if(request.letterId() != null) {
+            if(request.letterTitle() != null && request.letterTitle().length() > 16) {
+                throw new LetterException(ErrorCode.MAX_LENGTH_OVER);
+            }
             Letter letter =letterService.findById(request.letterId());
             letter.updateContent(request.letterTitle(),request.letter());
             letterRepository.save(letter);

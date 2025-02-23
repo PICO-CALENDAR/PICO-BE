@@ -79,6 +79,7 @@ public enum ErrorCode {
      * Letter Errors
      */
     NOT_FOUND_LETTER(404, "LT0001", "해당 편지를 찾을 수 없습니다."),
+    MAX_LENGTH_OVER(400, "LT0002", "편지명은 16자 이하입니다."),
 
     /**
      * Photo Errors
