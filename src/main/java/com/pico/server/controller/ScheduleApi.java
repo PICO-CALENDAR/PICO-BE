@@ -59,7 +59,7 @@ public interface ScheduleApi {
     );
 
     @PatchMapping("/update/{scheduleId}")
-    @Operation(summary = "오늘 포함 이후 일정 수정", description = "오늘을 포함해 이후 일정을 수정합니다.")
+    @Operation(summary = "단일 일정,반복 일정 - 요청 날짜를 기준으로 일정 전체 수정", description = "반복 일정의 경우 요청날짜를 시작날짜로 삼아 반복 하도록 수정하고, 단일 일정의 경우에는 해당 일정만 수정합니다.")
     ResponseEntity<ScheduleResponse> update(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
@@ -68,7 +68,7 @@ public interface ScheduleApi {
     );
 
     @PostMapping("/update/only/{scheduleId}")
-    @Operation(summary = "오늘 일정만 수정", description = "기존의 반복 일정은 그대로두고 요청날짜의 일정만 변경합니다.")
+    @Operation(summary = "반복 일정 - 요청 날짜 일정만 수정", description = "기존의 반복 일정은 그대로두고 요청날짜의 일정만 변경합니다.")
     ResponseEntity<ScheduleResponse> updateOnlyToday(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
@@ -77,7 +77,7 @@ public interface ScheduleApi {
     );
 
     @PostMapping("/update/after/{scheduleId}")
-    @Operation(summary = "오늘 이후 일정 수정", description = "기존의 반복 일정은 그대로두고 요청날짜를 포함한 이후의 일정을 변경합니다.")
+    @Operation(summary = "반복 일정 - 요청 날짜 이후 일정만 수정", description = "기존의 반복 일정은 그대로두고 요청날짜를 포함한 이후의 일정을 변경합니다.")
     ResponseEntity<ScheduleResponse> updateAfterToday(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
