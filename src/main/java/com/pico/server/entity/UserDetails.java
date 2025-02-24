@@ -67,6 +67,7 @@ public class UserDetails {
 
     public void deleteCoupleInfo() {
         this.partnerId = null;
+        this.partnerName = null;
         this.partnerProfileImage = null;
         this.partnerNickname = null;
     }
