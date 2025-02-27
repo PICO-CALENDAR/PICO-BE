@@ -61,8 +61,8 @@ public class InviteCodeService {
         Users partner = userRepository.findById(partnerUserId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-        user.getUserDetails().updatePartnerInfo(partner.getId(), partner.getUserDetails().getNickName(), partner.getProfileImage(), partner.getUserDetails().getName());
-        partner.getUserDetails().updatePartnerInfo(userId, user.getUserDetails().getNickName(), user.getProfileImage(), user.getUserDetails().getName());
+        user.getUserDetails().registerPartnerInfo(partner.getId(), partner.getUserDetails().getNickName(), partner.getProfileImage(), partner.getUserDetails().getName());
+        partner.getUserDetails().registerPartnerInfo(userId, user.getUserDetails().getNickName(), user.getProfileImage(), user.getUserDetails().getName());
         userRepository.save(user);
         userRepository.save(partner);
 

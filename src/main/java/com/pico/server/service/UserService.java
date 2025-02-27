@@ -13,6 +13,7 @@ import com.pico.server.exception.UserException;
 import com.pico.server.repository.AppleRefreshTokenRepository;
 import com.pico.server.repository.MemoryboxRepository;
 import com.pico.server.repository.ScheduleRepository;
+import com.pico.server.repository.UserDetailsRepository;
 import com.pico.server.repository.UserRepository;
 import com.pico.server.security.enums.Platform;
 import com.pico.server.service.apple.AppleApiClient;
@@ -31,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserDetailsRepository userDetailsRepository;
     private final ScheduleRepository scheduleRepository;
     private final AppleRefreshTokenRepository appleRefreshTokenRepository;
     private final MemoryboxRepository memoryboxRepository;
@@ -86,7 +88,7 @@ public class UserService {
 
     @Transactional
     public UserInfoDto updateUserProfile(Long userId, MultipartFile uploadFile) throws IOException {
-        Users user = userRepository.findById(userId)
+        Users user = userRepository.findUserAndUserDetails(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         String fileName = USER_PROFILE_PREFIX + userId.toString();
@@ -97,6 +99,13 @@ public class UserService {
 
         user.updateProfileImage(putImageUrl);
         userRepository.save(user);
+
+        if(user.getUserDetails().getPartnerId() != null) {
+            UserDetails partnerUserInfo = userRepository.findPartnerByUserId(userId).getUserDetails();
+            partnerUserInfo.updatePartnerProfile(putImageUrl);
+            userDetailsRepository.save(partnerUserInfo);
+        }
+
         return UserInfoDto.of(user, user.getUserDetails());
     }
 
@@ -171,7 +180,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public MemoryUserDto findPartner(Long userId) {
-        Users partner = userRepository.findByPartnerId(userId);
+        Users partner = userRepository.findPartnerByUserId(userId);
         return MemoryUserDto.from(partner, partner.getUserDetails());
     }
 

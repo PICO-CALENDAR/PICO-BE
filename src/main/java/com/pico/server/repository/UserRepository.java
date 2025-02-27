@@ -13,10 +13,13 @@ public interface UserRepository extends JpaRepository<Users,Long> {
 
     Optional<Users> findByPlatformAndEmail(Platform platform, String email);
 
-    @Query("SELECT u FROM Users u JOIN FETCH u.userDetails WHERE u.userDetails.partnerId = :partnerId")
-    Users findByPartnerId(@Param("partnerId") Long partnerId);
+    @Query("SELECT u FROM Users u JOIN FETCH u.userDetails WHERE u.userDetails.partnerId = :userId")
+    Users findPartnerByUserId(@Param("userId") Long userId);
 
     @Query("SELECT u FROM Users u JOIN FETCH u.userDetails WHERE u.id = :userId")
     Users findByUserIdWithUserDetails(@Param("userId") Long userId);
+
+    @Query("SELECT u FROM Users u JOIN FETCH u.userDetails WHERE u.id = :userId")
+    Optional<Users> findUserAndUserDetails(@Param("userId") Long userId);
 
 }

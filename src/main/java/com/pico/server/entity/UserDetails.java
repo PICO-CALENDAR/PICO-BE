@@ -48,11 +48,20 @@ public class UserDetails {
     private Boolean isTermsAgreed;
     private Boolean isMarketingAgreed;
 
-    public void updatePartnerInfo(Long partnerId, String partnerNickname, String partnerProfileImage, String partnerName) {
+    public void registerPartnerInfo(Long partnerId, String partnerNickname, String partnerProfileImage, String partnerName) {
         this.partnerId = partnerId;
         this.partnerNickname = partnerNickname;
         this.partnerProfileImage = partnerProfileImage;
         this.partnerName = partnerName;
+    }
+
+    public void updatePartnerNames(String partnerNickname, String partnerName) {
+        this.partnerNickname = partnerNickname;
+        this.partnerName = partnerName;
+    }
+
+    public void updatePartnerProfile(String partnerProfileImageUrl) {
+        this.partnerProfileImage = partnerProfileImageUrl;
     }
 
     public void updateUserInfo(String name, Gender gender, String nickName, LocalDate birth, LocalDate dday,Boolean isTermsAgreed, Boolean isMarketingAgreed) {
