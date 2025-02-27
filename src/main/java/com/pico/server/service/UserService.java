@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 
@@ -188,6 +187,7 @@ public class UserService {
         return user.getUserDetails().getPartnerId() == null;
     }
 
+    @Transactional(readOnly = true)
     public UserInfoDto getUserInfo(Long userId) {
         Users findUser = findById(userId);
         UserDetails userDetails = findUser.getUserDetails();

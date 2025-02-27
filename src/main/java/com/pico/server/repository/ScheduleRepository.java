@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -75,6 +76,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 """)
     List<Schedule> findPartnerSchedules(@Param("partnerId") Long partnerId);
 
+    @Modifying
     @Query("DELETE FROM Schedule s WHERE (s.user.id = :userId OR s.user.id = :partnerId) AND s.isAnniversary = true AND s.isCoupleAnniversary=true ")
     void deleteAnniversarySchedulesByUserIdOrPartnerId(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
 

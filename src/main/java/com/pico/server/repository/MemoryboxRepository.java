@@ -13,9 +13,6 @@ public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
     boolean existsByScheduleScheduleIdAndScheduleUserIdAndScheduleStartTimeAndScheduleEndTime(Long scheduleId, Long userId,LocalDateTime startTime, LocalDateTime endTime);
     void deleteByUserId(Long userId);
 
-    @Query("DELETE FROM Memorybox m where m.user.id = :userId OR m.user.id = :partnerId")
-    void deleteByUserIdAndPartnerId(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
-
     void deleteAllByUserId(Long userId);
 
     @Query("SELECT m FROM Memorybox m " +
