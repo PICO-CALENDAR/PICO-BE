@@ -74,6 +74,7 @@ public enum ErrorCode {
     NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다."),
     DUPLICATE_MEMORYBOX(400, "MB0002", "같은 일정에 대해서는 추억함을 1개만 생성할 수 있습니다."),
     NOT_BEFORE_OPENDATE(400, "MB0003", "타임캡슐은 오픈 전날까지만 수정 가능합니다."),
+    NOT_COUPLE_USERS(400, "MB0004", "커플이 아닌 유저는 타입캡슐을 생성할 수 없습니다."),
 
     /**
      * Letter Errors

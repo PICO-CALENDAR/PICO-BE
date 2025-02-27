@@ -18,7 +18,7 @@ public record MemoryboxRequest(
     @JsonFormat(timezone = "Asia/Seoul")
     LocalDateTime scheduleEndTime,
 
-    @Schema(description = "편지 제목", example = "추억함에 등록할 편지 제목 입니다.")
+    @Schema(description = "편지 제목", example = "편지 제목 입니다.")
     @NotNull
     @Size(min = 1, max = 16, message = "편지명은 16자 이하입니다.")
     String letterTitle,

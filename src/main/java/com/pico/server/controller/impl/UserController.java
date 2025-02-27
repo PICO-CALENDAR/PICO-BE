@@ -40,6 +40,9 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<AuthResponse> register(Long userId, UserRegisterRequest request) {
+        if(userService.checkRegistered(userId)) {
+            throw new UserException(ErrorCode.ALREADY_EXIST_USER);
+        }
         if(Boolean.FALSE.equals(request.isTermsAgreed())) {
             throw new UserException(ErrorCode.TERMS_NOT_AGREED);
         }

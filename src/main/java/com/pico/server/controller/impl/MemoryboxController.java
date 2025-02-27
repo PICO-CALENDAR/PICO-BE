@@ -13,6 +13,8 @@ import com.pico.server.dto.response.ListResponse;
 import com.pico.server.dto.response.MemoryboxResponse;
 import com.pico.server.dto.response.MemoryboxScheduleResponse;
 import com.pico.server.entity.Users;
+import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.MemoryboxException;
 import com.pico.server.service.MemoryboxService;
 import com.pico.server.service.ScheduleService;
 import com.pico.server.service.UserService;
@@ -43,6 +45,9 @@ public class MemoryboxController implements MemoryboxApi {
     public ResponseEntity<MemoryboxResponse> saveMemorybox(Long userId, MemoryboxRequest request)
         throws IOException {
         Users user = userService.findById(userId);
+        if(userService.checkNotCouple(userId)) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS);
+        }
         MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user, request);
         MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
         MemoryUserDto toWhom = userService.findPartner(userId);

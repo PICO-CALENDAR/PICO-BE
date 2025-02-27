@@ -176,6 +176,18 @@ public class UserService {
         return MemoryUserDto.from(partner, partner.getUserDetails());
     }
 
+    @Transactional(readOnly = true)
+    public Boolean checkRegistered(Long userId) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+        return user.getUserDetails() != null;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean checkNotCouple(Long userId) {
+        Users user = userRepository.findByUserIdWithUserDetails(userId);
+        return user.getUserDetails().getPartnerId() == null;
+    }
+
     public UserInfoDto getUserInfo(Long userId) {
         Users findUser = findById(userId);
         UserDetails userDetails = findUser.getUserDetails();

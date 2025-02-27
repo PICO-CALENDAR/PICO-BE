@@ -36,15 +36,17 @@ public class Memorybox extends BaseEntity{
     private LocalDateTime opendate;
 
     @OneToMany(mappedBy = "memorybox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     List<Letter> letters = new ArrayList<>();
     @OneToMany(mappedBy = "memorybox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     List<Photo> photos = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     Users user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false)
     Schedule schedule;
 

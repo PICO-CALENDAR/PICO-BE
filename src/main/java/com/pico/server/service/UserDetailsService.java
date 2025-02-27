@@ -6,6 +6,8 @@ import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.enums.Gender;
+import com.pico.server.exception.ErrorCode;
+import com.pico.server.exception.UserException;
 import com.pico.server.repository.UserDetailsRepository;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;

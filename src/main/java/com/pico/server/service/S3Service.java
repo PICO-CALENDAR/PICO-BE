@@ -41,7 +41,7 @@ public class S3Service {
         throws IOException {
         PutObjectRequest objectRequest =  putObjectRequest(uploadFile, PHOTO, fileName);
         s3Client.putObject(objectRequest, RequestBody.fromBytes(uploadFile.getBytes()));
-        return s3Client.utilities().getUrl(builder -> builder.bucket(s3Properties.bucket()).key(String.join("/", USER_IMAGE, fileName))).toExternalForm();
+        return s3Client.utilities().getUrl(builder -> builder.bucket(s3Properties.bucket()).key(String.join("/", PHOTO, fileName))).toExternalForm();
     }
 
     public void deletePhotoMultipartImage(String fileName) {
