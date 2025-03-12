@@ -21,8 +21,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @Query("SELECT s FROM Schedule s JOIN FETCH s.anniversary WHERE s.isAnniversary = true AND s.isCoupleAnniversary = false AND s.user.id = :userId AND  s.anniversary.date >= :now AND s.anniversary.date <= :afterThreeMonths")
     List<Schedule> findThreeMonthsAnniversarys(@Param("now") LocalDate now, @Param("afterThreeMonths") LocalDate afterThreeMonths, @Param("userId") Long userId);
 
-    @Query("SELECT s FROM Schedule s JOIN FETCH s.anniversary WHERE s.isAnniversary = true AND s.isCoupleAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND  s.anniversary.date >= :now AND s.anniversary.date <= :afterThreeMonths")
-    List<Schedule> findCoupleAnniversarys(@Param("now") LocalDate now, @Param("afterThreeMonths") LocalDate afterThreeMonths, @Param("userId") Long userId, @Param("partnerId") Long partnerId);
+    @Query("SELECT s FROM Schedule s WHERE s.isAnniversary = true AND s.isCoupleAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId) AND s.isRepeat = false AND s.startTime >= :now AND s.endTime <= :afterThreeMonths")
+    List<Schedule> findCoupleAnniversarys(@Param("now") LocalDateTime now, @Param("afterThreeMonths") LocalDateTime afterThreeMonths, @Param("userId") Long userId, @Param("partnerId") Long partnerId);
+
+    @Query("SELECT s FROM Schedule s WHERE s.isCoupleAnniversary = true AND s.isRepeat = true AND (s.user.id = :userId OR s.user.id = :partnerId)")
+    Schedule findYearlySchedule(@Param("userId") Long userId, @Param("partnerId") Long partnerId);
 
     @Query("SELECT s FROM Schedule s WHERE s.isCoupleAnniversary = true AND (s.user.id = :userId OR s.user.id = :partnerId)")
     List<Schedule> findCoupleDdaySchedules(@Param("userId") Long userId, @Param("partnerId") Long partnerId);

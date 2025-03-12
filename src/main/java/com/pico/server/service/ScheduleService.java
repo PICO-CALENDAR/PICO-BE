@@ -326,13 +326,18 @@ public class ScheduleService {
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
-
         Long partnerId = user.getUserDetails().getPartnerId();
-        LocalDate afterThreeMonths = LocalDate.now().plusMonths(3);
-        LocalDate now = LocalDate.now();
-        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(now, afterThreeMonths, userId);
-        List<Schedule> coupleSchedules = scheduleRepository.findCoupleAnniversarys(now,afterThreeMonths,userId, partnerId);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime afterThreeMonths = now.plusMonths(3);
+        List<Schedule> schedules = scheduleRepository.findThreeMonthsAnniversarys(now.toLocalDate(), afterThreeMonths.toLocalDate(), userId);
         //TODO: Batch 서버에서 anniversary 기간 지날때마다 update 로직 구현 필요
+        List<Schedule> coupleSchedules = scheduleRepository.findCoupleAnniversarys(now,afterThreeMonths,userId, partnerId);
+        Schedule yearlySchedule = scheduleRepository.findYearlySchedule(userId,partnerId);
+        if(isRecurringScheduleWithinRange(yearlySchedule, now, afterThreeMonths)) {
+            coupleSchedules.add(yearlySchedule);
+        }
+
         for(Schedule schedule : schedules) {
             LocalDateTime updatedTime = schedule.getStartTime()
                 .withYear(schedule.getAnniversary().getDate().getYear())
@@ -460,7 +465,7 @@ public class ScheduleService {
     }
 
 
-    private boolean isRecurringScheduleWithinRange(Schedule schedule, LocalDateTime weekStart, LocalDateTime weekEnd) {
+    private boolean isRecurringScheduleWithinRange(Schedule schedule, LocalDateTime startDate, LocalDateTime endDate) {
         RepeatInfo repeatInfo = schedule.getRepeatInfo();
         if (repeatInfo == null) {
             return false;
@@ -468,15 +473,15 @@ public class ScheduleService {
 
         LocalDateTime repeatStartDate = repeatInfo.getRepeatStartDate();
         LocalDateTime repeatEndDate = repeatInfo.getRepeatEndDate();
-        LocalDateTime effectiveEndDate = (repeatEndDate == null || repeatEndDate.isAfter(weekEnd))
-            ? weekEnd
+        LocalDateTime effectiveEndDate = (repeatEndDate == null || repeatEndDate.isAfter(endDate))
+            ? endDate
             : repeatEndDate;
 
         RepeatType repeatType = repeatInfo.getRepeatType();
         LocalDateTime currentDate = repeatStartDate;
 
         while (!currentDate.isAfter(effectiveEndDate)) {
-            if (!currentDate.isBefore(weekStart) && !currentDate.isAfter(weekEnd)) {
+            if (!currentDate.isBefore(startDate) && !currentDate.isAfter(endDate)) {
                 return true;
             }
 
@@ -556,5 +561,4 @@ public class ScheduleService {
             .repeatInfo(null)
             .build();
     }
-
 }
