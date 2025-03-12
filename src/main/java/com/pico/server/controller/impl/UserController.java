@@ -4,12 +4,15 @@ import com.pico.server.controller.UserApi;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.MakeCoupleRequest;
+import com.pico.server.dto.request.RegisterDdayRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
 import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.response.InviteCodeResponse;
+import com.pico.server.dto.response.RegisterDdayResponse;
+import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.exception.ErrorCode;
 import com.pico.server.exception.UserException;
@@ -53,6 +56,13 @@ public class UserController implements UserApi {
         scheduleService.createBasicSchedules(userId);
 
         AuthResponse response = AuthResponse.of(findUser,authToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<RegisterDdayResponse> registerDday(Long userId, RegisterDdayRequest request) {
+        Users User = userService.findById(userId);
+        RegisterDdayResponse response = userDetailsService.registerDday(userId, request.dday());
         return ResponseEntity.ok(response);
     }
 
@@ -108,7 +118,6 @@ public class UserController implements UserApi {
             .gender(request.gender())
             .nickName(request.nickName())
             .birth(request.birth())
-            .dday(request.dday())
             .isTermsAgreed(request.isTermsAgreed())
             .isMarketingAgreed(request.isMarketingAgreed())
             .build();

@@ -25,11 +25,6 @@ public record UserRegisterRequest(
     @NotNull(message = "birth는 null 일 수 없습니다.")
     LocalDate birth,
 
-    @Schema(description = "디데이", example = "2023-10-23",type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @NotNull(message = "dday는 null 일 수 없습니다.")
-    LocalDate dday,
-
     @Schema(description = "서비스 약관 동의", example = "true")
     @NotNull(message = "isTermsAgreed는 null 일 수 없습니다.")
     Boolean isTermsAgreed,

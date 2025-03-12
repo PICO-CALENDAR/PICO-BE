@@ -2,6 +2,7 @@ package com.pico.server.controller;
 
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.MakeCoupleRequest;
+import com.pico.server.dto.request.RegisterDdayRequest;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
 import com.pico.server.dto.request.UserRegisterRequest;
 import com.pico.server.dto.response.AuthResponse;
@@ -9,6 +10,7 @@ import com.pico.server.dto.response.CoupleResponse;
 import com.pico.server.dto.CoupleUserDto;
 import com.pico.server.dto.response.ErrorResponse;
 import com.pico.server.dto.response.InviteCodeResponse;
+import com.pico.server.dto.response.RegisterDdayResponse;
 import com.pico.server.dto.response.TokenResponse;
 import com.pico.server.security.config.userid.LoginUserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,15 +44,6 @@ public interface UserApi {
 
     @PostMapping("/register/{userId}")
     @Operation(summary = "회원가입", description = "회원가입을 진행합니다.")
-    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
-        mediaType = "application/json",
-        examples = {
-            @ExampleObject(name = "US0001", description = "토큰에 담긴 UserId에 대한 사용자를 찾을 수 없을 때 발생합니다.",
-                value = """
-                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
-                                    """
-            )
-        }, schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(
         mediaType = "application/json",
         examples = {
@@ -65,6 +58,26 @@ public interface UserApi {
 
         @Valid
         @RequestBody UserRegisterRequest request
+    );
+
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/register/{userId}/dday")
+    @Operation(summary = "디데이 등록", description = "디데이 등록을 진행합니다.")
+    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
+        mediaType = "application/json",
+        examples = {
+            @ExampleObject(name = "US0001", description = "토큰에 담긴 UserId에 대한 사용자를 찾을 수 없을 때 발생합니다.",
+                value = """
+                                    {"code": "US0001", "message": "해당 사용자를 찾을 수 없습니다."}
+                                    """
+            )
+        }, schema = @Schema(implementation = ErrorResponse.class)))
+    ResponseEntity<RegisterDdayResponse> registerDday(
+        @Parameter(hidden = true)
+        @LoginUserId Long userId,
+
+        @Valid
+        @RequestBody RegisterDdayRequest request
     );
 
     @SecurityRequirement(name = "JWT")

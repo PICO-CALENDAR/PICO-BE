@@ -3,6 +3,7 @@ package com.pico.server.service;
 import com.pico.server.dto.request.CreateUserDetailsDto;
 import com.pico.server.dto.UserInfoDto;
 import com.pico.server.dto.request.UserInfoUpdateRequest;
+import com.pico.server.dto.response.RegisterDdayResponse;
 import com.pico.server.entity.UserDetails;
 import com.pico.server.entity.Users;
 import com.pico.server.enums.Gender;
@@ -25,13 +26,11 @@ public class UserDetailsService {
 
     @Transactional
     public UserDetails saveUserDetails(CreateUserDetailsDto createUserDetailsDto) {
-
         UserDetails userDetails = UserDetails.builder()
             .name(createUserDetailsDto.name())
             .gender(createUserDetailsDto.gender())
             .nickName(createUserDetailsDto.nickName())
             .birth(createUserDetailsDto.birth())
-            .dday(createUserDetailsDto.dday())
             .isTermsAgreed(createUserDetailsDto.isTermsAgreed())
             .isMarketingAgreed(createUserDetailsDto.isMarketingAgreed())
             .build();
@@ -53,6 +52,18 @@ public class UserDetailsService {
 
         userDetailsRepository.save(userDetails);
         return UserInfoDto.of(findUser, userDetails);
+    }
+
+    @Transactional
+    public RegisterDdayResponse registerDday(Long userId, LocalDate dday) {
+        Users findUser = userService.findById(userId);
+        UserDetails userDetails = findUser.getUserDetails();
+        userDetails.updateDday(dday);
+        userDetailsRepository.save(userDetails);
+
+        return RegisterDdayResponse.builder()
+            .dday(dday)
+            .build();
     }
 }
 

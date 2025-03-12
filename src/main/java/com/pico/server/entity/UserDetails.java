@@ -55,6 +55,10 @@ public class UserDetails {
         this.partnerName = partnerName;
     }
 
+    public void updateDday(LocalDate dday) {
+        this.dday = dday;
+    }
+
     public void updatePartnerNames(String partnerNickname, String partnerName) {
         this.partnerNickname = partnerNickname;
         this.partnerName = partnerName;
