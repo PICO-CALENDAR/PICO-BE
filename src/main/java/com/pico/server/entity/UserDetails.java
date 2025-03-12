@@ -83,5 +83,6 @@ public class UserDetails {
         this.partnerName = null;
         this.partnerProfileImage = null;
         this.partnerNickname = null;
+        this.dday = null;
     }
 }

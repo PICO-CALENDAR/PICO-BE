@@ -61,8 +61,13 @@ public class UserDetailsService {
         if(userDetails.getPartnerId() == null) {
             throw new UserException(ErrorCode.NOT_COUPLE_USERS_DDAY);
         }
+        Users partner = userRepository.findPartnerByUserId(userId);
+        UserDetails partnerDetails = partner.getUserDetails();
+
         userDetails.updateDday(dday);
+        partnerDetails.updateDday(dday);
         userDetailsRepository.save(userDetails);
+        userDetailsRepository.save(partnerDetails);
 
         return RegisterDdayResponse.builder()
             .dday(dday)
