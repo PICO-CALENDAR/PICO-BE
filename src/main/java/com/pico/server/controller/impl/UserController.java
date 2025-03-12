@@ -61,8 +61,8 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<RegisterDdayResponse> registerDday(Long userId, RegisterDdayRequest request) {
-        Users User = userService.findById(userId);
         RegisterDdayResponse response = userDetailsService.registerDday(userId, request.dday());
+        scheduleService.createAnniversarySchedules(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -88,7 +88,6 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<CoupleResponse<CoupleUserDto>> makeCouple(Long userId, MakeCoupleRequest makeCoupleRequest) {
         List<CoupleUserDto> users = inviteCodeService.makeCouple(userId, makeCoupleRequest.inviteCode());
-        scheduleService.createAnniversarySchedules(userId);
         return ResponseEntity.ok(CoupleResponse.from(users));
     }
 

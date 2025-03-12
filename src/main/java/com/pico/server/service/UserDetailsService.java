@@ -58,6 +58,9 @@ public class UserDetailsService {
     public RegisterDdayResponse registerDday(Long userId, LocalDate dday) {
         Users findUser = userService.findById(userId);
         UserDetails userDetails = findUser.getUserDetails();
+        if(userDetails.getPartnerId() == null) {
+            throw new UserException(ErrorCode.NOT_COUPLE_USERS_DDAY);
+        }
         userDetails.updateDday(dday);
         userDetailsRepository.save(userDetails);
 

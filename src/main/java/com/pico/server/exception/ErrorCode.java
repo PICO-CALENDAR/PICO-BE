@@ -48,6 +48,8 @@ public enum ErrorCode {
     NOT_FOUND_USER_DETAIL(404, "US0004", "해당 사용자 세부정보를 찾을 수 없습니다."),
     TERMS_NOT_AGREED(400, "US0005", "사용자 약관이 동의되지 않았습니다."),
     FAIL_TO_DELETE_APPLE_USER(400, "US0006", "사용자의 애플 정보를 삭제하는데 실패했습니다."),
+    NOT_COUPLE_USERS_DDAY(400, "US0007", "커플이 아닌 유저는 디데이를 등록할 수 없습니다."),
+
 
     /**
      * Schedule Errors

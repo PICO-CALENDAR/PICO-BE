@@ -68,7 +68,7 @@ public class MemoryboxService {
             throw new ScheduleException(ErrorCode.NOT_ANNIVERSARY_SCHEDULE);
         }
 
-        LocalDateTime scheduleDate = schedule.getStartTime();
+        LocalDateTime scheduleDate = request.scheduleStartTime();
         LocalDateTime opendate = LocalDateTime.of(scheduleDate.getYear(), scheduleDate.getMonth(), scheduleDate.getDayOfMonth(), 9,0,0);
         Boolean isOpen = !LocalDateTime.now().isBefore(opendate);
 

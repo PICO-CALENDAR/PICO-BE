@@ -61,7 +61,7 @@ public interface UserApi {
     );
 
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/register/{userId}/dday")
+    @PostMapping("/register/dday")
     @Operation(summary = "디데이 등록", description = "디데이 등록을 진행합니다.")
     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(
         mediaType = "application/json",
