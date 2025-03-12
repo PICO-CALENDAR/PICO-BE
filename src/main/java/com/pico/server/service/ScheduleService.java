@@ -152,6 +152,11 @@ public class ScheduleService {
     public ScheduleDto deleteSchedule(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        if(schedule.getIsAnniversary()) {
+            throw new ScheduleException(ErrorCode.ANNIVERSARY_SCHEDULES);
+        }
+
         scheduleRepository.delete(schedule);
         return ScheduleDto.from(schedule);
     }
@@ -160,6 +165,10 @@ public class ScheduleService {
     public ScheduleDto deleteRepeatSchedule(Long userId, Long scheduleId, LocalDateTime repeatEndDate) {
         Schedule schedule = scheduleRepository.findByUserIdAndScheduleId(userId, scheduleId)
             .orElseThrow(() -> new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE));
+
+        if(schedule.getIsAnniversary()) {
+            throw new ScheduleException(ErrorCode.ANNIVERSARY_SCHEDULES);
+        }
 
         if(Boolean.FALSE.equals(schedule.getIsRepeat())) {
             throw new ScheduleException(ErrorCode.NOT_REPEAT_SCHEDULE);
@@ -191,7 +200,7 @@ public class ScheduleService {
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         RepeatInfo originalRepeatInfo = schedule.getRepeatInfo();
-        originalRepeatInfo.updateRepeatEndDate(LocalDateTime.now().minusDays(1).with(LocalTime.of(23,59)));
+        originalRepeatInfo.updateRepeatEndDate(updateDto.startTime().minusDays(1).with(LocalTime.of(23,59)));
         repeatInfoRepository.save(originalRepeatInfo);
         scheduleRepository.save(schedule);
 
@@ -214,9 +223,16 @@ public class ScheduleService {
         scheduleRepository.save(changedSchdule);
 
         //new Origin 스케줄 생성
-        LocalDateTime newStartTime = checkNextStartTime(originalRepeatInfo);
-        RepeatInfo repeatInfo = createRepeatInfo(newStartTime, originalRepeatInfo.getRepeatType());
-        Schedule newOriginSchedule = makeOriginSchedule(schedule, repeatInfo, newStartTime);
+        LocalDateTime newStartTime = checkNextStartTime(originalRepeatInfo, updateDto.startTime());
+        LocalDateTime newEndTime = checkNextEndTime(originalRepeatInfo, updateDto.endTime());
+
+        RepeatInfo repeatInfo;
+        if(originalRepeatInfo.getRepeatEndDate() == null) {
+            repeatInfo = createRepeatInfo(newStartTime, originalRepeatInfo.getRepeatType());
+        } else {
+            repeatInfo = createRepeatInfoWithEndDate(newStartTime, originalRepeatInfo.getRepeatType(), originalRepeatInfo.getRepeatEndDate());
+        }
+        Schedule newOriginSchedule = makeOriginSchedule(schedule, repeatInfo, newStartTime, newEndTime);
         repeatInfoRepository.save(repeatInfo);
         scheduleRepository.save(newOriginSchedule);
 
@@ -233,12 +249,18 @@ public class ScheduleService {
             .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         RepeatInfo originalRepeatInfo = schedule.getRepeatInfo();
-        originalRepeatInfo.updateRepeatEndDate(LocalDateTime.now().minusDays(1).with(LocalTime.of(23,59)));
+        originalRepeatInfo.updateRepeatEndDate(updateDto.startTime().minusDays(1).with(LocalTime.of(23,59)));
         repeatInfoRepository.save(originalRepeatInfo);
         scheduleRepository.save(schedule);
 
         //변경된 schedule 생성
-        RepeatInfo changedRepeatInfo = createRepeatInfo(updateDto.startTime(), updateDto.repeatType());
+        RepeatInfo changedRepeatInfo;
+        if(originalRepeatInfo.getRepeatEndDate() != null) {
+            changedRepeatInfo = createRepeatInfoWithEndDate(updateDto.startTime(), updateDto.repeatType(), originalRepeatInfo.getRepeatEndDate());
+        }
+        else {
+            changedRepeatInfo = createRepeatInfo(updateDto.startTime(), updateDto.repeatType());
+        }
         Schedule changedSchdule = Schedule.builder()
             .user(user)
             .title(updateDto.title())
@@ -421,6 +443,14 @@ public class ScheduleService {
             .build();
     }
 
+    private RepeatInfo createRepeatInfoWithEndDate(LocalDateTime startTime, RepeatType repeatType, LocalDateTime endTime) {
+        return RepeatInfo.builder()
+            .repeatType(repeatType)
+            .repeatStartDate(startTime)
+            .repeatEndDate(endTime)
+            .build();
+    }
+
     private RepeatInfo createYearlyRepeatInfo(LocalDateTime startTime) {
         return RepeatInfo.builder()
             .repeatType(RepeatType.YEARLY)
@@ -450,37 +480,25 @@ public class ScheduleService {
                 return true;
             }
 
-            switch (repeatType) {
-                case DAILY:
-                    currentDate = currentDate.plusDays(1);
-                    break;
-                case WEEKLY:
-                    currentDate = currentDate.plusWeeks(1);
-                    break;
-                case MONTHLY:
-                    currentDate = currentDate.plusMonths(1);
-                    break;
-                case YEARLY:
-                    currentDate = currentDate.plusYears(1);
-                    break;
-                case BIWEEKLY:
-                    currentDate = currentDate.plusWeeks(2);
-                    break;
-                default:
-                    throw new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE);
-            }
+            currentDate = switch (repeatType) {
+                case DAILY -> currentDate.plusDays(1);
+                case WEEKLY -> currentDate.plusWeeks(1);
+                case MONTHLY -> currentDate.plusMonths(1);
+                case YEARLY -> currentDate.plusYears(1);
+                case BIWEEKLY -> currentDate.plusWeeks(2);
+            };
         }
 
         return false;
     }
 
-    private Schedule makeOriginSchedule(Schedule schedule, RepeatInfo repeatInfo, LocalDateTime startTime) {
+    private Schedule makeOriginSchedule(Schedule schedule, RepeatInfo repeatInfo, LocalDateTime startTime, LocalDateTime endTime) {
         return Schedule.builder()
             .user(schedule.getUser())
             .title(schedule.getTitle())
             .category(schedule.getCategory())
             .startTime(startTime)
-            .endTime(schedule.getEndTime())
+            .endTime(endTime)
             .isAllDay(schedule.getIsAllDay())
             .isRepeat(schedule.getIsRepeat())
             .isAnniversary(false)
@@ -490,28 +508,36 @@ public class ScheduleService {
             .build();
     }
 
-    private LocalDateTime checkNextStartTime(RepeatInfo repeatInfo) {
+    private LocalDateTime checkNextStartTime(RepeatInfo repeatInfo,LocalDateTime requestDateTime) {
         RepeatType repeatType = repeatInfo.getRepeatType();
-        LocalDateTime currentDate = repeatInfo.getRepeatStartDate();
+        LocalDateTime repeatStartDate = repeatInfo.getRepeatStartDate();
 
-        switch (repeatType) {
-            case DAILY:
-                currentDate = currentDate.plusDays(1);
-                break;
-            case WEEKLY:
-                currentDate = currentDate.plusWeeks(1);
-                break;
-            case MONTHLY:
-                currentDate = currentDate.plusMonths(1);
-                break;
-            case YEARLY:
-                currentDate = currentDate.plusYears(1);
-                break;
-            case BIWEEKLY:
-                currentDate = currentDate.plusWeeks(2);
-                break;
-            default:
-                throw new ScheduleException(ErrorCode.NOT_FOUND_SCHEDULE);
+        LocalDateTime currentDate = repeatStartDate.withSecond(0).withNano(0);
+        while(!currentDate.isAfter(requestDateTime.withSecond(0).withNano(0))) {
+            currentDate = switch (repeatType) {
+                case DAILY -> currentDate.plusDays(2);
+                case WEEKLY -> currentDate.plusWeeks(2);
+                case MONTHLY -> currentDate.plusMonths(2);
+                case YEARLY -> currentDate.plusYears(2);
+                case BIWEEKLY -> currentDate.plusWeeks(4);
+            };
+        }
+        return currentDate;
+    }
+
+    private LocalDateTime checkNextEndTime(RepeatInfo repeatInfo,LocalDateTime requestDateTime) {
+        RepeatType repeatType = repeatInfo.getRepeatType();
+        LocalDateTime repeatEndDate = repeatInfo.getRepeatEndDate();
+
+        LocalDateTime currentDate = repeatEndDate.withSecond(0).withNano(0);
+        while(!currentDate.isAfter(requestDateTime.withSecond(0).withNano(0))) {
+            currentDate = switch (repeatType) {
+                case DAILY -> currentDate.plusDays(2);
+                case WEEKLY -> currentDate.plusWeeks(2);
+                case MONTHLY -> currentDate.plusMonths(2);
+                case YEARLY -> currentDate.plusYears(2);
+                case BIWEEKLY -> currentDate.plusWeeks(4);
+            };
         }
         return currentDate;
     }

@@ -56,6 +56,7 @@ public enum ErrorCode {
     NOT_REPEAT_SCHEDULE(400, "SC0002", "반복 일정이 아닙니다."),
     NOT_ANNIVERSARY_SCHEDULE(400, "SC0003", "해당 일정은 기념일이 아닙니다."),
     NOT_COUPLE_ANNIVERSARY_SCHEDULE(400, "SC0004", "해당 일정은 커플 기념일이 아닙니다."),
+    ANNIVERSARY_SCHEDULES(400, "SC0005", "기념일 일정은 삭제할 수 없습니다."),
 
     /**
      * Invite Code Errors
@@ -74,7 +75,10 @@ public enum ErrorCode {
     NOT_FOUND_MEMORYBOX(404, "MB0001", "해당 추억함을 찾을 수 없습니다."),
     DUPLICATE_MEMORYBOX(400, "MB0002", "같은 일정에 대해서는 추억함을 1개만 생성할 수 있습니다."),
     NOT_BEFORE_OPENDATE(400, "MB0003", "타임캡슐은 오픈 전날까지만 수정 가능합니다."),
-    NOT_COUPLE_USERS(400, "MB0004", "커플이 아닌 유저는 타입캡슐을 생성할 수 없습니다."),
+    NOT_COUPLE_USERS_CREATE(400, "MB0004", "커플이 아닌 유저는 타입캡슐을 생성할 수 없습니다."),
+    NOT_COUPLE_USERS_UPDATE(400, "MB0005", "커플이 아닌 유저는 타입캡슐을 수정할 수 없습니다."),
+    NOT_COUPLE_USERS_READ(400, "MB0006", "커플이 아닌 유저는 타입캡슐을 조회할 수 없습니다."),
+    NOT_FOUND_ANNIVERSARY_MEMORYBOX(400, "MB0007", "기념일에 해당하는 타임캡슐을 찾을 수 없습니다."),
 
     /**
      * Letter Errors

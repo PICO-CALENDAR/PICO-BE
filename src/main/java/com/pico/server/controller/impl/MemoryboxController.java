@@ -36,6 +36,9 @@ public class MemoryboxController implements MemoryboxApi {
 
     @Override
     public ResponseEntity<ListResponse<ScheduleDto>> getThreeMonthsAnniversaries(Long userId) {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_CREATE);
+        }
         List<ScheduleDto> schedulDtos =  scheduleService.getThreeMonthsAnniversarySchedules(userId);
         ListResponse<ScheduleDto> response =ListResponse.from(schedulDtos);
         return ResponseEntity.ok(response);
@@ -45,8 +48,8 @@ public class MemoryboxController implements MemoryboxApi {
     public ResponseEntity<MemoryboxResponse> saveMemorybox(Long userId, MemoryboxRequest request)
         throws IOException {
         Users user = userService.findById(userId);
-        if(userService.checkNotCouple(userId)) {
-            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS);
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_UPDATE);
         }
         MemoryboxDto memoryBox = memoryboxService.saveMemoryBox(user, request);
         MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
@@ -61,6 +64,9 @@ public class MemoryboxController implements MemoryboxApi {
     @Override
     public ResponseEntity<MemoryboxResponse> updateMemorybox(Long userId, Long memoryboxId,
         MemoryboxUpdateRequest request) throws IOException {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_READ);
+        }
         MemoryboxDto memoryBox = memoryboxService.updateMemorybox(userId, memoryboxId, request);
         MemoryUserDto author = memoryboxService.findMemoryboxUser(memoryBox.memoryboxId());
         MemoryUserDto toWhom = userService.findPartner(userId);
@@ -85,6 +91,9 @@ public class MemoryboxController implements MemoryboxApi {
 
     @Override
     public ResponseEntity<ListResponse<MemoryboxScheduleResponse>> getAllMemoryboxes(Long userId) {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_READ);
+        }
         List<MemoryboxScheduleResponse> memoryBoxes = memoryboxService.getAllMemoryboxes(userId);
         ListResponse<MemoryboxScheduleResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
@@ -92,12 +101,18 @@ public class MemoryboxController implements MemoryboxApi {
 
     @Override
     public ResponseEntity<MemoryboxScheduleResponse> getAnniversaryMemoryboxes(Long userId, AnniversaryMemoryboxRequest request) {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_READ);
+        }
         MemoryboxScheduleResponse response = memoryboxService.getAnniversaryMemoryboxes(userId, request.title());
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<ListResponse<MemoryboxResponse>> getMyPastMemoryboxes(Long userId) {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_READ);
+        }
         List<MemoryboxResponse> memoryBoxes = memoryboxService.getMyPastMemoryboxes(userId);
         ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);
@@ -105,6 +120,9 @@ public class MemoryboxController implements MemoryboxApi {
 
     @Override
     public ResponseEntity<ListResponse<MemoryboxResponse>> getMyUpcomingMemoryboxes(Long userId) {
+        if(Boolean.TRUE.equals(userService.checkNotCouple(userId))) {
+            throw new MemoryboxException(ErrorCode.NOT_COUPLE_USERS_READ);
+        }
         List<MemoryboxResponse> memoryBoxes = memoryboxService.getMyUpcomingMemoryboxes(userId);
         ListResponse<MemoryboxResponse> response = ListResponse.from(memoryBoxes);
         return ResponseEntity.ok(response);

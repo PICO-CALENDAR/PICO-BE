@@ -32,4 +32,6 @@ public interface MemoryboxRepository extends JpaRepository<Memorybox, Long> {
 
     @Query("SELECT m FROM Memorybox m WHERE m.schedule IN :schedules")
     List<Memorybox> findBySchedules(@Param("schedules") List<Schedule> schedules);
+
+    List<Memorybox> findBySchedule(Schedule schedule);
 }

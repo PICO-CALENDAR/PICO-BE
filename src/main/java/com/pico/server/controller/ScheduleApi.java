@@ -77,7 +77,7 @@ public interface ScheduleApi {
     );
 
     @PostMapping("/update/after/{scheduleId}")
-    @Operation(summary = "반복 일정 - 요청 날짜 이후 일정만 수정", description = "기존의 반복 일정은 그대로두고 요청날짜를 포함한 이후의 일정을 변경합니다.")
+    @Operation(summary = "반복 일정 - 요청 날짜포함 이후 일정 수정", description = "기존의 반복 일정은 그대로두고 요청날짜를 포함한 이후의 일정을 변경합니다.")
     ResponseEntity<ScheduleResponse> updateAfterToday(
         @Parameter(hidden = true)
         @LoginUserId Long userId,
