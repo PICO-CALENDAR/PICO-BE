@@ -18,8 +18,8 @@ public record UserInfoDto(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     String birth,
 
-    @Nullable
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Nullable
     String dday,
 
     @Nullable
@@ -43,7 +43,8 @@ public record UserInfoDto(
             .gender(userDetails.getGender().getValue())
             .nickName(userDetails.getNickName())
             .birth(userDetails.getBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-            .dday(userDetails.getDday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            .dday(userDetails.getDday() != null ?
+                userDetails.getDday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null)
             .partnerId(userDetails.getPartnerId())
             .partnerName(userDetails.getPartnerName())
             .partnerNickname(userDetails.getPartnerNickname())
